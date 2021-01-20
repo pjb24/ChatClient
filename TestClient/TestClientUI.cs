@@ -8,23 +8,28 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
+using System.Net;
+using System.Net.Sockets;
+
 namespace TestClient
 {
     public partial class TestClientUI : Form
     {
-        AsynchronousClient socket = new AsynchronousClient();
+        AsynchronousClient client = new AsynchronousClient();
         public static TestClientUI testClientUI;
         public TestClientUI()
         {
             InitializeComponent();
             testClientUI = this;
-            
         }
 
         private void TestClient_Load(object sender, EventArgs e)
         {
-            
-            socket.BeginStartClient(socket.StartClientCallback, socket);
+            client.BeginStartClient(client.StartClientCallback, client);
+
+            (Socket socket, IPEndPoint remoteEP) = client.CreateSocket();
+            socket.BeginConnect(remoteEP, new AsyncCallback(AsynchronousClient.ConnectCallback), client);
+            client.BeginWaitingReceive(socket, client.WaitingReceiveCallback, client);
         }
 
         private void btn_Close_Click(object sender, EventArgs e)
@@ -34,10 +39,11 @@ namespace TestClient
 
         private void btn_Send_Click(object sender, EventArgs e)
         {
-            socket.BeginConnect(AsynchronousClient.ConnectCallback, socket);
-            string text = txt_Send.Text;
-            socket.BeginSend(socket, text, AsynchronousClient.SendCallback, socket);
-            
+            (Socket socket, IPEndPoint remoteEP) = client.CreateSocket();
+            socket.BeginConnect(remoteEP, new AsyncCallback(AsynchronousClient.ConnectCallback), client);
+            string data = txt_Send.Text + "<EOF>";
+            AsynchronousClient.Send(socket, data);
+            client.BeginWaitingReceive(socket, client.WaitingReceiveCallback, client);
         }
     }
 }
