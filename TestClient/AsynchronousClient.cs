@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using System.Windows.Forms;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
@@ -35,6 +36,49 @@ namespace TestClient
         // The response from the remote device.
         private static String response = String.Empty;
 
+        // delegate 생성
+        private Action StartClientDelegate;
+
+        public AsynchronousClient()
+        {
+            this.StartClientDelegate = StartClient;
+        }
+
+        // Window Form ListBox 사용 메서드
+        private static void WriteListBoxSafe(String text)
+        {
+            if (TestClientUI.testClientUI.lb_Result.InvokeRequired)
+            {
+                TestClientUI.testClientUI.lb_Result.Invoke((MethodInvoker)delegate ()
+                {
+                    WriteListBoxSafe(text);
+                });
+            } else
+            {
+                TestClientUI.testClientUI.lb_Result.Items.Add(text);
+            }
+        }
+
+        // Callback 메서드
+        public void StartClientCallback(IAsyncResult ar)
+        {
+            var async = ar.AsyncState as AsynchronousClient;
+            async.EndStartClient(ar);
+        }
+
+        // BeginInvoke 메서드
+        public IAsyncResult BeginStartClient(AsyncCallback asyncCallback, object state)
+        {
+            return StartClientDelegate.BeginInvoke(asyncCallback, state);
+        }
+
+        // EndInvoke 메서드
+        public void EndStartClient(IAsyncResult asyncResult)
+        {
+            this.StartClientDelegate.EndInvoke(asyncResult);
+        }
+
+        // 작업 진행 메서드
         private static void StartClient()
         {
             // Connect to a remote device.
@@ -63,6 +107,8 @@ namespace TestClient
 
                 // Write the response to the console.
                 Console.WriteLine("Response receivd : {0}", response);
+                WriteListBoxSafe("Response receivd : " + response);
+                
 
                 // Release the socket.
                 client.Shutdown(SocketShutdown.Both);
@@ -84,6 +130,7 @@ namespace TestClient
                 client.EndConnect(ar);
 
                 Console.WriteLine("Socket connected to {0}", client.RemoteEndPoint.ToString());
+                WriteListBoxSafe("Socket connected to " + client.RemoteEndPoint.ToString());
 
                 // Signal that the connection has been made.
                 connectDone.Set();
@@ -163,6 +210,7 @@ namespace TestClient
                 // Complete sending the data to the remote device.
                 int bytesSent = client.EndSend(ar);
                 Console.WriteLine("Sent {0} bytes to server.", bytesSent);
+                WriteListBoxSafe("Sent " + bytesSent + " bytes to server.");
 
                 // Signal that all bytes have been sent.
                 sendDone.Set();
@@ -170,11 +218,6 @@ namespace TestClient
             {
                 Console.WriteLine(e.ToString());
             }
-        }
-
-        public static void Main(String[] args)
-        {
-            StartClient();
         }
     }
 }
