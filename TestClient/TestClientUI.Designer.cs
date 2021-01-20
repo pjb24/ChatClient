@@ -59,6 +59,7 @@ namespace TestClient
             this.btn_Send.TabIndex = 3;
             this.btn_Send.Text = "전송";
             this.btn_Send.UseVisualStyleBackColor = true;
+            this.btn_Send.Click += new System.EventHandler(this.btn_Send_Click);
             // 
             // btn_Close
             // 

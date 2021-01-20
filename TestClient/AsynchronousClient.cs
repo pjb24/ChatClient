@@ -38,6 +38,8 @@ namespace TestClient
 
         // delegate 생성
         private Action StartClientDelegate;
+        private Action<Socket, String> SendDelegate;
+        private Action ConnectDelegate;
 
         public AsynchronousClient()
         {
@@ -118,8 +120,33 @@ namespace TestClient
                 Console.WriteLine(e.ToString());
             }
         }
+        // BeginInvoke
+        public IAsyncResult BeginConnect(AsyncCallback asyncCallback, object state)
+        {
+            return ConnectDelegate.BeginInvoke(asyncCallback, state);
+        }
+        // EndInvoke
+        public void EndConnect(IAsyncResult asyncResult)
+        {
+            ConnectDelegate.EndInvoke(asyncResult);
+        }
+        // work
+        private static void Connect()
+        {
+            // Establish the remote endpoint for the socket.
+            // The name of the remote device is "host.contoso.com".
+            IPHostEntry ipHostInfo = Dns.GetHostEntry(IPAddress.Loopback);
+            IPAddress ipAddress = ipHostInfo.AddressList[0];
+            IPEndPoint remoteEP = new IPEndPoint(ipAddress, port);
 
-        private static void ConnectCallback(IAsyncResult ar)
+            // Create a TCP/IP socket.
+            Socket client = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+
+            // Connect to the remote endpoint.
+            client.BeginConnect(remoteEP, new AsyncCallback(ConnectCallback), client);
+        }
+        // Callback
+        public static void ConnectCallback(IAsyncResult ar)
         {
             try
             {
@@ -153,10 +180,13 @@ namespace TestClient
             } catch(Exception e)
             {
                 Console.WriteLine(e.ToString());
+                Socket socket = client;
+                socket.Close();
+                WriteListBoxSafe("서버에 접속할 수 없습니다");
             }
         }
 
-        private static void ReceiveCallback(IAsyncResult ar)
+        public static void ReceiveCallback(IAsyncResult ar)
         {
             try
             {
@@ -188,9 +218,22 @@ namespace TestClient
             } catch(Exception e)
             {
                 Console.WriteLine(e.ToString());
+                Socket socket = (Socket)ar.AsyncState;
+                socket.Close();
+                WriteListBoxSafe("서버에 접속할 수 없습니다");
             }
         }
-
+        // BeginInvoke
+        public IAsyncResult BeginSend(Socket client, String data, AsyncCallback asyncCallback, object state)
+        {
+            return SendDelegate.BeginInvoke(client, data, asyncCallback, state);
+        }
+        // EndInvoke
+        public void EndSend(IAsyncResult asyncResult)
+        {
+            SendDelegate.EndInvoke(asyncResult);
+        }
+        // 작업 메서드
         private static void Send(Socket client, String data)
         {
             // Convert the string data to byte data using ASCII encoding.
@@ -199,8 +242,8 @@ namespace TestClient
             // Begin sending the data to the remote device.
             client.BeginSend(byteData, 0, byteData.Length, 0, new AsyncCallback(SendCallback), client);
         }
-
-        private static void SendCallback(IAsyncResult ar)
+        // Callback 메서드
+        public static void SendCallback(IAsyncResult ar)
         {
             try
             {
