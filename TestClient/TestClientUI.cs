@@ -8,15 +8,14 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-using System.Net;
-using System.Net.Sockets;
+using System.Threading;
 
 namespace TestClient
 {
     public partial class TestClientUI : Form
     {
-        AsynchronousClient client = new AsynchronousClient();
         public static TestClientUI testClientUI;
+
         public TestClientUI()
         {
             InitializeComponent();
@@ -25,11 +24,10 @@ namespace TestClient
 
         private void TestClient_Load(object sender, EventArgs e)
         {
-            client.BeginStartClient(client.StartClientCallback, client);
-
-            (Socket socket, IPEndPoint remoteEP) = client.CreateSocket();
-            socket.BeginConnect(remoteEP, new AsyncCallback(AsynchronousClient.ConnectCallback), client);
-            client.BeginWaitingReceive(socket, client.WaitingReceiveCallback, client);
+            
+            string data = "test";
+            Thread workerThread = new Thread(new ParameterizedThreadStart(AsynchronousClient.StartClient));
+            workerThread.Start(data);
         }
 
         private void btn_Close_Click(object sender, EventArgs e)
@@ -39,11 +37,9 @@ namespace TestClient
 
         private void btn_Send_Click(object sender, EventArgs e)
         {
-            (Socket socket, IPEndPoint remoteEP) = client.CreateSocket();
-            socket.BeginConnect(remoteEP, new AsyncCallback(AsynchronousClient.ConnectCallback), client);
-            string data = txt_Send.Text + "<EOF>";
-            AsynchronousClient.Send(socket, data);
-            client.BeginWaitingReceive(socket, client.WaitingReceiveCallback, client);
+            string data = txt_Send.Text;
+            Thread workerThread = new Thread(new ParameterizedThreadStart(AsynchronousClient.StartClient));
+            workerThread.Start(data);
         }
 
         private void txt_Send_KeyDown(object sender, KeyEventArgs e)
