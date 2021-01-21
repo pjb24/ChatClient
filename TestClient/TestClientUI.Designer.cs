@@ -50,6 +50,7 @@ namespace TestClient
             this.txt_Send.Name = "txt_Send";
             this.txt_Send.Size = new System.Drawing.Size(625, 25);
             this.txt_Send.TabIndex = 1;
+            this.txt_Send.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txt_Send_KeyDown);
             // 
             // btn_Send
             // 

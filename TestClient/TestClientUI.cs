@@ -45,5 +45,16 @@ namespace TestClient
             AsynchronousClient.Send(socket, data);
             client.BeginWaitingReceive(socket, client.WaitingReceiveCallback, client);
         }
+
+        private void txt_Send_KeyDown(object sender, KeyEventArgs e)
+        {
+            switch (e.KeyCode)
+            {
+                case Keys.Enter:
+                    btn_Send_Click(sender, e);
+                    txt_Send.SelectAll();
+                    break;
+            }
+        }
     }
 }
