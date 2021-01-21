@@ -24,10 +24,12 @@ namespace TestClient
 
         private void TestClient_Load(object sender, EventArgs e)
         {
-            
             string data = "test";
             Thread workerThread = new Thread(new ParameterizedThreadStart(AsynchronousClient.StartClient));
             workerThread.Start(data);
+
+            Thread listenThread = new Thread(SocketListener.StartListening);
+            listenThread.Start();
         }
 
         private void btn_Close_Click(object sender, EventArgs e)

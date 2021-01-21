@@ -194,7 +194,7 @@ namespace TestClient
         }
 
         // Window Form ListBox 사용 메서드
-        private static void WriteListBoxSafe(String text)
+        public static void WriteListBoxSafe(String text)
         {
             if (TestClientUI.testClientUI.lb_Result.InvokeRequired)
             {
