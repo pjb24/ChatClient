@@ -25,25 +25,24 @@ namespace TestClient
 
         private void TestClient_Load(object sender, EventArgs e)
         {
-            client.BeginStartClient(client.StartClientCallback, client);
+            // Connection Test
+            //client.BeginStartClient(client.StartClientCallback, client);
 
             (Socket socket, IPEndPoint remoteEP) = client.CreateSocket();
-            socket.BeginConnect(remoteEP, new AsyncCallback(AsynchronousClient.ConnectCallback), client);
-            client.BeginWaitingReceive(socket, client.WaitingReceiveCallback, client);
+            AsynchronousClient.clientSocket.BeginConnect(remoteEP, new AsyncCallback(AsynchronousClient.ConnectCallback), AsynchronousClient.clientSocket);
+            client.BeginWaitingReceive(AsynchronousClient.clientSocket, client.WaitingReceiveCallback, client);
         }
 
         private void btn_Close_Click(object sender, EventArgs e)
         {
+            client.ReleaseSocket(AsynchronousClient.clientSocket);
             this.Close();
         }
 
         private void btn_Send_Click(object sender, EventArgs e)
         {
-            (Socket socket, IPEndPoint remoteEP) = client.CreateSocket();
-            socket.BeginConnect(remoteEP, new AsyncCallback(AsynchronousClient.ConnectCallback), client);
             string data = txt_Send.Text + "<EOF>";
-            AsynchronousClient.Send(socket, data);
-            client.BeginWaitingReceive(socket, client.WaitingReceiveCallback, client);
+            AsynchronousClient.Send(AsynchronousClient.clientSocket, data);
         }
 
         private void txt_Send_KeyDown(object sender, KeyEventArgs e)

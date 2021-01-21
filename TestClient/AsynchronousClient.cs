@@ -36,6 +36,8 @@ namespace TestClient
         // The response from the remote device.
         public static String response = String.Empty;
 
+        public static Socket clientSocket;
+
         // delegate 생성
         private Action StartClientDelegate;
         private Action<Socket> WaitingReceiveDelegate;
@@ -90,8 +92,8 @@ namespace TestClient
             IPEndPoint remoteEP = new IPEndPoint(ipAddress, port);
 
             // Create a TCP/IP socket.
-            Socket client = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-            return (client, remoteEP);
+            clientSocket = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+            return (clientSocket, remoteEP);
         }
 
         public void ReleaseSocket(Socket client)
@@ -186,7 +188,6 @@ namespace TestClient
             receiveDone.WaitOne();
 
             WriteListBoxSafe(response);
-            ReleaseSocket(client);
         }
 
         public static void Receive(Socket client)
