@@ -16,8 +16,6 @@ namespace TestClient
 {
     public partial class TestClientUI : Form
     {
-        public static TestClientUI testClientUI;
-
         TcpClient clientSocket = new TcpClient();
         NetworkStream stream = default(NetworkStream);
         string message = string.Empty;
@@ -25,20 +23,10 @@ namespace TestClient
         public TestClientUI()
         {
             InitializeComponent();
-            testClientUI = this;
         }
 
         private void TestClient_Load(object sender, EventArgs e)
         {
-            /*
-            string data = "test";
-            Thread workerThread = new Thread(new ParameterizedThreadStart(AsynchronousClient.StartClient));
-            workerThread.Start(data);
-
-            Thread listenThread = new Thread(SocketListener.StartListening);
-            listenThread.Start();
-            */
-
             clientSocket.Connect(IPAddress.Loopback, 11000);
             stream = clientSocket.GetStream();
 
@@ -61,11 +49,6 @@ namespace TestClient
 
         private void btn_Send_Click(object sender, EventArgs e)
         {
-            /*
-            string data = txt_Send.Text;
-            Thread workerThread = new Thread(new ParameterizedThreadStart(AsynchronousClient.StartClient));
-            workerThread.Start(data);
-            */
             byte[] buffer = Encoding.Unicode.GetBytes(this.txt_Send.Text + "$");
             stream.Write(buffer, 0, buffer.Length);
             stream.Flush();
@@ -108,5 +91,22 @@ namespace TestClient
             else
                 lb_Result.Items.Add(text + Environment.NewLine);
         }
+
+        private void btn_Register_Click(object sender, EventArgs e)
+        {
+            RegisterForm registerForm = new RegisterForm();
+            registerForm.stream = stream;
+            registerForm.Show();
+        }
+
+        private void btn_SignIn_Click(object sender, EventArgs e)
+        {
+            SignInForm signInForm = new SignInForm();
+            signInForm.stream = stream;
+            signInForm.Show();
+        }
     }
 }
+
+// 출처: https://it-jerryfamily.tistory.com/80 [IT 이야기]
+// 출처: https://yeolco.tistory.com/53 [열코의 프로그래밍 일기]

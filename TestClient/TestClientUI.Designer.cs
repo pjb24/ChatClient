@@ -33,6 +33,8 @@ namespace TestClient
             this.txt_Send = new System.Windows.Forms.TextBox();
             this.btn_Send = new System.Windows.Forms.Button();
             this.btn_Close = new System.Windows.Forms.Button();
+            this.btn_Register = new System.Windows.Forms.Button();
+            this.btn_SignIn = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // lb_Result
@@ -72,11 +74,33 @@ namespace TestClient
             this.btn_Close.UseVisualStyleBackColor = true;
             this.btn_Close.Click += new System.EventHandler(this.btn_Close_Click);
             // 
+            // btn_Register
+            // 
+            this.btn_Register.Location = new System.Drawing.Point(377, 322);
+            this.btn_Register.Name = "btn_Register";
+            this.btn_Register.Size = new System.Drawing.Size(75, 23);
+            this.btn_Register.TabIndex = 4;
+            this.btn_Register.Text = "Register";
+            this.btn_Register.UseVisualStyleBackColor = true;
+            this.btn_Register.Click += new System.EventHandler(this.btn_Register_Click);
+            // 
+            // btn_SignIn
+            // 
+            this.btn_SignIn.Location = new System.Drawing.Point(221, 322);
+            this.btn_SignIn.Name = "btn_SignIn";
+            this.btn_SignIn.Size = new System.Drawing.Size(75, 23);
+            this.btn_SignIn.TabIndex = 5;
+            this.btn_SignIn.Text = "Sign in";
+            this.btn_SignIn.UseVisualStyleBackColor = true;
+            this.btn_SignIn.Click += new System.EventHandler(this.btn_SignIn_Click);
+            // 
             // TestClientUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 397);
+            this.Controls.Add(this.btn_SignIn);
+            this.Controls.Add(this.btn_Register);
             this.Controls.Add(this.btn_Close);
             this.Controls.Add(this.btn_Send);
             this.Controls.Add(this.txt_Send);
@@ -94,6 +118,8 @@ namespace TestClient
         private System.Windows.Forms.Button btn_Send;
         private System.Windows.Forms.Button btn_Close;
         public System.Windows.Forms.ListBox lb_Result;
+        private System.Windows.Forms.Button btn_Register;
+        private System.Windows.Forms.Button btn_SignIn;
     }
 }
 
