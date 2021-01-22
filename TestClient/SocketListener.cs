@@ -29,7 +29,7 @@ namespace TestClient
             IPEndPoint endPoint = new IPEndPoint(ipAddress, port);
 
             // Create a TCP/IP socket.  
-            Socket listener = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            Socket listener = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
 
             // Bind the socket to the local endpoint and listen for incoming connections.  
             try
