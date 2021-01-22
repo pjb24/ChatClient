@@ -35,6 +35,7 @@ namespace TestClient
             this.btn_Close = new System.Windows.Forms.Button();
             this.btn_Register = new System.Windows.Forms.Button();
             this.btn_SignIn = new System.Windows.Forms.Button();
+            this.btn_Group = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // lb_Result
@@ -76,7 +77,7 @@ namespace TestClient
             // 
             // btn_Register
             // 
-            this.btn_Register.Location = new System.Drawing.Point(377, 322);
+            this.btn_Register.Location = new System.Drawing.Point(182, 322);
             this.btn_Register.Name = "btn_Register";
             this.btn_Register.Size = new System.Drawing.Size(75, 23);
             this.btn_Register.TabIndex = 4;
@@ -86,7 +87,7 @@ namespace TestClient
             // 
             // btn_SignIn
             // 
-            this.btn_SignIn.Location = new System.Drawing.Point(221, 322);
+            this.btn_SignIn.Location = new System.Drawing.Point(64, 322);
             this.btn_SignIn.Name = "btn_SignIn";
             this.btn_SignIn.Size = new System.Drawing.Size(75, 23);
             this.btn_SignIn.TabIndex = 5;
@@ -94,11 +95,22 @@ namespace TestClient
             this.btn_SignIn.UseVisualStyleBackColor = true;
             this.btn_SignIn.Click += new System.EventHandler(this.btn_SignIn_Click);
             // 
+            // btn_Group
+            // 
+            this.btn_Group.Location = new System.Drawing.Point(309, 321);
+            this.btn_Group.Name = "btn_Group";
+            this.btn_Group.Size = new System.Drawing.Size(75, 23);
+            this.btn_Group.TabIndex = 6;
+            this.btn_Group.Text = "Group";
+            this.btn_Group.UseVisualStyleBackColor = true;
+            this.btn_Group.Click += new System.EventHandler(this.btn_Group_Click);
+            // 
             // TestClientUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 397);
+            this.Controls.Add(this.btn_Group);
             this.Controls.Add(this.btn_SignIn);
             this.Controls.Add(this.btn_Register);
             this.Controls.Add(this.btn_Close);
@@ -120,6 +132,7 @@ namespace TestClient
         public System.Windows.Forms.ListBox lb_Result;
         private System.Windows.Forms.Button btn_Register;
         private System.Windows.Forms.Button btn_SignIn;
+        private System.Windows.Forms.Button btn_Group;
     }
 }
 

@@ -105,6 +105,13 @@ namespace TestClient
             signInForm.stream = stream;
             signInForm.Show();
         }
+
+        private void btn_Group_Click(object sender, EventArgs e)
+        {
+            GroupForm groupForm = new GroupForm();
+            groupForm.stream = stream;
+            groupForm.Show();
+        }
     }
 }
 
