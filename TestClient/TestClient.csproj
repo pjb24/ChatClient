@@ -46,6 +46,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ChatGroupForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ChatGroupForm.Designer.cs">
+      <DependentUpon>ChatGroupForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="CreateGroupForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -78,6 +84,9 @@
       <DependentUpon>TestClientUI.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="ChatGroupForm.resx">
+      <DependentUpon>ChatGroupForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="CreateGroupForm.resx">
       <DependentUpon>CreateGroupForm.cs</DependentUpon>
     </EmbeddedResource>

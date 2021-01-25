@@ -35,11 +35,12 @@ namespace TestClient
             this.txt_PW = new System.Windows.Forms.TextBox();
             this.btn_SignIn = new System.Windows.Forms.Button();
             this.btn_Close = new System.Windows.Forms.Button();
+            this.btn_Register = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // txt_ID
             // 
-            this.txt_ID.Location = new System.Drawing.Point(138, 91);
+            this.txt_ID.Location = new System.Drawing.Point(138, 46);
             this.txt_ID.Name = "txt_ID";
             this.txt_ID.Size = new System.Drawing.Size(160, 25);
             this.txt_ID.TabIndex = 0;
@@ -47,7 +48,7 @@ namespace TestClient
             // lb_ID
             // 
             this.lb_ID.AutoSize = true;
-            this.lb_ID.Location = new System.Drawing.Point(62, 94);
+            this.lb_ID.Location = new System.Drawing.Point(73, 49);
             this.lb_ID.Name = "lb_ID";
             this.lb_ID.Size = new System.Drawing.Size(20, 15);
             this.lb_ID.TabIndex = 1;
@@ -56,7 +57,7 @@ namespace TestClient
             // lb_PW
             // 
             this.lb_PW.AutoSize = true;
-            this.lb_PW.Location = new System.Drawing.Point(62, 148);
+            this.lb_PW.Location = new System.Drawing.Point(62, 120);
             this.lb_PW.Name = "lb_PW";
             this.lb_PW.Size = new System.Drawing.Size(31, 15);
             this.lb_PW.TabIndex = 2;
@@ -64,14 +65,14 @@ namespace TestClient
             // 
             // txt_PW
             // 
-            this.txt_PW.Location = new System.Drawing.Point(138, 145);
+            this.txt_PW.Location = new System.Drawing.Point(138, 110);
             this.txt_PW.Name = "txt_PW";
             this.txt_PW.Size = new System.Drawing.Size(160, 25);
             this.txt_PW.TabIndex = 3;
             // 
             // btn_SignIn
             // 
-            this.btn_SignIn.Location = new System.Drawing.Point(101, 216);
+            this.btn_SignIn.Location = new System.Drawing.Point(89, 172);
             this.btn_SignIn.Name = "btn_SignIn";
             this.btn_SignIn.Size = new System.Drawing.Size(75, 23);
             this.btn_SignIn.TabIndex = 4;
@@ -81,7 +82,7 @@ namespace TestClient
             // 
             // btn_Close
             // 
-            this.btn_Close.Location = new System.Drawing.Point(223, 216);
+            this.btn_Close.Location = new System.Drawing.Point(223, 172);
             this.btn_Close.Name = "btn_Close";
             this.btn_Close.Size = new System.Drawing.Size(75, 23);
             this.btn_Close.TabIndex = 5;
@@ -89,11 +90,22 @@ namespace TestClient
             this.btn_Close.UseVisualStyleBackColor = true;
             this.btn_Close.Click += new System.EventHandler(this.btn_Close_Click);
             // 
+            // btn_Register
+            // 
+            this.btn_Register.Location = new System.Drawing.Point(150, 233);
+            this.btn_Register.Name = "btn_Register";
+            this.btn_Register.Size = new System.Drawing.Size(75, 23);
+            this.btn_Register.TabIndex = 6;
+            this.btn_Register.Text = "Register";
+            this.btn_Register.UseVisualStyleBackColor = true;
+            this.btn_Register.Click += new System.EventHandler(this.btn_Register_Click);
+            // 
             // SignInForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(412, 301);
+            this.Controls.Add(this.btn_Register);
             this.Controls.Add(this.btn_Close);
             this.Controls.Add(this.btn_SignIn);
             this.Controls.Add(this.txt_PW);
@@ -115,5 +127,6 @@ namespace TestClient
         private System.Windows.Forms.TextBox txt_PW;
         private System.Windows.Forms.Button btn_SignIn;
         private System.Windows.Forms.Button btn_Close;
+        private System.Windows.Forms.Button btn_Register;
     }
 }

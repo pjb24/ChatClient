@@ -15,24 +15,14 @@ namespace TestClient
     public partial class CreateGroupForm : Form
     {
         public NetworkStream stream = default(NetworkStream);
+        public List<string> userList = new List<string>();
+        public string user_ID;
+
+        private CheckedListBox chk_GroupUser = new CheckedListBox();
 
         public CreateGroupForm()
         {
-            InitializeComponent();
-            // pull users
-            /*
-            string msg = "request freinds" + user_ID;
-            byte[] buffer = Encoding.Unicode.GetBytes(msg + "$");
-            stream.Write(buffer, 0, buffer.Length);
-            stream.Flush();*/
-
-            // change design
-
-        }
-
-        private void CreateGroupForm_Load(object sender, EventArgs e)
-        {
-            
+            InitializeComponent();            
         }
 
         private void btn_Close_Click(object sender, EventArgs e)
@@ -42,16 +32,35 @@ namespace TestClient
 
         private void btn_Create_Click(object sender, EventArgs e)
         {
-            // send group info to server
-            /*
-            string user_Info = user_ID + "createGroup";
+            string userInfo = null;
+            foreach(var checkeditem in chk_GroupUser.CheckedItems)
+            {
+                userInfo = userInfo + (string)checkeditem + "&";
+            }
+            Console.WriteLine(userInfo);
 
-            byte[] buffer = Encoding.Unicode.GetBytes(user_Info + "$");
+            // send group info to server
+            userInfo = userInfo + user_ID + "createGroup";
+
+            byte[] buffer = Encoding.Unicode.GetBytes(userInfo + "$");
             stream.Write(buffer, 0, buffer.Length);
             stream.Flush();
-            */
 
             this.Close();
+        }
+
+        private void CreateGroupForm_Load(object sender, EventArgs e)
+        {
+            // change design
+            chk_GroupUser = new CheckedListBox();
+            chk_GroupUser.Location = new Point(100, 100);
+            chk_GroupUser.Name = "chk_GroupUser";
+            //btn_OpenGroup.Size = new Size(50, 50);
+            for (int i = 0; i < userList.Count; i++)
+            {
+                chk_GroupUser.Items.Add(userList[i]);
+            }
+            Controls.Add(chk_GroupUser);
         }
     }
 }

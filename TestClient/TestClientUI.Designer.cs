@@ -83,7 +83,6 @@ namespace TestClient
             this.btn_Register.TabIndex = 4;
             this.btn_Register.Text = "Register";
             this.btn_Register.UseVisualStyleBackColor = true;
-            this.btn_Register.Click += new System.EventHandler(this.btn_Register_Click);
             // 
             // btn_SignIn
             // 
@@ -103,7 +102,6 @@ namespace TestClient
             this.btn_Group.TabIndex = 6;
             this.btn_Group.Text = "Group";
             this.btn_Group.UseVisualStyleBackColor = true;
-            this.btn_Group.Click += new System.EventHandler(this.btn_Group_Click);
             // 
             // TestClientUI
             // 
