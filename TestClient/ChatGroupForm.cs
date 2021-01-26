@@ -16,6 +16,7 @@ namespace TestClient
     {
         public NetworkStream stream = default(NetworkStream);
         public string group;
+        public string user_ID;
 
         public ChatGroupForm()
         {

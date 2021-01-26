@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 using System.Net.Sockets;
+using System.Threading;
 
 namespace TestClient
 {
@@ -41,6 +42,8 @@ namespace TestClient
             ChatGroupForm chatGroupForm = new ChatGroupForm();
             chatGroupForm.stream = stream;
             chatGroupForm.group = groupList[(int)btn.Tag];
+            chatGroupForm.user_ID = user_ID;
+            chatGroupForm.Name = "chatGroupForm" + (int)btn.Tag;
             chatGroupForm.Show();
         }
 
@@ -65,15 +68,26 @@ namespace TestClient
             byte[] buffer = Encoding.Unicode.GetBytes(msg + "$");
             stream.Write(buffer, 0, buffer.Length);
             stream.Flush();
+            
         }
 
         private void GroupForm_Load(object sender, EventArgs e)
+        {
+            
+        }
+
+        private void GroupForm_Paint(object sender, PaintEventArgs e)
+        {
+            
+        }
+
+        public void designGroup()
         {
             // change design
             for (int i = 0; i < groupList.Count; i++)
             {
                 btn_OpenGroup.Add(new Button());
-                btn_OpenGroup[i].Location = new Point(10 + 10 * i, 10 + 10 * i);
+                btn_OpenGroup[i].Location = new Point(10 + 40 * i, 10 + 40 * i);
                 btn_OpenGroup[i].Name = "btn_OpenGroup" + i.ToString();
                 //btn_OpenGroup[i].Size = new Size(50, 50);
                 btn_OpenGroup[i].Text = "Group" + i.ToString();
@@ -82,6 +96,31 @@ namespace TestClient
                 btn_OpenGroup[i].Click += new EventHandler(btn_OpenGroup_Click);
                 Controls.Add(btn_OpenGroup[i]);
             }
+            Invalidate(false);
+        }
+
+        private void open_ChatGroup(object sender)
+        {
+            Button btn = sender as Button;
+            foreach (Form openForm in Application.OpenForms)
+            {
+                if(openForm.Name.Equals("chatGroupForm" + (int)btn.Tag))
+                {
+                    if(openForm.WindowState == FormWindowState.Minimized)
+                    {
+                        openForm.WindowState = FormWindowState.Normal;
+                        openForm.Location = new Point(this.Location.X + this.Width, this.Location.Y);
+                    }
+                    openForm.Activate();
+                    return;
+                }
+            }
+            ChatGroupForm chatGroupForm = new ChatGroupForm();
+            chatGroupForm.stream = stream;
+            chatGroupForm.group = groupList[(int)btn.Tag];
+            chatGroupForm.user_ID = user_ID;
+            chatGroupForm.Name = "chatGroupForm" + (int)btn.Tag;
+            chatGroupForm.Show();
         }
     }
 }

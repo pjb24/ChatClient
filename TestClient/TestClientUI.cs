@@ -23,6 +23,8 @@ namespace TestClient
         NetworkStream stream = default(NetworkStream);
         string message = string.Empty;
 
+        GroupForm groupForm = new GroupForm();
+
         public TestClientUI()
         {
             InitializeComponent();
@@ -94,14 +96,14 @@ namespace TestClient
                 else if (message.Contains("groupList"))
                 {
                     // 지금은 여러번 받게 되는데 차후 한번만 받게 바꾸자
-                    string group = message.Substring(0, message.IndexOf("groupList"));
+                    string group = message.Substring(0, message.LastIndexOf("groupList"));
                     if (!groupList.Contains(group))
                     {
                         groupList.Add(group);
-                        GroupForm groupForm = new GroupForm();
+                        
                         groupForm.groupList = groupList;
-                        groupForm.Refresh();
                     }
+                    GroupRefresh();
                 } // receive userList 동기화
                 else if (message.Contains("userID"))
                 {
@@ -113,9 +115,9 @@ namespace TestClient
                         {
                             // userList에 추가
                             userList.Add(user);
-                            GroupForm groupForm = new GroupForm();
+
                             groupForm.userList = userList;
-                            groupForm.Refresh();
+                            GroupRefresh();
                         }
                     }
                 } // receive complete create group
@@ -130,8 +132,7 @@ namespace TestClient
                 } // default
                 else
                 {
-                    ChatGroupForm chatGroupForm = new ChatGroupForm();
-                    chatGroupForm.DisplayText(message);
+                    
                 }
 
             }
@@ -150,6 +151,19 @@ namespace TestClient
                 lb_Result.Items.Add(text + Environment.NewLine);
         }
 
+        private void GroupRefresh()
+        {
+            if (groupForm.InvokeRequired)
+            {
+                groupForm.BeginInvoke(new MethodInvoker(delegate
+                {
+                    GroupRefresh();
+                }));
+            }
+            else
+                groupForm.designGroup();
+        }
+
         /*
         private void btn_Register_Click(object sender, EventArgs e)
         {
@@ -158,7 +172,7 @@ namespace TestClient
             registerForm.Show();
         }*/
 
-        
+
         private void btn_SignIn_Click(object sender, EventArgs e)
         {
             SignInForm signInForm = new SignInForm();
@@ -168,7 +182,6 @@ namespace TestClient
 
         private void open_Group(object user_ID)
         {
-            GroupForm groupForm = new GroupForm();
             groupForm.stream = stream;
             groupForm.user_ID = Convert.ToString(user_ID);
             groupForm.userList = userList;
