@@ -20,6 +20,7 @@ namespace TestClient
         public List<string> groupList = new List<string>();
         public string user_ID;
 
+        // new TestClientUI(); 로 생성해버리면 stackoverflowException 발생 
         public TestClientUI testClientUI = null;
 
         private List<Button> btn_OpenGroup = new List<Button>();
@@ -96,25 +97,25 @@ namespace TestClient
             createGroupForm.Show();
         }
 
+        // groupList 동기화 요청
         public void btn_PullGroup_Click(object sender, EventArgs e)
         {
-            // group 동기화 요청
             string sendMsg =  user_ID + "&requestGroupList";
             byte[] buffer = Encoding.Unicode.GetBytes(sendMsg + "$");
             stream.Write(buffer, 0, buffer.Length);
             stream.Flush();
         }
 
+        // userList 동기화 요청
         private void btn_PullUser_Click(object sender, EventArgs e)
         {
-            // user 동기화 요청
             string sendMsg = user_ID + "&requestUserList";
             byte[] buffer = Encoding.Unicode.GetBytes(sendMsg + "$");
             stream.Write(buffer, 0, buffer.Length);
             stream.Flush();
-            
         }
 
+        // server에서 clientList 정리 필요
         private void btn_SignOut_Click(object sender, EventArgs e)
         {
             this.Close();

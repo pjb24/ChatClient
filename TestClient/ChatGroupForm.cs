@@ -50,6 +50,7 @@ namespace TestClient
             }
         }
 
+        // 크로스스레드 문제로 사용함
         public void DisplayText(string text)
         {
             if (lb_Result.InvokeRequired)
