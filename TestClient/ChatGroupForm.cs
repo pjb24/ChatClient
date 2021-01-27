@@ -30,7 +30,9 @@ namespace TestClient
 
         private void btn_Send_Click(object sender, EventArgs e)
         {
-            byte[] buffer = Encoding.Unicode.GetBytes(this.txt_Send.Text + group + "$");
+            string sendMsg = this.txt_Send.Text + "&" + group + "&" + user_ID + "&groupChat";
+
+            byte[] buffer = Encoding.Unicode.GetBytes(sendMsg + "$");
             stream.Write(buffer, 0, buffer.Length);
             stream.Flush();
         }

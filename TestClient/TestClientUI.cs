@@ -24,6 +24,7 @@ namespace TestClient
         string message = string.Empty;
 
         GroupForm groupForm = new GroupForm();
+        List<ChatGroupForm> chatGroupForms = new List<ChatGroupForm>();
 
         public TestClientUI()
         {
@@ -86,28 +87,34 @@ namespace TestClient
                 // allow sign in message
                 if (message.Contains("allowSignin"))
                 {
-                    string user_ID = message.Substring(0, message.IndexOf("allowSignin"));
+                    string msg = message.Substring(0, message.LastIndexOf("allowSignin"));
+                    string user_ID = msg.Substring(0, message.LastIndexOf("&"));
                     DisplayText(user_ID);
 
                     Thread thread = new Thread(new ParameterizedThreadStart(open_Group));
                     thread.Start(user_ID);
                     
                 } // receive groupList, client용 groupList가 따로 있으니 groupList를 요청할 때는 client와 server간 동기화 할 때 뿐
-                else if (message.Contains("groupList"))
+                else if (message.Contains("responseGroupList"))
                 {
                     // 지금은 여러번 받게 되는데 차후 한번만 받게 바꾸자
-                    string group = message.Substring(0, message.LastIndexOf("groupList"));
-                    if (!groupList.Contains(group))
+                    string msg = message.Substring(0, message.LastIndexOf("&responseGroupList"));
+                    string[] groups = msg.Split('&');
+                    
+                    foreach(string g in groups)
                     {
-                        groupList.Add(group);
-                        
-                        groupForm.groupList = groupList;
+                        if (!groupList.Contains(g))
+                        {
+                            groupList.Add(g);
+
+                            groupForm.groupList = groupList;
+                        }
                     }
                     GroupRefresh();
                 } // receive userList 동기화
-                else if (message.Contains("userID"))
+                else if (message.Contains("responseUserList"))
                 {
-                    string msg = message.Substring(0, message.LastIndexOf("&"));
+                    string msg = message.Substring(0, message.LastIndexOf("&responseUserList"));
                     string[] users = msg.Split('&');
                     foreach(string user in users)
                     {
@@ -124,17 +131,37 @@ namespace TestClient
                 else if (message.Contains("completeCreateGroup"))
                 {
                     // 임시
-                    string user_ID = message.Substring(0, message.IndexOf("completeCreateGroup"));
-                    string msg = user_ID + "requestGroupList";
-                    buffer = Encoding.Unicode.GetBytes(msg + "$");
+                    string msg = message.Substring(0, message.LastIndexOf("completeCreateGroup"));
+                    string user_ID = message.Substring(0, message.LastIndexOf("&"));
+
+                    string sendMsg = user_ID + "&requestGroupList";
+                    buffer = Encoding.Unicode.GetBytes(sendMsg + "$");
                     stream.Write(buffer, 0, buffer.Length);
                     stream.Flush();
                 } // default
-                else
+                else if (message.Contains("&groupChat"))
                 {
-                    
-                }
+                    string msg = message.Substring(0, message.LastIndexOf("&groupChat"));
 
+                    string user_ID = msg.Substring(msg.LastIndexOf("&") + 1);
+                    msg = msg.Substring(0, msg.LastIndexOf("&"));
+
+                    string group = msg.Substring(msg.LastIndexOf("&") + 1);
+                    msg = msg.Substring(0, msg.LastIndexOf("&"));
+
+                    string chat = msg;
+
+                    foreach(string temp in groupList)
+                    {
+                        foreach(ChatGroupForm tmp in chatGroupForms)
+                        {
+                            if(tmp.group.Equals(temp))
+                            {
+                                tmp.DisplayText(user_ID + " : " + chat);
+                            }
+                        }
+                    }
+                }
             }
         }
 
@@ -186,7 +213,13 @@ namespace TestClient
             groupForm.user_ID = Convert.ToString(user_ID);
             groupForm.userList = userList;
             groupForm.groupList = groupList;
+            groupForm.testClientUI = this;
             groupForm.ShowDialog();
+        }
+
+        public void open_GroupChatForm(ChatGroupForm chatGroupForm)
+        {
+            chatGroupForms.Add(chatGroupForm);
         }
     }
 }

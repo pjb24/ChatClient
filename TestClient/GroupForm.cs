@@ -20,65 +20,24 @@ namespace TestClient
         public List<string> groupList = new List<string>();
         public string user_ID;
 
+        public TestClientUI testClientUI = null;
+
         private List<Button> btn_OpenGroup = new List<Button>();
 
         public GroupForm()
         {
             InitializeComponent();
         }
-        
-        private void btn_CreateGroup_Click(object sender, EventArgs e)
-        {
-            CreateGroupForm createGroupForm = new CreateGroupForm();
-            createGroupForm.stream = stream;
-            createGroupForm.userList = userList;
-            createGroupForm.user_ID = user_ID;
-            createGroupForm.Show();
-        }
 
         private void btn_OpenGroup_Click(object sender, EventArgs e)
         {
             Button btn = sender as Button;
-            ChatGroupForm chatGroupForm = new ChatGroupForm();
-            chatGroupForm.stream = stream;
-            chatGroupForm.group = groupList[(int)btn.Tag];
-            chatGroupForm.user_ID = user_ID;
-            chatGroupForm.Name = "chatGroupForm" + (int)btn.Tag;
-            chatGroupForm.Show();
-        }
+            Control[] controls = this.Controls.Find("btn_OpenGroup" + btn.Tag, true);
 
-        private void btn_SignOut_Click(object sender, EventArgs e)
-        {
-            this.Close();
-        }
-
-        public void btn_PullGroup_Click(object sender, EventArgs e)
-        {
-            // group 동기화 요청
-            string msg =  user_ID + "requestGroupList";
-            byte[] buffer = Encoding.Unicode.GetBytes(msg + "$");
-            stream.Write(buffer, 0, buffer.Length);
-            stream.Flush();
-        }
-
-        private void btn_PullUser_Click(object sender, EventArgs e)
-        {
-            // user 동기화 요청
-            string msg = user_ID + "requestUserList";
-            byte[] buffer = Encoding.Unicode.GetBytes(msg + "$");
-            stream.Write(buffer, 0, buffer.Length);
-            stream.Flush();
-            
-        }
-
-        private void GroupForm_Load(object sender, EventArgs e)
-        {
-            
-        }
-
-        private void GroupForm_Paint(object sender, PaintEventArgs e)
-        {
-            
+            foreach(Control temp in controls)
+            {
+                open_ChatGroup(temp);
+            }
         }
 
         public void designGroup()
@@ -99,14 +58,14 @@ namespace TestClient
             Invalidate(false);
         }
 
-        private void open_ChatGroup(object sender)
+        private void open_ChatGroup(Control sender)
         {
             Button btn = sender as Button;
             foreach (Form openForm in Application.OpenForms)
             {
-                if(openForm.Name.Equals("chatGroupForm" + (int)btn.Tag))
+                if (openForm.Name.Equals("chatGroupForm" + (int)btn.Tag))
                 {
-                    if(openForm.WindowState == FormWindowState.Minimized)
+                    if (openForm.WindowState == FormWindowState.Minimized)
                     {
                         openForm.WindowState = FormWindowState.Normal;
                         openForm.Location = new Point(this.Location.X + this.Width, this.Location.Y);
@@ -119,8 +78,46 @@ namespace TestClient
             chatGroupForm.stream = stream;
             chatGroupForm.group = groupList[(int)btn.Tag];
             chatGroupForm.user_ID = user_ID;
+            chatGroupForm.Tag = (int)btn.Tag;
+            chatGroupForm.Text = "chatGroupForm" + (int)btn.Tag;
             chatGroupForm.Name = "chatGroupForm" + (int)btn.Tag;
+
+            testClientUI.open_GroupChatForm(chatGroupForm);
+
             chatGroupForm.Show();
+        }
+
+        private void btn_CreateGroup_Click(object sender, EventArgs e)
+        {
+            CreateGroupForm createGroupForm = new CreateGroupForm();
+            createGroupForm.stream = stream;
+            createGroupForm.userList = userList;
+            createGroupForm.user_ID = user_ID;
+            createGroupForm.Show();
+        }
+
+        public void btn_PullGroup_Click(object sender, EventArgs e)
+        {
+            // group 동기화 요청
+            string sendMsg =  user_ID + "&requestGroupList";
+            byte[] buffer = Encoding.Unicode.GetBytes(sendMsg + "$");
+            stream.Write(buffer, 0, buffer.Length);
+            stream.Flush();
+        }
+
+        private void btn_PullUser_Click(object sender, EventArgs e)
+        {
+            // user 동기화 요청
+            string sendMsg = user_ID + "&requestUserList";
+            byte[] buffer = Encoding.Unicode.GetBytes(sendMsg + "$");
+            stream.Write(buffer, 0, buffer.Length);
+            stream.Flush();
+            
+        }
+
+        private void btn_SignOut_Click(object sender, EventArgs e)
+        {
+            this.Close();
         }
     }
 }

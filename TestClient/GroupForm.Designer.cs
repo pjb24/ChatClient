@@ -86,8 +86,6 @@ namespace TestClient
             this.Controls.Add(this.btn_CreateGroup);
             this.Name = "GroupForm";
             this.Text = "GroupForm";
-            this.Load += new System.EventHandler(this.GroupForm_Load);
-            this.Paint += new System.Windows.Forms.PaintEventHandler(this.GroupForm_Paint);
             this.ResumeLayout(false);
 
         }

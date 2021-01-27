@@ -26,9 +26,9 @@ namespace TestClient
             string user_ID = txt_ID.Text;
             string user_PW = txt_PW.Text;
 
-            string user_Info = user_ID + "signin" + user_PW;
+            string sendMsg = user_ID + "&" + user_PW + "signin";
 
-            byte[] buffer = Encoding.Unicode.GetBytes(user_Info + "$");
+            byte[] buffer = Encoding.Unicode.GetBytes(sendMsg + "$");
             stream.Write(buffer, 0, buffer.Length);
             stream.Flush();
 

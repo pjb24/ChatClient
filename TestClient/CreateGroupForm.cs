@@ -32,17 +32,17 @@ namespace TestClient
 
         private void btn_Create_Click(object sender, EventArgs e)
         {
-            string userInfo = null;
+            string sendMsg = null;
             foreach(var checkeditem in chk_GroupUser.CheckedItems)
             {
-                userInfo = userInfo + (string)checkeditem + "&";
+                sendMsg = sendMsg + (string)checkeditem + "&";
             }
-            Console.WriteLine(userInfo);
+            Console.WriteLine(sendMsg);
 
             // send group info to server
-            userInfo = userInfo + user_ID + "createGroup";
+            sendMsg = sendMsg + user_ID + "&createGroup";
 
-            byte[] buffer = Encoding.Unicode.GetBytes(userInfo + "$");
+            byte[] buffer = Encoding.Unicode.GetBytes(sendMsg + "$");
             stream.Write(buffer, 0, buffer.Length);
             stream.Flush();
 
@@ -55,6 +55,7 @@ namespace TestClient
             chk_GroupUser = new CheckedListBox();
             chk_GroupUser.Location = new Point(100, 100);
             chk_GroupUser.Name = "chk_GroupUser";
+            chk_GroupUser.CheckOnClick = true;
             //btn_OpenGroup.Size = new Size(50, 50);
             for (int i = 0; i < userList.Count; i++)
             {
