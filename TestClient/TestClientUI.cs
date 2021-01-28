@@ -95,99 +95,107 @@ namespace TestClient
         {
             while (true)
             {
-                stream = clientSocket.GetStream();
-                int BUFFERSIZE = clientSocket.ReceiveBufferSize;
-                byte[] buffer = new byte[BUFFERSIZE];
-                int bytes = stream.Read(buffer, 0, buffer.Length);
-
-                message = Encoding.Unicode.GetString(buffer, 0, bytes);
-
-                DisplayText(message);
-
-                // received message 처리
-                // allow sign in message
-                if (message.Contains("allowSignin"))
+                try
                 {
-                    // 정보 추출
-                    string msg = message.Substring(0, message.LastIndexOf("allowSignin"));
-                    string user_ID = msg.Substring(0, msg.LastIndexOf("&"));
-                    DisplayText(user_ID);
+                    stream = clientSocket.GetStream();
+                    int BUFFERSIZE = clientSocket.ReceiveBufferSize;
+                    byte[] buffer = new byte[BUFFERSIZE];
+                    int bytes = stream.Read(buffer, 0, buffer.Length);
 
-                    // sign in 후, GroupForm Thread 생성, 매개변수를 전달하기 위해 ParameterizedThreadStart 사용
-                    Thread thread = new Thread(new ParameterizedThreadStart(open_Group));
-                    thread.Start(user_ID);
+                    message = Encoding.Unicode.GetString(buffer, 0, bytes);
 
-                } // receive groupList, client용 groupList가 따로 있으니 groupList를 요청할 때는 client와 server간 동기화 할 때 뿐
-                else if (message.Contains("responseGroupList"))
-                {
-                    // 지금은 여러번 받게 되는데 차후 한번만 받게 바꾸자
-                    // 한번만 받게 변경 완료
-                    string msg = message.Substring(0, message.LastIndexOf("&responseGroupList"));
-                    string[] groups = msg.Split('&');
-                    
-                    foreach(string g in groups)
+                    DisplayText(message);
+
+                    // received message 처리
+                    // allow sign in message
+                    if (message.Contains("allowSignin"))
                     {
-                        if (!groupList.Contains(g))
-                        {
-                            // groupList 추가
-                            groupList.Add(g);
-                            // groupForm.groupList.Clear();
-                            groupForm.groupList = groupList;
-                        }
-                    }
-                    // 화면 갱신
-                    GroupRefresh();
-                } // receive userList 동기화
-                else if (message.Contains("responseUserList"))
-                {
-                    string msg = message.Substring(0, message.LastIndexOf("&responseUserList"));
-                    string[] users = msg.Split('&');
+                        // 정보 추출
+                        string msg = message.Substring(0, message.LastIndexOf("allowSignin"));
+                        string user_ID = msg.Substring(0, msg.LastIndexOf("&"));
+                        DisplayText(user_ID);
 
-                    foreach(string user in users)
+                        // sign in 후, GroupForm Thread 생성, 매개변수를 전달하기 위해 ParameterizedThreadStart 사용
+                        Thread thread = new Thread(new ParameterizedThreadStart(open_Group));
+                        thread.Start(user_ID);
+
+                    } // receive groupList, client용 groupList가 따로 있으니 groupList를 요청할 때는 client와 server간 동기화 할 때 뿐
+                    else if (message.Contains("responseGroupList"))
                     {
-                        if (!userList.Contains(user))
+                        // 지금은 여러번 받게 되는데 차후 한번만 받게 바꾸자
+                        // 한번만 받게 변경 완료
+                        string msg = message.Substring(0, message.LastIndexOf("&responseGroupList"));
+                        string[] groups = msg.Split('&');
+
+                        foreach (string g in groups)
                         {
-                            // userList에 추가
-                            userList.Add(user);
-                            // groupForm.userList.Clear();
-                            groupForm.userList = userList;
-                        }
-                    }
-                    GroupRefresh();
-                } // receive complete create group
-                else if (message.Contains("completeCreateGroup"))
-                {
-                    string msg = message.Substring(0, message.LastIndexOf("completeCreateGroup"));
-                    string user_ID = msg.Substring(0, msg.LastIndexOf("&"));
-
-                    string sendMsg = user_ID + "&requestGroupList";
-                    buffer = Encoding.Unicode.GetBytes(sendMsg + "$");
-                    stream.Write(buffer, 0, buffer.Length);
-                    stream.Flush();
-                } // default
-                else if (message.Contains("&groupChat"))
-                {
-                    string msg = message.Substring(0, message.LastIndexOf("&groupChat"));
-
-                    string user_ID = msg.Substring(msg.LastIndexOf("&") + 1);
-                    msg = msg.Substring(0, msg.LastIndexOf("&"));
-
-                    string group = msg.Substring(msg.LastIndexOf("&") + 1);
-                    msg = msg.Substring(0, msg.LastIndexOf("&"));
-
-                    string chat = msg;
-
-                    if(groupList.Contains(group))
-                    {
-                        // 열려있는 ChatGroupForm 중에서 group이 일치하는 window에 출력
-                        foreach(ChatGroupForm temp in chatGroupForms)
-                        {
-                            if(temp.group.Equals(group))
+                            if (!groupList.Contains(g))
                             {
-                                temp.DisplayText(user_ID + " : " + chat);
+                                // groupList 추가
+                                groupList.Add(g);
+                                // groupForm.groupList.Clear();
+                                groupForm.groupList = groupList;
+                            }
+                        }
+                        // 화면 갱신
+                        GroupRefresh();
+                    } // receive userList 동기화
+                    else if (message.Contains("responseUserList"))
+                    {
+                        string msg = message.Substring(0, message.LastIndexOf("&responseUserList"));
+                        string[] users = msg.Split('&');
+
+                        foreach (string user in users)
+                        {
+                            if (!userList.Contains(user))
+                            {
+                                // userList에 추가
+                                userList.Add(user);
+                                // groupForm.userList.Clear();
+                                groupForm.userList = userList;
+                            }
+                        }
+                        GroupRefresh();
+                    } // receive complete create group
+                    else if (message.Contains("completeCreateGroup"))
+                    {
+                        string msg = message.Substring(0, message.LastIndexOf("completeCreateGroup"));
+                        string user_ID = msg.Substring(0, msg.LastIndexOf("&"));
+
+                        string sendMsg = user_ID + "&requestGroupList";
+                        buffer = Encoding.Unicode.GetBytes(sendMsg + "$");
+                        stream.Write(buffer, 0, buffer.Length);
+                        stream.Flush();
+                    } // default
+                    else if (message.Contains("&groupChat"))
+                    {
+                        string msg = message.Substring(0, message.LastIndexOf("&groupChat"));
+
+                        string user_ID = msg.Substring(msg.LastIndexOf("&") + 1);
+                        msg = msg.Substring(0, msg.LastIndexOf("&"));
+
+                        string group = msg.Substring(msg.LastIndexOf("&") + 1);
+                        msg = msg.Substring(0, msg.LastIndexOf("&"));
+
+                        string chat = msg;
+
+                        if (groupList.Contains(group))
+                        {
+                            // 열려있는 ChatGroupForm 중에서 group이 일치하는 window에 출력
+                            foreach (ChatGroupForm temp in chatGroupForms)
+                            {
+                                if (temp.group.Equals(group))
+                                {
+                                    temp.DisplayText(user_ID + " : " + chat);
+                                }
                             }
                         }
                     }
+                }
+                catch (Exception e)
+                {
+                    DisplayText(e.ToString());
+                    break;
                 }
             }
         }
