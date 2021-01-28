@@ -22,7 +22,7 @@ namespace TestClient
 
         // new TestClientUI(); 로 생성해버리면 stackoverflowException 발생 
         public TestClientUI testClientUI = null;
-
+        // 동적 생성되는 버튼 저장
         private List<Button> btn_OpenGroup = new List<Button>();
 
         public GroupForm()
@@ -30,6 +30,7 @@ namespace TestClient
             InitializeComponent();
         }
 
+        // 동적 생성된 버튼 이벤트, 어떤 컨트롤에서 눌러진건지 확인
         private void btn_OpenGroup_Click(object sender, EventArgs e)
         {
             Button btn = sender as Button;
@@ -37,12 +38,15 @@ namespace TestClient
 
             foreach(Control temp in controls)
             {
+                // 확인된 컨트롤 정보로 open
                 open_ChatGroup(temp);
             }
         }
 
         public void designGroup()
         {
+            // groupList를 사용하여 버튼 컨트롤 동적 생성
+            // 버튼의 Text를 사용자 편의적으로 바꿀 필요가 있음
             // change design
             for (int i = 0; i < groupList.Count; i++)
             {
@@ -56,12 +60,16 @@ namespace TestClient
                 btn_OpenGroup[i].Click += new EventHandler(btn_OpenGroup_Click);
                 Controls.Add(btn_OpenGroup[i]);
             }
+            // window를 비활성화하여 WM_PAINT call
+            // true 배경을 지우고 다시 그린다
+            // false 현 배경 위에 다시 그린다
             Invalidate(false);
         }
 
         private void open_ChatGroup(Control sender)
         {
             Button btn = sender as Button;
+            // 해당 윈도우가 이미 열려있을 때 처리
             foreach (Form openForm in Application.OpenForms)
             {
                 if (openForm.Name.Equals("chatGroupForm" + (int)btn.Tag))
@@ -83,13 +91,15 @@ namespace TestClient
             chatGroupForm.Text = "chatGroupForm" + (int)btn.Tag;
             chatGroupForm.Name = "chatGroupForm" + (int)btn.Tag;
 
-            testClientUI.open_GroupChatForm(chatGroupForm);
+            // ChatGroupForm이 열렸을 때 TestClientUI에 Form 정보 저장
+            testClientUI.open_ChatGroupForm(chatGroupForm);
 
             chatGroupForm.Show();
         }
 
         private void btn_CreateGroup_Click(object sender, EventArgs e)
         {
+            // 1번 사용하고 더 사용하지 않기 때문에 함수 안에서 CreateGroupForm 객체 생성
             CreateGroupForm createGroupForm = new CreateGroupForm();
             createGroupForm.stream = stream;
             createGroupForm.userList = userList;
@@ -118,6 +128,10 @@ namespace TestClient
         // server에서 clientList 정리 필요
         private void btn_SignOut_Click(object sender, EventArgs e)
         {
+            // Sign out 후 다른 사용자가 같은 클라이언트로 Sign in 하면
+            // userList와 groupList는 어떻게 되는가
+            // 현재는 이전 사용자의 데이터가 남아있다
+            // 사용자에 따라 데이터가 달라져야하니 데이터 제어가 필요하다
             this.Close();
         }
     }

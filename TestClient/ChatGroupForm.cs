@@ -15,7 +15,9 @@ namespace TestClient
     public partial class ChatGroupForm : Form
     {
         public NetworkStream stream = default(NetworkStream);
+        // 열려있는 group의 name
         public string group;
+        // 현재 클라이언트의 ID
         public string user_ID;
 
         public ChatGroupForm()
@@ -50,7 +52,8 @@ namespace TestClient
             }
         }
 
-        // 크로스스레드 문제로 사용함
+        // 크로스스레드 문제로 사용
+        // TestClientUI에서 호출함, 호출 위치 변경 생각해볼것
         public void DisplayText(string text)
         {
             if (lb_Result.InvokeRequired)

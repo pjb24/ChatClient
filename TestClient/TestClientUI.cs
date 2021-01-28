@@ -28,6 +28,7 @@ namespace TestClient
 
         // 사용되는 GroupForm이 1개이기 때문에 이곳에 선언
         GroupForm groupForm = new GroupForm();
+        // 여러 개의 chatGroup이 생성될 수 있기 때문에 사용
         List<ChatGroupForm> chatGroupForms = new List<ChatGroupForm>();
 
         public TestClientUI()
@@ -154,9 +155,8 @@ namespace TestClient
                 } // receive complete create group
                 else if (message.Contains("completeCreateGroup"))
                 {
-                    // 임시
                     string msg = message.Substring(0, message.LastIndexOf("completeCreateGroup"));
-                    string user_ID = message.Substring(0, message.LastIndexOf("&"));
+                    string user_ID = msg.Substring(0, message.LastIndexOf("&"));
 
                     string sendMsg = user_ID + "&requestGroupList";
                     buffer = Encoding.Unicode.GetBytes(sendMsg + "$");
@@ -175,13 +175,14 @@ namespace TestClient
 
                     string chat = msg;
 
-                    foreach(string temp in groupList)
+                    if(groupList.Contains(group))
                     {
-                        foreach(ChatGroupForm tmp in chatGroupForms)
+                        // 열려있는 ChatGroupForm 중에서 group이 일치하는 window에 출력
+                        foreach(ChatGroupForm temp in chatGroupForms)
                         {
-                            if(tmp.group.Equals(temp))
+                            if(temp.group.Equals(group))
                             {
-                                tmp.DisplayText(user_ID + " : " + chat);
+                                temp.DisplayText(user_ID + " : " + chat);
                             }
                         }
                     }
@@ -206,8 +207,11 @@ namespace TestClient
         // 크로스스레드 문제 코드 정리해서 없앨 수 있을것 같음
         private void GroupRefresh()
         {
+            // 크로스스레드가 발생할 때
             if (groupForm.InvokeRequired)
             {
+                // BeginInvoke - 비동기식 대리자 실행
+                // 익명함수? 익명대리자?
                 groupForm.BeginInvoke(new MethodInvoker(delegate
                 {
                     GroupRefresh();
@@ -245,7 +249,8 @@ namespace TestClient
             groupForm.ShowDialog();
         }
 
-        public void open_GroupChatForm(ChatGroupForm chatGroupForm)
+        // ChatGroupForm이 열렸을 때 Form 정보 저장
+        public void open_ChatGroupForm(ChatGroupForm chatGroupForm)
         {
             chatGroupForms.Add(chatGroupForm);
         }

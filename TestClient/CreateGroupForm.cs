@@ -52,11 +52,11 @@ namespace TestClient
         private void CreateGroupForm_Load(object sender, EventArgs e)
         {
             // change design
-            chk_GroupUser = new CheckedListBox();
+            // chk_GroupUser = new CheckedListBox();
             chk_GroupUser.Location = new Point(100, 100);
             chk_GroupUser.Name = "chk_GroupUser";
             chk_GroupUser.CheckOnClick = true;
-            //btn_OpenGroup.Size = new Size(50, 50);
+            // btn_OpenGroup.Size = new Size(50, 50);
             for (int i = 0; i < userList.Count; i++)
             {
                 chk_GroupUser.Items.Add(userList[i]);
