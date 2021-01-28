@@ -16,9 +16,9 @@ namespace TestClient
     {
         public NetworkStream stream = default(NetworkStream);
         // 열려있는 group의 name
-        public string group;
+        public string group = string.Empty;
         // 현재 클라이언트의 ID
-        public string user_ID;
+        public string user_ID = string.Empty;
 
         public ChatGroupForm()
         {
@@ -65,6 +65,11 @@ namespace TestClient
             }
             else
                 lb_Result.Items.Add(text + Environment.NewLine);
+        }
+
+        private void ChatGroupForm_Load(object sender, EventArgs e)
+        {
+            lbl_User.Text = "클라이언트 ID : " + user_ID;
         }
     }
 }

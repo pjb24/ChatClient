@@ -39,22 +39,22 @@ namespace TestClient
             // 
             // txt_ID
             // 
-            this.txt_ID.Location = new System.Drawing.Point(133, 85);
+            this.txt_ID.Location = new System.Drawing.Point(105, 45);
             this.txt_ID.Name = "txt_ID";
-            this.txt_ID.Size = new System.Drawing.Size(271, 25);
+            this.txt_ID.Size = new System.Drawing.Size(217, 25);
             this.txt_ID.TabIndex = 0;
             // 
             // txt_PW
             // 
-            this.txt_PW.Location = new System.Drawing.Point(133, 161);
+            this.txt_PW.Location = new System.Drawing.Point(105, 121);
             this.txt_PW.Name = "txt_PW";
-            this.txt_PW.Size = new System.Drawing.Size(271, 25);
+            this.txt_PW.Size = new System.Drawing.Size(217, 25);
             this.txt_PW.TabIndex = 1;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(93, 88);
+            this.label1.Location = new System.Drawing.Point(54, 48);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(20, 15);
             this.label1.TabIndex = 2;
@@ -63,7 +63,7 @@ namespace TestClient
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(82, 164);
+            this.label2.Location = new System.Drawing.Point(54, 124);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(31, 15);
             this.label2.TabIndex = 3;
@@ -71,7 +71,7 @@ namespace TestClient
             // 
             // btn_Submit
             // 
-            this.btn_Submit.Location = new System.Drawing.Point(120, 248);
+            this.btn_Submit.Location = new System.Drawing.Point(105, 187);
             this.btn_Submit.Name = "btn_Submit";
             this.btn_Submit.Size = new System.Drawing.Size(75, 23);
             this.btn_Submit.TabIndex = 4;
@@ -81,7 +81,7 @@ namespace TestClient
             // 
             // btn_Close
             // 
-            this.btn_Close.Location = new System.Drawing.Point(275, 248);
+            this.btn_Close.Location = new System.Drawing.Point(233, 187);
             this.btn_Close.Name = "btn_Close";
             this.btn_Close.Size = new System.Drawing.Size(75, 23);
             this.btn_Close.TabIndex = 5;
@@ -93,7 +93,7 @@ namespace TestClient
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(474, 299);
+            this.ClientSize = new System.Drawing.Size(391, 260);
             this.Controls.Add(this.btn_Close);
             this.Controls.Add(this.btn_Submit);
             this.Controls.Add(this.label2);

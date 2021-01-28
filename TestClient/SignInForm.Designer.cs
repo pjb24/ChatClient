@@ -40,7 +40,7 @@ namespace TestClient
             // 
             // txt_ID
             // 
-            this.txt_ID.Location = new System.Drawing.Point(138, 46);
+            this.txt_ID.Location = new System.Drawing.Point(94, 43);
             this.txt_ID.Name = "txt_ID";
             this.txt_ID.Size = new System.Drawing.Size(160, 25);
             this.txt_ID.TabIndex = 0;
@@ -48,7 +48,7 @@ namespace TestClient
             // lb_ID
             // 
             this.lb_ID.AutoSize = true;
-            this.lb_ID.Location = new System.Drawing.Point(73, 49);
+            this.lb_ID.Location = new System.Drawing.Point(44, 46);
             this.lb_ID.Name = "lb_ID";
             this.lb_ID.Size = new System.Drawing.Size(20, 15);
             this.lb_ID.TabIndex = 1;
@@ -57,7 +57,7 @@ namespace TestClient
             // lb_PW
             // 
             this.lb_PW.AutoSize = true;
-            this.lb_PW.Location = new System.Drawing.Point(62, 120);
+            this.lb_PW.Location = new System.Drawing.Point(44, 110);
             this.lb_PW.Name = "lb_PW";
             this.lb_PW.Size = new System.Drawing.Size(31, 15);
             this.lb_PW.TabIndex = 2;
@@ -65,16 +65,16 @@ namespace TestClient
             // 
             // txt_PW
             // 
-            this.txt_PW.Location = new System.Drawing.Point(138, 110);
+            this.txt_PW.Location = new System.Drawing.Point(94, 107);
             this.txt_PW.Name = "txt_PW";
             this.txt_PW.Size = new System.Drawing.Size(160, 25);
             this.txt_PW.TabIndex = 3;
             // 
             // btn_SignIn
             // 
-            this.btn_SignIn.Location = new System.Drawing.Point(89, 172);
+            this.btn_SignIn.Location = new System.Drawing.Point(47, 169);
             this.btn_SignIn.Name = "btn_SignIn";
-            this.btn_SignIn.Size = new System.Drawing.Size(75, 23);
+            this.btn_SignIn.Size = new System.Drawing.Size(75, 28);
             this.btn_SignIn.TabIndex = 4;
             this.btn_SignIn.Text = "Sign in";
             this.btn_SignIn.UseVisualStyleBackColor = true;
@@ -82,9 +82,9 @@ namespace TestClient
             // 
             // btn_Close
             // 
-            this.btn_Close.Location = new System.Drawing.Point(223, 172);
+            this.btn_Close.Location = new System.Drawing.Point(179, 169);
             this.btn_Close.Name = "btn_Close";
-            this.btn_Close.Size = new System.Drawing.Size(75, 23);
+            this.btn_Close.Size = new System.Drawing.Size(75, 28);
             this.btn_Close.TabIndex = 5;
             this.btn_Close.Text = "닫기";
             this.btn_Close.UseVisualStyleBackColor = true;
@@ -92,9 +92,9 @@ namespace TestClient
             // 
             // btn_Register
             // 
-            this.btn_Register.Location = new System.Drawing.Point(150, 233);
+            this.btn_Register.Location = new System.Drawing.Point(122, 234);
             this.btn_Register.Name = "btn_Register";
-            this.btn_Register.Size = new System.Drawing.Size(75, 23);
+            this.btn_Register.Size = new System.Drawing.Size(75, 32);
             this.btn_Register.TabIndex = 6;
             this.btn_Register.Text = "Register";
             this.btn_Register.UseVisualStyleBackColor = true;
@@ -104,7 +104,7 @@ namespace TestClient
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(412, 301);
+            this.ClientSize = new System.Drawing.Size(310, 298);
             this.Controls.Add(this.btn_Register);
             this.Controls.Add(this.btn_Close);
             this.Controls.Add(this.btn_SignIn);

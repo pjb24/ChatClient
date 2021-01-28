@@ -100,7 +100,7 @@ namespace TestClient
                 byte[] buffer = new byte[BUFFERSIZE];
                 int bytes = stream.Read(buffer, 0, buffer.Length);
 
-                string message = Encoding.Unicode.GetString(buffer, 0, bytes);
+                message = Encoding.Unicode.GetString(buffer, 0, bytes);
 
                 DisplayText(message);
 
@@ -110,7 +110,7 @@ namespace TestClient
                 {
                     // 정보 추출
                     string msg = message.Substring(0, message.LastIndexOf("allowSignin"));
-                    string user_ID = msg.Substring(0, message.LastIndexOf("&"));
+                    string user_ID = msg.Substring(0, msg.LastIndexOf("&"));
                     DisplayText(user_ID);
 
                     // sign in 후, GroupForm Thread 생성, 매개변수를 전달하기 위해 ParameterizedThreadStart 사용
@@ -131,6 +131,7 @@ namespace TestClient
                         {
                             // groupList 추가
                             groupList.Add(g);
+                            // groupForm.groupList.Clear();
                             groupForm.groupList = groupList;
                         }
                     }
@@ -148,6 +149,7 @@ namespace TestClient
                         {
                             // userList에 추가
                             userList.Add(user);
+                            // groupForm.userList.Clear();
                             groupForm.userList = userList;
                         }
                     }
@@ -156,7 +158,7 @@ namespace TestClient
                 else if (message.Contains("completeCreateGroup"))
                 {
                     string msg = message.Substring(0, message.LastIndexOf("completeCreateGroup"));
-                    string user_ID = msg.Substring(0, message.LastIndexOf("&"));
+                    string user_ID = msg.Substring(0, msg.LastIndexOf("&"));
 
                     string sendMsg = user_ID + "&requestGroupList";
                     buffer = Encoding.Unicode.GetBytes(sendMsg + "$");
@@ -198,10 +200,14 @@ namespace TestClient
                 lb_Result.BeginInvoke(new MethodInvoker(delegate
                 {
                     lb_Result.Items.Add(text + Environment.NewLine);
+                    lb_Result.SelectedIndex = lb_Result.Items.Count - 1;
                 }));
             }
             else
+            {
                 lb_Result.Items.Add(text + Environment.NewLine);
+                lb_Result.SelectedIndex = lb_Result.Items.Count - 1;
+            }
         }
 
         // 크로스스레드 문제 코드 정리해서 없앨 수 있을것 같음
@@ -241,6 +247,7 @@ namespace TestClient
         private void open_Group(object user_ID)
         {
             groupForm.stream = stream;
+            groupForm.user_ID = string.Empty;
             groupForm.user_ID = Convert.ToString(user_ID);
             groupForm.userList = userList;
             groupForm.groupList = groupList;

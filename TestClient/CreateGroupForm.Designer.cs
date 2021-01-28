@@ -35,9 +35,9 @@ namespace TestClient
             // 
             // btn_Create
             // 
-            this.btn_Create.Location = new System.Drawing.Point(529, 388);
+            this.btn_Create.Location = new System.Drawing.Point(510, 109);
             this.btn_Create.Name = "btn_Create";
-            this.btn_Create.Size = new System.Drawing.Size(75, 23);
+            this.btn_Create.Size = new System.Drawing.Size(75, 46);
             this.btn_Create.TabIndex = 0;
             this.btn_Create.Text = "생성";
             this.btn_Create.UseVisualStyleBackColor = true;
@@ -45,9 +45,9 @@ namespace TestClient
             // 
             // btn_Close
             // 
-            this.btn_Close.Location = new System.Drawing.Point(677, 388);
+            this.btn_Close.Location = new System.Drawing.Point(510, 203);
             this.btn_Close.Name = "btn_Close";
-            this.btn_Close.Size = new System.Drawing.Size(75, 23);
+            this.btn_Close.Size = new System.Drawing.Size(75, 46);
             this.btn_Close.TabIndex = 1;
             this.btn_Close.Text = "닫기";
             this.btn_Close.UseVisualStyleBackColor = true;
@@ -57,7 +57,7 @@ namespace TestClient
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(624, 371);
             this.Controls.Add(this.btn_Close);
             this.Controls.Add(this.btn_Create);
             this.Name = "CreateGroupForm";

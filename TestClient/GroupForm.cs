@@ -134,5 +134,10 @@ namespace TestClient
             // 사용자에 따라 데이터가 달라져야하니 데이터 제어가 필요하다
             this.Close();
         }
+
+        private void GroupForm_Load(object sender, EventArgs e)
+        {
+            this.lbl_UserID.Text = "클라이언트 ID : " + user_ID;
+        }
     }
 }
