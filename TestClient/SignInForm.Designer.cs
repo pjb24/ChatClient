@@ -74,7 +74,7 @@ namespace TestClient
             // 
             this.btn_SignIn.Location = new System.Drawing.Point(47, 169);
             this.btn_SignIn.Name = "btn_SignIn";
-            this.btn_SignIn.Size = new System.Drawing.Size(75, 28);
+            this.btn_SignIn.Size = new System.Drawing.Size(75, 37);
             this.btn_SignIn.TabIndex = 4;
             this.btn_SignIn.Text = "Sign in";
             this.btn_SignIn.UseVisualStyleBackColor = true;
@@ -84,7 +84,7 @@ namespace TestClient
             // 
             this.btn_Close.Location = new System.Drawing.Point(179, 169);
             this.btn_Close.Name = "btn_Close";
-            this.btn_Close.Size = new System.Drawing.Size(75, 28);
+            this.btn_Close.Size = new System.Drawing.Size(75, 37);
             this.btn_Close.TabIndex = 5;
             this.btn_Close.Text = "닫기";
             this.btn_Close.UseVisualStyleBackColor = true;

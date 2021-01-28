@@ -73,7 +73,7 @@ namespace TestClient
             // 
             this.btn_Submit.Location = new System.Drawing.Point(105, 187);
             this.btn_Submit.Name = "btn_Submit";
-            this.btn_Submit.Size = new System.Drawing.Size(75, 23);
+            this.btn_Submit.Size = new System.Drawing.Size(75, 31);
             this.btn_Submit.TabIndex = 4;
             this.btn_Submit.Text = "등록";
             this.btn_Submit.UseVisualStyleBackColor = true;
@@ -83,7 +83,7 @@ namespace TestClient
             // 
             this.btn_Close.Location = new System.Drawing.Point(233, 187);
             this.btn_Close.Name = "btn_Close";
-            this.btn_Close.Size = new System.Drawing.Size(75, 23);
+            this.btn_Close.Size = new System.Drawing.Size(75, 31);
             this.btn_Close.TabIndex = 5;
             this.btn_Close.Text = "닫기";
             this.btn_Close.UseVisualStyleBackColor = true;

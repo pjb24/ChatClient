@@ -47,6 +47,7 @@ namespace TestClient
             message = "Connected to Chat Server";
             DisplayText(message);
 
+            /*
             // Encoding해서 buffer에 저장, "asdf" 현재 사용하지 않음, 없어도 된다.
             byte[] buffer = Encoding.Unicode.GetBytes("asdf" + "$");
             // 송출
@@ -54,6 +55,7 @@ namespace TestClient
             // MSDN : 파생 클래스에서 재정의되면 이 스트림에 대해 모든 버퍼를 지우고 버퍼링된 데이터가 내부 디바이스에 쓰여지도록 합니다.
             // NetworkStream에서는 구현되지 않음
             stream.Flush();
+            */
 
             // GetMessage Thread 생성
             Thread t_handler = new Thread(GetMessage);
@@ -127,15 +129,23 @@ namespace TestClient
                         string msg = message.Substring(0, message.LastIndexOf("&responseGroupList"));
                         string[] groups = msg.Split('&');
 
-                        foreach (string g in groups)
+                        try
                         {
-                            if (!groupList.Contains(g))
+                            foreach (string g in groups)
                             {
-                                // groupList 추가
-                                groupList.Add(g);
-                                // groupForm.groupList.Clear();
-                                groupForm.groupList = groupList;
+                                if (!groupList.Contains(g))
+                                {
+                                    // groupList 추가
+                                    groupList.Add(g);
+                                    // groupForm.groupList.Clear();
+                                    groupForm.groupList = groupList;
+                                }
                             }
+                        }
+                        catch (Exception e)
+                        {
+                            DisplayText(e.ToString());
+                            break;
                         }
                         // 화면 갱신
                         GroupRefresh();
