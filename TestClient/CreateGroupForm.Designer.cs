@@ -35,9 +35,10 @@ namespace TestClient
             // 
             // btn_Create
             // 
-            this.btn_Create.Location = new System.Drawing.Point(510, 109);
+            this.btn_Create.Location = new System.Drawing.Point(274, 40);
+            this.btn_Create.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btn_Create.Name = "btn_Create";
-            this.btn_Create.Size = new System.Drawing.Size(75, 46);
+            this.btn_Create.Size = new System.Drawing.Size(66, 37);
             this.btn_Create.TabIndex = 0;
             this.btn_Create.Text = "생성";
             this.btn_Create.UseVisualStyleBackColor = true;
@@ -45,9 +46,10 @@ namespace TestClient
             // 
             // btn_Close
             // 
-            this.btn_Close.Location = new System.Drawing.Point(510, 203);
+            this.btn_Close.Location = new System.Drawing.Point(274, 114);
+            this.btn_Close.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btn_Close.Name = "btn_Close";
-            this.btn_Close.Size = new System.Drawing.Size(75, 46);
+            this.btn_Close.Size = new System.Drawing.Size(66, 37);
             this.btn_Close.TabIndex = 1;
             this.btn_Close.Text = "닫기";
             this.btn_Close.UseVisualStyleBackColor = true;
@@ -55,13 +57,14 @@ namespace TestClient
             // 
             // CreateGroupForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(624, 371);
+            this.ClientSize = new System.Drawing.Size(376, 199);
             this.Controls.Add(this.btn_Close);
             this.Controls.Add(this.btn_Create);
+            this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.Name = "CreateGroupForm";
-            this.Text = "CreateGroupForm";
+            this.Text = "채팅방 생성";
             this.Load += new System.EventHandler(this.CreateGroupForm_Load);
             this.ResumeLayout(false);
 

@@ -34,8 +34,12 @@ namespace TestClient
             string sendMsg = user_ID + "&" + user_PW + "register";
 
             byte[] buffer = Encoding.Unicode.GetBytes(sendMsg + "$");
+            
             stream.Write(buffer, 0, buffer.Length);
             stream.Flush();
+
+            txt_ID.Clear();
+            txt_PW.Clear();
         }
     }
 }

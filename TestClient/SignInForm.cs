@@ -33,6 +33,9 @@ namespace TestClient
             byte[] buffer = Encoding.Unicode.GetBytes(sendMsg + "$");
             stream.Write(buffer, 0, buffer.Length);
             stream.Flush();
+
+            txt_ID.Clear();
+            txt_PW.Clear();
         }
 
         private void btn_Close_Click(object sender, EventArgs e)
@@ -49,8 +52,15 @@ namespace TestClient
 
         private void btn_Register_Click(object sender, EventArgs e)
         {
-            registerForm.stream = stream;
-            registerForm.Show();
+            try
+            {
+                registerForm.stream = stream;
+                registerForm.Show();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private void SignInForm_Load(object sender, EventArgs e)

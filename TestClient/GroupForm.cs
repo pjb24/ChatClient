@@ -54,7 +54,7 @@ namespace TestClient
                 btn_OpenGroup[i].Location = new Point(10 + 40 * i, 10 + 40 * i);
                 btn_OpenGroup[i].Name = "btn_OpenGroup" + i.ToString();
                 //btn_OpenGroup[i].Size = new Size(50, 50);
-                btn_OpenGroup[i].Text = "Group" + i.ToString();
+                btn_OpenGroup[i].Text = "채팅방" + i.ToString();
                 btn_OpenGroup[i].UseVisualStyleBackColor = true;
                 btn_OpenGroup[i].Tag = i;
                 btn_OpenGroup[i].Click += new EventHandler(btn_OpenGroup_Click);
@@ -88,7 +88,7 @@ namespace TestClient
             chatGroupForm.group = groupList[(int)btn.Tag];
             chatGroupForm.user_ID = user_ID;
             chatGroupForm.Tag = (int)btn.Tag;
-            chatGroupForm.Text = "chatGroupForm" + (int)btn.Tag;
+            chatGroupForm.Text = "채팅방" + (int)btn.Tag;
             chatGroupForm.Name = "chatGroupForm" + (int)btn.Tag;
 
             // ChatGroupForm이 열렸을 때 TestClientUI에 Form 정보 저장

@@ -41,26 +41,29 @@ namespace TestClient
             // lb_Result
             // 
             this.lb_Result.FormattingEnabled = true;
-            this.lb_Result.ItemHeight = 15;
-            this.lb_Result.Location = new System.Drawing.Point(12, 12);
+            this.lb_Result.ItemHeight = 12;
+            this.lb_Result.Location = new System.Drawing.Point(10, 10);
+            this.lb_Result.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.lb_Result.Name = "lb_Result";
-            this.lb_Result.Size = new System.Drawing.Size(763, 199);
+            this.lb_Result.Size = new System.Drawing.Size(668, 196);
             this.lb_Result.TabIndex = 0;
             // 
             // txt_Send
             // 
-            this.txt_Send.Location = new System.Drawing.Point(12, 230);
+            this.txt_Send.Location = new System.Drawing.Point(10, 184);
+            this.txt_Send.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.txt_Send.Name = "txt_Send";
-            this.txt_Send.Size = new System.Drawing.Size(625, 25);
+            this.txt_Send.Size = new System.Drawing.Size(547, 21);
             this.txt_Send.TabIndex = 1;
             this.txt_Send.Visible = false;
             this.txt_Send.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txt_Send_KeyDown);
             // 
             // btn_Send
             // 
-            this.btn_Send.Location = new System.Drawing.Point(673, 228);
+            this.btn_Send.Location = new System.Drawing.Point(589, 182);
+            this.btn_Send.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btn_Send.Name = "btn_Send";
-            this.btn_Send.Size = new System.Drawing.Size(102, 25);
+            this.btn_Send.Size = new System.Drawing.Size(89, 20);
             this.btn_Send.TabIndex = 3;
             this.btn_Send.Text = "전송";
             this.btn_Send.UseVisualStyleBackColor = true;
@@ -69,9 +72,10 @@ namespace TestClient
             // 
             // btn_Close
             // 
-            this.btn_Close.Location = new System.Drawing.Point(673, 280);
+            this.btn_Close.Location = new System.Drawing.Point(589, 224);
+            this.btn_Close.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btn_Close.Name = "btn_Close";
-            this.btn_Close.Size = new System.Drawing.Size(102, 31);
+            this.btn_Close.Size = new System.Drawing.Size(89, 25);
             this.btn_Close.TabIndex = 3;
             this.btn_Close.Text = "닫기";
             this.btn_Close.UseVisualStyleBackColor = true;
@@ -79,9 +83,10 @@ namespace TestClient
             // 
             // btn_Register
             // 
-            this.btn_Register.Location = new System.Drawing.Point(32, 280);
+            this.btn_Register.Location = new System.Drawing.Point(28, 224);
+            this.btn_Register.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btn_Register.Name = "btn_Register";
-            this.btn_Register.Size = new System.Drawing.Size(75, 23);
+            this.btn_Register.Size = new System.Drawing.Size(66, 18);
             this.btn_Register.TabIndex = 4;
             this.btn_Register.Text = "Register";
             this.btn_Register.UseVisualStyleBackColor = true;
@@ -89,19 +94,21 @@ namespace TestClient
             // 
             // btn_SignIn
             // 
-            this.btn_SignIn.Location = new System.Drawing.Point(328, 280);
+            this.btn_SignIn.Location = new System.Drawing.Point(10, 222);
+            this.btn_SignIn.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btn_SignIn.Name = "btn_SignIn";
-            this.btn_SignIn.Size = new System.Drawing.Size(81, 34);
+            this.btn_SignIn.Size = new System.Drawing.Size(71, 27);
             this.btn_SignIn.TabIndex = 5;
-            this.btn_SignIn.Text = "Sign in";
+            this.btn_SignIn.Text = "로그인";
             this.btn_SignIn.UseVisualStyleBackColor = true;
             this.btn_SignIn.Click += new System.EventHandler(this.btn_SignIn_Click);
             // 
             // btn_Group
             // 
-            this.btn_Group.Location = new System.Drawing.Point(137, 280);
+            this.btn_Group.Location = new System.Drawing.Point(120, 224);
+            this.btn_Group.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btn_Group.Name = "btn_Group";
-            this.btn_Group.Size = new System.Drawing.Size(75, 23);
+            this.btn_Group.Size = new System.Drawing.Size(66, 18);
             this.btn_Group.TabIndex = 6;
             this.btn_Group.Text = "Group";
             this.btn_Group.UseVisualStyleBackColor = true;
@@ -109,9 +116,9 @@ namespace TestClient
             // 
             // TestClientUI
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(787, 343);
+            this.ClientSize = new System.Drawing.Size(689, 274);
             this.Controls.Add(this.btn_Group);
             this.Controls.Add(this.btn_SignIn);
             this.Controls.Add(this.btn_Register);
@@ -119,8 +126,9 @@ namespace TestClient
             this.Controls.Add(this.btn_Send);
             this.Controls.Add(this.txt_Send);
             this.Controls.Add(this.lb_Result);
+            this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.Name = "TestClientUI";
-            this.Text = "TestClient";
+            this.Text = "Client";
             this.Load += new System.EventHandler(this.TestClient_Load);
             this.ResumeLayout(false);
             this.PerformLayout();

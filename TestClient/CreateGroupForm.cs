@@ -53,7 +53,7 @@ namespace TestClient
         {
             // change design
             // chk_GroupUser = new CheckedListBox();
-            chk_GroupUser.Location = new Point(100, 100);
+            chk_GroupUser.Location = new Point(10, 10);
             chk_GroupUser.Name = "chk_GroupUser";
             chk_GroupUser.CheckOnClick = true;
             // btn_OpenGroup.Size = new Size(50, 50);

@@ -31,6 +31,8 @@ namespace TestClient
         // 여러 개의 chatGroup이 생성될 수 있기 때문에 사용
         List<ChatGroupForm> chatGroupForms = new List<ChatGroupForm>();
 
+        // SignInForm signInForm = new SignInForm();
+
         public TestClientUI()
         {
             InitializeComponent();
@@ -85,9 +87,9 @@ namespace TestClient
                 case Keys.Enter:
                     btn_Send_Click(sender, e);
                     // txt_Send의 Text를 선택해줌
-                    txt_Send.SelectAll();
+                    // txt_Send.SelectAll();
                     // Text를 지움
-                    // txt_Send.Clear();
+                    txt_Send.Clear();
                     break;
             }
         }
@@ -194,16 +196,16 @@ namespace TestClient
                         }
                     } else if (message.Contains(" is aleady registered"))
                     {
-                        MessageBox.Show(message, "알림");
+                        MessageBox.Show("이미 등록된 회원입니다.", "알림");
                     } else if (message.Contains(" is not registered"))
                     {
-                        MessageBox.Show(message, "알림");
+                        MessageBox.Show("등록된 회원이 아닙니다.", "알림");
                     } else if (message.Contains("incorrect PW"))
                     {
-                        MessageBox.Show(message, "알림");
+                        MessageBox.Show("올바르지 못한 비밀번호입니다.", "알림");
                     } else if (message.Contains(" is register"))
                     {
-                        MessageBox.Show(message, "알림");
+                        MessageBox.Show("회원가입 되었습니다.", "알림");
                     }
                 }
                 catch (Exception e)
