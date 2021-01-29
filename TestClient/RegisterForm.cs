@@ -36,8 +36,6 @@ namespace TestClient
             byte[] buffer = Encoding.Unicode.GetBytes(sendMsg + "$");
             stream.Write(buffer, 0, buffer.Length);
             stream.Flush();
-
-            this.Close();
         }
     }
 }

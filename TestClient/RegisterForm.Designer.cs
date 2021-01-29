@@ -48,6 +48,7 @@ namespace TestClient
             // 
             this.txt_PW.Location = new System.Drawing.Point(105, 121);
             this.txt_PW.Name = "txt_PW";
+            this.txt_PW.PasswordChar = '*';
             this.txt_PW.Size = new System.Drawing.Size(217, 25);
             this.txt_PW.TabIndex = 1;
             // 

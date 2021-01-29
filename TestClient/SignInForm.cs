@@ -14,7 +14,9 @@ namespace TestClient
 {
     public partial class SignInForm : Form
     {
+        public TestClientUI testClientUI = new TestClientUI();
         public NetworkStream stream = default(NetworkStream);
+        public RegisterForm registerForm = new RegisterForm();
 
         public SignInForm()
         {
@@ -31,20 +33,29 @@ namespace TestClient
             byte[] buffer = Encoding.Unicode.GetBytes(sendMsg + "$");
             stream.Write(buffer, 0, buffer.Length);
             stream.Flush();
-
-            this.Close();
         }
 
         private void btn_Close_Click(object sender, EventArgs e)
-        {
+        {            
+            if (testClientUI.WindowState == FormWindowState.Minimized)
+            {
+                testClientUI.WindowState = FormWindowState.Normal;
+                testClientUI.Location = new Point(this.Location.X + this.Width, this.Location.Y);
+            }
+            testClientUI.Activate();
+            
             this.Close();
         }
 
         private void btn_Register_Click(object sender, EventArgs e)
         {
-            RegisterForm registerForm = new RegisterForm();
             registerForm.stream = stream;
             registerForm.Show();
+        }
+
+        private void SignInForm_Load(object sender, EventArgs e)
+        {
+            
         }
     }
 }

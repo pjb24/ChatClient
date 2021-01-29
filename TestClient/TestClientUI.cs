@@ -129,23 +129,15 @@ namespace TestClient
                         string msg = message.Substring(0, message.LastIndexOf("&responseGroupList"));
                         string[] groups = msg.Split('&');
 
-                        try
+                        foreach (string g in groups)
                         {
-                            foreach (string g in groups)
+                            if (!groupList.Contains(g))
                             {
-                                if (!groupList.Contains(g))
-                                {
-                                    // groupList 추가
-                                    groupList.Add(g);
-                                    // groupForm.groupList.Clear();
-                                    groupForm.groupList = groupList;
-                                }
+                                // groupList 추가
+                                groupList.Add(g);
+                                // groupForm.groupList.Clear();
+                                groupForm.groupList = groupList;
                             }
-                        }
-                        catch (Exception e)
-                        {
-                            DisplayText(e.ToString());
-                            break;
                         }
                         // 화면 갱신
                         GroupRefresh();
@@ -200,6 +192,18 @@ namespace TestClient
                                 }
                             }
                         }
+                    } else if (message.Contains(" is aleady registered"))
+                    {
+                        MessageBox.Show(message, "알림");
+                    } else if (message.Contains(" is not registered"))
+                    {
+                        MessageBox.Show(message, "알림");
+                    } else if (message.Contains("incorrect PW"))
+                    {
+                        MessageBox.Show(message, "알림");
+                    } else if (message.Contains(" is register"))
+                    {
+                        MessageBox.Show(message, "알림");
                     }
                 }
                 catch (Exception e)
@@ -257,8 +261,11 @@ namespace TestClient
         private void btn_SignIn_Click(object sender, EventArgs e)
         {
             SignInForm signInForm = new SignInForm();
+            signInForm.testClientUI = this;
             signInForm.stream = stream;
             signInForm.Show();
+
+            this.WindowState = FormWindowState.Minimized;
         }
 
         // ParameterizedThreadStart가 object만 받기 때문에 object 사용

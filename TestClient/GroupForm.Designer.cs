@@ -38,7 +38,7 @@ namespace TestClient
             // 
             // btn_CreateGroup
             // 
-            this.btn_CreateGroup.Location = new System.Drawing.Point(385, 359);
+            this.btn_CreateGroup.Location = new System.Drawing.Point(242, 359);
             this.btn_CreateGroup.Name = "btn_CreateGroup";
             this.btn_CreateGroup.Size = new System.Drawing.Size(124, 45);
             this.btn_CreateGroup.TabIndex = 0;
@@ -54,11 +54,12 @@ namespace TestClient
             this.btn_SignOut.TabIndex = 1;
             this.btn_SignOut.Text = "Sign out";
             this.btn_SignOut.UseVisualStyleBackColor = true;
+            this.btn_SignOut.Visible = false;
             this.btn_SignOut.Click += new System.EventHandler(this.btn_SignOut_Click);
             // 
             // btn_PullGroup
             // 
-            this.btn_PullGroup.Location = new System.Drawing.Point(245, 359);
+            this.btn_PullGroup.Location = new System.Drawing.Point(398, 359);
             this.btn_PullGroup.Name = "btn_PullGroup";
             this.btn_PullGroup.Size = new System.Drawing.Size(102, 45);
             this.btn_PullGroup.TabIndex = 2;

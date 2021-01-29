@@ -67,6 +67,7 @@ namespace TestClient
             // 
             this.txt_PW.Location = new System.Drawing.Point(94, 107);
             this.txt_PW.Name = "txt_PW";
+            this.txt_PW.PasswordChar = '*';
             this.txt_PW.Size = new System.Drawing.Size(160, 25);
             this.txt_PW.TabIndex = 3;
             // 
@@ -114,6 +115,7 @@ namespace TestClient
             this.Controls.Add(this.txt_ID);
             this.Name = "SignInForm";
             this.Text = "SignInForm";
+            this.Load += new System.EventHandler(this.SignInForm_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 
