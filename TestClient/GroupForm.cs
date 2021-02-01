@@ -45,6 +45,29 @@ namespace TestClient
             }
         }
 
+        /* ListView
+        public void designGroup()
+        {
+            // change design
+            foreach (var item in Initializer.groupList)
+            {
+                //if (!lvw_GroupList.Items.)
+                //{
+                    lvw_GroupList.BeginUpdate();
+                    ListViewItem lvi = new ListViewItem(item);
+                lvi.SubItems.Add("asdf");
+                lvi.SubItems.Add("dddddd");
+                    lvw_GroupList.Items.Add(lvi);
+                    lvw_GroupList.EndUpdate();
+                //}
+            }
+            // window를 비활성화하여 WM_PAINT call
+            // true 배경을 지우고 다시 그린다
+            // false 현 배경 위에 다시 그린다
+            Invalidate(false);
+        }*/
+
+        
         public void designGroup()
         {
             // groupList를 사용하여 버튼 컨트롤 동적 생성
@@ -63,7 +86,7 @@ namespace TestClient
             Invalidate(false);
         }
 
-        /*
+        /* Button
         public void designGroup()
         {
             // groupList를 사용하여 버튼 컨트롤 동적 생성
@@ -190,7 +213,7 @@ namespace TestClient
 
         private void GroupForm_Load(object sender, EventArgs e)
         {
-            this.lbl_UserID.Text = "클라이언트 ID : " + Initializer.user_ID;
+
         }
 
         private void lb_GroupList_DoubleClick(object sender, EventArgs e)

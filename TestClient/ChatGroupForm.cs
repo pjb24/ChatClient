@@ -25,11 +25,6 @@ namespace TestClient
             InitializeComponent();
         }
 
-        private void btn_Close_Click(object sender, EventArgs e)
-        {
-            this.Close();
-        }
-
         private void btn_Send_Click(object sender, EventArgs e)
         {
             string sendMsg = this.txt_Send.Text + "&" + group + "&" + Initializer.user_ID + "&groupChat";
@@ -37,6 +32,9 @@ namespace TestClient
             byte[] buffer = Encoding.Unicode.GetBytes(sendMsg + "$");
             Initializer.stream.Write(buffer, 0, buffer.Length);
             Initializer.stream.Flush();
+
+            txt_Send.Clear();
+            txt_Send.Focus();
         }
 
         private void txt_Send_KeyDown(object sender, KeyEventArgs e)
@@ -45,7 +43,6 @@ namespace TestClient
             {
                 case Keys.Enter:
                     btn_Send_Click(sender, e);
-                    txt_Send.SelectAll();
                     break;
                 default:
                     break;
@@ -73,7 +70,7 @@ namespace TestClient
 
         private void ChatGroupForm_Load(object sender, EventArgs e)
         {
-            lbl_User.Text = "클라이언트 ID : " + Initializer.user_ID;
+
         }
     }
 }

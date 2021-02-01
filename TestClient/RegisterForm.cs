@@ -39,5 +39,49 @@ namespace TestClient
             txt_ID.Clear();
             txt_PW.Clear();
         }
+
+        private void txt_ID_Enter(object sender, EventArgs e)
+        {
+            if (txt_ID.Text == "ID")
+            {
+                txt_ID.Text = "";
+
+                txt_ID.ForeColor = Color.Black;
+            }
+        }
+
+        private void txt_ID_Leave(object sender, EventArgs e)
+        {
+            if (txt_ID.Text == "")
+            {
+                txt_ID.Text = "ID";
+
+                txt_ID.ForeColor = Color.Silver;
+            }
+        }
+
+        private void txt_PW_Enter(object sender, EventArgs e)
+        {
+            if (txt_PW.Text == "PW")
+            {
+                txt_PW.Text = "";
+
+                txt_PW.ForeColor = Color.Black;
+
+                txt_PW.PasswordChar = '*';
+            }
+        }
+
+        private void txt_PW_Leave(object sender, EventArgs e)
+        {
+            if (txt_PW.Text == "")
+            {
+                txt_PW.Text = "PW";
+
+                txt_PW.ForeColor = Color.Silver;
+
+                txt_PW.PasswordChar = '\0';
+            }
+        }
     }
 }

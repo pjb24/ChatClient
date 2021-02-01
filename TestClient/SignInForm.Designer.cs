@@ -30,78 +30,53 @@ namespace TestClient
         private void InitializeComponent()
         {
             this.txt_ID = new System.Windows.Forms.TextBox();
-            this.lb_ID = new System.Windows.Forms.Label();
-            this.lb_PW = new System.Windows.Forms.Label();
             this.txt_PW = new System.Windows.Forms.TextBox();
             this.btn_SignIn = new System.Windows.Forms.Button();
-            this.btn_Close = new System.Windows.Forms.Button();
             this.btn_Register = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // txt_ID
             // 
-            this.txt_ID.Location = new System.Drawing.Point(94, 42);
+            this.txt_ID.ForeColor = System.Drawing.SystemColors.InactiveCaption;
+            this.txt_ID.Location = new System.Drawing.Point(78, 263);
             this.txt_ID.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.txt_ID.Name = "txt_ID";
-            this.txt_ID.Size = new System.Drawing.Size(202, 25);
-            this.txt_ID.TabIndex = 0;
-            // 
-            // lb_ID
-            // 
-            this.lb_ID.AutoSize = true;
-            this.lb_ID.Location = new System.Drawing.Point(43, 46);
-            this.lb_ID.Name = "lb_ID";
-            this.lb_ID.Size = new System.Drawing.Size(20, 15);
-            this.lb_ID.TabIndex = 1;
-            this.lb_ID.Text = "ID";
-            // 
-            // lb_PW
-            // 
-            this.lb_PW.AutoSize = true;
-            this.lb_PW.Location = new System.Drawing.Point(43, 110);
-            this.lb_PW.Name = "lb_PW";
-            this.lb_PW.Size = new System.Drawing.Size(31, 15);
-            this.lb_PW.TabIndex = 2;
-            this.lb_PW.Text = "PW";
+            this.txt_ID.Size = new System.Drawing.Size(180, 25);
+            this.txt_ID.TabIndex = 1;
+            this.txt_ID.Text = "ID";
+            this.txt_ID.Enter += new System.EventHandler(this.txt_ID_Enter);
+            this.txt_ID.Leave += new System.EventHandler(this.txt_ID_Leave);
             // 
             // txt_PW
             // 
-            this.txt_PW.Location = new System.Drawing.Point(94, 108);
+            this.txt_PW.ForeColor = System.Drawing.SystemColors.InactiveCaption;
+            this.txt_PW.Location = new System.Drawing.Point(78, 310);
             this.txt_PW.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.txt_PW.Name = "txt_PW";
-            this.txt_PW.PasswordChar = '*';
-            this.txt_PW.Size = new System.Drawing.Size(202, 25);
-            this.txt_PW.TabIndex = 3;
+            this.txt_PW.Size = new System.Drawing.Size(180, 25);
+            this.txt_PW.TabIndex = 2;
+            this.txt_PW.Text = "PW";
+            this.txt_PW.Enter += new System.EventHandler(this.txt_PW_Enter);
+            this.txt_PW.Leave += new System.EventHandler(this.txt_PW_Leave);
             // 
             // btn_SignIn
             // 
-            this.btn_SignIn.Location = new System.Drawing.Point(146, 169);
+            this.btn_SignIn.Location = new System.Drawing.Point(78, 361);
             this.btn_SignIn.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btn_SignIn.Name = "btn_SignIn";
-            this.btn_SignIn.Size = new System.Drawing.Size(75, 38);
-            this.btn_SignIn.TabIndex = 4;
+            this.btn_SignIn.Size = new System.Drawing.Size(180, 40);
+            this.btn_SignIn.TabIndex = 0;
             this.btn_SignIn.Text = "로그인";
             this.btn_SignIn.UseVisualStyleBackColor = true;
             this.btn_SignIn.Click += new System.EventHandler(this.btn_SignIn_Click);
             // 
-            // btn_Close
-            // 
-            this.btn_Close.Location = new System.Drawing.Point(243, 169);
-            this.btn_Close.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.btn_Close.Name = "btn_Close";
-            this.btn_Close.Size = new System.Drawing.Size(75, 38);
-            this.btn_Close.TabIndex = 5;
-            this.btn_Close.Text = "닫기";
-            this.btn_Close.UseVisualStyleBackColor = true;
-            this.btn_Close.Click += new System.EventHandler(this.btn_Close_Click);
-            // 
             // btn_Register
             // 
-            this.btn_Register.Location = new System.Drawing.Point(46, 169);
+            this.btn_Register.Location = new System.Drawing.Point(78, 441);
             this.btn_Register.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btn_Register.Name = "btn_Register";
-            this.btn_Register.Size = new System.Drawing.Size(75, 38);
-            this.btn_Register.TabIndex = 6;
+            this.btn_Register.Size = new System.Drawing.Size(180, 40);
+            this.btn_Register.TabIndex = 3;
             this.btn_Register.Text = "회원가입";
             this.btn_Register.UseVisualStyleBackColor = true;
             this.btn_Register.Click += new System.EventHandler(this.btn_Register_Click);
@@ -110,17 +85,15 @@ namespace TestClient
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(350, 239);
+            this.ClientSize = new System.Drawing.Size(332, 553);
             this.Controls.Add(this.btn_Register);
-            this.Controls.Add(this.btn_Close);
             this.Controls.Add(this.btn_SignIn);
             this.Controls.Add(this.txt_PW);
-            this.Controls.Add(this.lb_PW);
-            this.Controls.Add(this.lb_ID);
             this.Controls.Add(this.txt_ID);
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.Name = "SignInForm";
             this.Text = "로그인";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.SignInForm_FormClosed);
             this.Load += new System.EventHandler(this.SignInForm_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -130,11 +103,8 @@ namespace TestClient
         #endregion
 
         private System.Windows.Forms.TextBox txt_ID;
-        private System.Windows.Forms.Label lb_ID;
-        private System.Windows.Forms.Label lb_PW;
         private System.Windows.Forms.TextBox txt_PW;
         private System.Windows.Forms.Button btn_SignIn;
-        private System.Windows.Forms.Button btn_Close;
         private System.Windows.Forms.Button btn_Register;
     }
 }

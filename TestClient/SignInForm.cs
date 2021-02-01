@@ -34,18 +34,6 @@ namespace TestClient
             txt_PW.Clear();
         }
 
-        private void btn_Close_Click(object sender, EventArgs e)
-        {            
-            if (Initializer.testClientUI.WindowState == FormWindowState.Minimized)
-            {
-                Initializer.testClientUI.WindowState = FormWindowState.Normal;
-                Initializer.testClientUI.Location = new Point(this.Location.X + this.Width, this.Location.Y);
-            }
-            Initializer.testClientUI.Activate();
-            
-            this.Close();
-        }
-
         private void btn_Register_Click(object sender, EventArgs e)
         {
             try
@@ -62,6 +50,60 @@ namespace TestClient
         private void SignInForm_Load(object sender, EventArgs e)
         {
             
+        }
+
+        private void SignInForm_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            if (Initializer.testClientUI.WindowState == FormWindowState.Minimized)
+            {
+                Initializer.testClientUI.WindowState = FormWindowState.Normal;
+                Initializer.testClientUI.Location = new Point(this.Location.X + this.Width, this.Location.Y);
+            }
+            Initializer.testClientUI.Activate();
+        }
+
+        private void txt_ID_Enter(object sender, EventArgs e)
+        {
+            if (txt_ID.Text == "ID")
+            {
+                txt_ID.Text = "";
+
+                txt_ID.ForeColor = Color.Black;
+            }
+        }
+
+        private void txt_ID_Leave(object sender, EventArgs e)
+        {
+            if (txt_ID.Text == "")
+            {
+                txt_ID.Text = "ID";
+
+                txt_ID.ForeColor = Color.Silver;
+            }
+        }
+
+        private void txt_PW_Enter(object sender, EventArgs e)
+        {
+            if (txt_PW.Text == "PW")
+            {
+                txt_PW.Text = "";
+
+                txt_PW.ForeColor = Color.Black;
+
+                txt_PW.PasswordChar = '*';
+            }
+        }
+
+        private void txt_PW_Leave(object sender, EventArgs e)
+        {
+            if (txt_PW.Text == "")
+            {
+                txt_PW.Text = "PW";
+
+                txt_PW.ForeColor = Color.Silver;
+
+                txt_PW.PasswordChar = '\0';
+            }
         }
     }
 }

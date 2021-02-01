@@ -36,10 +36,10 @@ namespace TestClient
             // 
             // btn_Create
             // 
-            this.btn_Create.Location = new System.Drawing.Point(35, 234);
+            this.btn_Create.Location = new System.Drawing.Point(12, 497);
             this.btn_Create.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btn_Create.Name = "btn_Create";
-            this.btn_Create.Size = new System.Drawing.Size(75, 46);
+            this.btn_Create.Size = new System.Drawing.Size(110, 45);
             this.btn_Create.TabIndex = 0;
             this.btn_Create.Text = "생성";
             this.btn_Create.UseVisualStyleBackColor = true;
@@ -47,10 +47,10 @@ namespace TestClient
             // 
             // btn_Close
             // 
-            this.btn_Close.Location = new System.Drawing.Point(148, 234);
+            this.btn_Close.Location = new System.Drawing.Point(210, 497);
             this.btn_Close.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btn_Close.Name = "btn_Close";
-            this.btn_Close.Size = new System.Drawing.Size(75, 46);
+            this.btn_Close.Size = new System.Drawing.Size(110, 45);
             this.btn_Close.TabIndex = 1;
             this.btn_Close.Text = "닫기";
             this.btn_Close.UseVisualStyleBackColor = true;
@@ -59,16 +59,16 @@ namespace TestClient
             // clb_GroupUser
             // 
             this.clb_GroupUser.FormattingEnabled = true;
-            this.clb_GroupUser.Location = new System.Drawing.Point(35, 22);
+            this.clb_GroupUser.Location = new System.Drawing.Point(-1, -1);
             this.clb_GroupUser.Name = "clb_GroupUser";
-            this.clb_GroupUser.Size = new System.Drawing.Size(188, 184);
+            this.clb_GroupUser.Size = new System.Drawing.Size(334, 484);
             this.clb_GroupUser.TabIndex = 2;
             // 
             // CreateGroupForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(255, 307);
+            this.ClientSize = new System.Drawing.Size(332, 553);
             this.Controls.Add(this.clb_GroupUser);
             this.Controls.Add(this.btn_Close);
             this.Controls.Add(this.btn_Create);

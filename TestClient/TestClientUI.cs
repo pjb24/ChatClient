@@ -83,29 +83,6 @@ namespace TestClient
             this.Close();
         }
 
-        private void btn_Send_Click(object sender, EventArgs e)
-        {
-            // txt_Send의 Text를 읽어서 server에 전송
-            byte[] buffer = Encoding.Unicode.GetBytes(this.txt_Send.Text + "$");
-            stream.Write(buffer, 0, buffer.Length);
-            stream.Flush();
-        }
-
-        private void txt_Send_KeyDown(object sender, KeyEventArgs e)
-        {
-            switch (e.KeyCode)
-            {
-                // Enter 키 입력할 때 발생
-                case Keys.Enter:
-                    btn_Send_Click(sender, e);
-                    // txt_Send의 Text를 선택해줌
-                    // txt_Send.SelectAll();
-                    // Text를 지움
-                    txt_Send.Clear();
-                    break;
-            }
-        }
-
         // server message 대기
         private void GetMessage()
         {
@@ -289,6 +266,7 @@ namespace TestClient
             // Initializer.groupForm.userList = Initializer.userList;
             // Initializer.groupForm.groupList = Initializer.groupList;
             // Initializer.groupForm.testClientUI = this;
+            Initializer.groupForm.Text = "사용중인 유저 : " + Convert.ToString(user_ID);
             // Show를 사용하면 바로 꺼짐, 이유 확인 필요
             Initializer.groupForm.ShowDialog();
         }

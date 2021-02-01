@@ -31,65 +31,52 @@ namespace TestClient
         {
             this.txt_ID = new System.Windows.Forms.TextBox();
             this.txt_PW = new System.Windows.Forms.TextBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
             this.btn_Submit = new System.Windows.Forms.Button();
             this.btn_Close = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // txt_ID
             // 
-            this.txt_ID.Location = new System.Drawing.Point(91, 41);
+            this.txt_ID.ForeColor = System.Drawing.SystemColors.InactiveCaption;
+            this.txt_ID.Location = new System.Drawing.Point(54, 171);
             this.txt_ID.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.txt_ID.Name = "txt_ID";
-            this.txt_ID.Size = new System.Drawing.Size(217, 25);
-            this.txt_ID.TabIndex = 0;
+            this.txt_ID.Size = new System.Drawing.Size(232, 25);
+            this.txt_ID.TabIndex = 1;
+            this.txt_ID.Text = "ID";
+            this.txt_ID.Enter += new System.EventHandler(this.txt_ID_Enter);
+            this.txt_ID.Leave += new System.EventHandler(this.txt_ID_Leave);
             // 
             // txt_PW
             // 
-            this.txt_PW.Location = new System.Drawing.Point(91, 117);
+            this.txt_PW.ForeColor = System.Drawing.SystemColors.InactiveCaption;
+            this.txt_PW.Location = new System.Drawing.Point(54, 239);
             this.txt_PW.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.txt_PW.Name = "txt_PW";
-            this.txt_PW.PasswordChar = '*';
-            this.txt_PW.Size = new System.Drawing.Size(217, 25);
-            this.txt_PW.TabIndex = 1;
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(40, 44);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(20, 15);
-            this.label1.TabIndex = 2;
-            this.label1.Text = "ID";
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(40, 120);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(31, 15);
-            this.label2.TabIndex = 3;
-            this.label2.Text = "PW";
+            this.txt_PW.Size = new System.Drawing.Size(232, 25);
+            this.txt_PW.TabIndex = 2;
+            this.txt_PW.Text = "PW";
+            this.txt_PW.Enter += new System.EventHandler(this.txt_PW_Enter);
+            this.txt_PW.Leave += new System.EventHandler(this.txt_PW_Leave);
             // 
             // btn_Submit
             // 
-            this.btn_Submit.Location = new System.Drawing.Point(63, 188);
+            this.btn_Submit.Location = new System.Drawing.Point(54, 316);
             this.btn_Submit.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btn_Submit.Name = "btn_Submit";
             this.btn_Submit.Size = new System.Drawing.Size(75, 31);
-            this.btn_Submit.TabIndex = 4;
+            this.btn_Submit.TabIndex = 3;
             this.btn_Submit.Text = "등록";
             this.btn_Submit.UseVisualStyleBackColor = true;
             this.btn_Submit.Click += new System.EventHandler(this.btn_Submit_Click);
             // 
             // btn_Close
             // 
-            this.btn_Close.Location = new System.Drawing.Point(213, 188);
+            this.btn_Close.Location = new System.Drawing.Point(211, 316);
             this.btn_Close.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btn_Close.Name = "btn_Close";
             this.btn_Close.Size = new System.Drawing.Size(75, 31);
-            this.btn_Close.TabIndex = 5;
+            this.btn_Close.TabIndex = 0;
             this.btn_Close.Text = "닫기";
             this.btn_Close.UseVisualStyleBackColor = true;
             this.btn_Close.Click += new System.EventHandler(this.btn_Close_Click);
@@ -98,11 +85,9 @@ namespace TestClient
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(346, 260);
+            this.ClientSize = new System.Drawing.Size(332, 553);
             this.Controls.Add(this.btn_Close);
             this.Controls.Add(this.btn_Submit);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
             this.Controls.Add(this.txt_PW);
             this.Controls.Add(this.txt_ID);
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
@@ -117,8 +102,6 @@ namespace TestClient
 
         private System.Windows.Forms.TextBox txt_ID;
         private System.Windows.Forms.TextBox txt_PW;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button btn_Submit;
         private System.Windows.Forms.Button btn_Close;
     }
