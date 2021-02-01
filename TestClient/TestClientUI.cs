@@ -17,24 +17,6 @@ namespace TestClient
 {
     public partial class TestClientUI : Form
     {
-        /*
-        // <ID>
-        public List<string> userList = new List<string>();
-        // <groupName>
-        public List<string> groupList = new List<string>();
-
-        // class에서 사용할 변수 초기화
-        TcpClient clientSocket = new TcpClient();
-        NetworkStream stream = default(NetworkStream);
-
-        // 사용되는 GroupForm이 1개이기 때문에 이곳에 선언
-        GroupForm groupForm = new GroupForm();
-        // 여러 개의 chatGroup이 생성될 수 있기 때문에 사용
-        List<ChatGroupForm> chatGroupForms = new List<ChatGroupForm>();
-
-        // SignInForm signInForm = new SignInForm();
-        */
-
         TcpClient clientSocket = new TcpClient();
         NetworkStream stream = default(NetworkStream);
         string message = string.Empty;
@@ -59,17 +41,6 @@ namespace TestClient
 
             message = "Connected to Chat Server";
             DisplayText(message);
-
-            /*
-            // Encoding해서 buffer에 저장, "asdf" 현재 사용하지 않음, 없어도 된다.
-            byte[] buffer = Encoding.Unicode.GetBytes("asdf" + "$");
-            // 송출
-            stream.Write(buffer, 0, buffer.Length);
-            // MSDN : 파생 클래스에서 재정의되면 이 스트림에 대해 모든 버퍼를 지우고 버퍼링된 데이터가 내부 디바이스에 쓰여지도록 합니다.
-            // NetworkStream에서는 구현되지 않음
-            // 버퍼에 있는 데이터를 바로 내보냄
-            stream.Flush();
-            */
 
             // GetMessage Thread 생성
             Thread t_handler = new Thread(GetMessage);
@@ -126,8 +97,6 @@ namespace TestClient
                             {
                                 // groupList 추가
                                 Initializer.groupList.Add(g);
-                                // groupForm.groupList.Clear();
-                                // Initializer.groupForm.groupList = Initializer.groupList;
                             }
                         }
                         // 화면 갱신
@@ -144,8 +113,6 @@ namespace TestClient
                             {
                                 // userList에 추가
                                 Initializer.userList.Add(user);
-                                // groupForm.userList.Clear();
-                                // Initializer.groupForm.userList = Initializer.userList;
                             }
                         }
                     } // receive complete create group
@@ -239,33 +206,10 @@ namespace TestClient
                 Initializer.groupForm.designGroup();
         }
 
-        /*
-        private void btn_Register_Click(object sender, EventArgs e)
-        {
-            RegisterForm registerForm = new RegisterForm();
-            registerForm.stream = stream;
-            registerForm.Show();
-        }*/
-
-        // 진입점 정리 필요
-        private void btn_SignIn_Click(object sender, EventArgs e)
-        {
-            Initializer.testClientUI = this;
-            // Initializer.stream = stream;
-            Initializer.signInForm.Show();
-
-            this.WindowState = FormWindowState.Minimized;
-        }
-
         // ParameterizedThreadStart가 object만 받기 때문에 object 사용
         private void open_Group(object user_ID)
         {
-            // Initializer.groupForm.stream = stream;
-            // Initializer.groupForm.user_ID = string.Empty;
             Initializer.user_ID = Convert.ToString(user_ID);
-            // Initializer.groupForm.userList = Initializer.userList;
-            // Initializer.groupForm.groupList = Initializer.groupList;
-            // Initializer.groupForm.testClientUI = this;
             Initializer.groupForm.Text = "사용중인 유저 : " + Convert.ToString(user_ID);
             // Show를 사용하면 바로 꺼짐, 이유 확인 필요
             Initializer.groupForm.ShowDialog();
@@ -275,6 +219,70 @@ namespace TestClient
         public void open_ChatGroupForm(ChatGroupForm chatGroupForm)
         {
             Initializer.chatGroupForms.Add(chatGroupForm);
+        }
+
+        private void txt_UserID_Enter(object sender, EventArgs e)
+        {
+            if (txt_UserID.Text == "ID")
+            {
+                txt_UserID.Text = "";
+
+                txt_UserID.ForeColor = Color.Black;
+            }
+        }
+
+        private void txt_UserID_Leave(object sender, EventArgs e)
+        {
+            if (txt_UserID.Text == "")
+            {
+                txt_UserID.Text = "ID";
+
+                txt_UserID.ForeColor = Color.Silver;
+            }
+        }
+
+        private void txt_UserPW_Enter(object sender, EventArgs e)
+        {
+            if (txt_UserPW.Text == "PW")
+            {
+                txt_UserPW.Text = "";
+
+                txt_UserPW.ForeColor = Color.Black;
+
+                txt_UserPW.PasswordChar = '*';
+            }
+        }
+
+        private void txt_UserPW_Leave(object sender, EventArgs e)
+        {
+            if (txt_UserPW.Text == "")
+            {
+                txt_UserPW.Text = "PW";
+
+                txt_UserPW.ForeColor = Color.Silver;
+
+                txt_UserPW.PasswordChar = '\0';
+            }
+        }
+
+        private void btn_SignIn_Click(object sender, EventArgs e)
+        {
+            string user_ID = txt_UserID.Text;
+            string user_PW = txt_UserPW.Text;
+
+            string sendMsg = user_ID + "&" + user_PW + "signin";
+
+            byte[] buffer = Encoding.Unicode.GetBytes(sendMsg + "$");
+            Initializer.stream.Write(buffer, 0, buffer.Length);
+            Initializer.stream.Flush();
+
+            txt_UserID.Clear();
+            txt_UserPW.Clear();
+        }
+
+        private void btn_Register_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
