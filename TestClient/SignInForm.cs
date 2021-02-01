@@ -14,10 +14,6 @@ namespace TestClient
 {
     public partial class SignInForm : Form
     {
-        public TestClientUI testClientUI = new TestClientUI();
-        public NetworkStream stream = default(NetworkStream);
-        public RegisterForm registerForm = new RegisterForm();
-
         public SignInForm()
         {
             InitializeComponent();
@@ -31,8 +27,8 @@ namespace TestClient
             string sendMsg = user_ID + "&" + user_PW + "signin";
 
             byte[] buffer = Encoding.Unicode.GetBytes(sendMsg + "$");
-            stream.Write(buffer, 0, buffer.Length);
-            stream.Flush();
+            Initializer.stream.Write(buffer, 0, buffer.Length);
+            Initializer.stream.Flush();
 
             txt_ID.Clear();
             txt_PW.Clear();
@@ -40,12 +36,12 @@ namespace TestClient
 
         private void btn_Close_Click(object sender, EventArgs e)
         {            
-            if (testClientUI.WindowState == FormWindowState.Minimized)
+            if (Initializer.testClientUI.WindowState == FormWindowState.Minimized)
             {
-                testClientUI.WindowState = FormWindowState.Normal;
-                testClientUI.Location = new Point(this.Location.X + this.Width, this.Location.Y);
+                Initializer.testClientUI.WindowState = FormWindowState.Normal;
+                Initializer.testClientUI.Location = new Point(this.Location.X + this.Width, this.Location.Y);
             }
-            testClientUI.Activate();
+            Initializer.testClientUI.Activate();
             
             this.Close();
         }
@@ -54,7 +50,7 @@ namespace TestClient
         {
             try
             {
-                registerForm.stream = stream;
+                RegisterForm registerForm = new RegisterForm();
                 registerForm.Show();
             }
             catch (Exception ex)

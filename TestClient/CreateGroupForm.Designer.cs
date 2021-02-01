@@ -31,14 +31,15 @@ namespace TestClient
         {
             this.btn_Create = new System.Windows.Forms.Button();
             this.btn_Close = new System.Windows.Forms.Button();
+            this.clb_GroupUser = new System.Windows.Forms.CheckedListBox();
             this.SuspendLayout();
             // 
             // btn_Create
             // 
-            this.btn_Create.Location = new System.Drawing.Point(274, 40);
+            this.btn_Create.Location = new System.Drawing.Point(35, 234);
             this.btn_Create.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btn_Create.Name = "btn_Create";
-            this.btn_Create.Size = new System.Drawing.Size(66, 37);
+            this.btn_Create.Size = new System.Drawing.Size(75, 46);
             this.btn_Create.TabIndex = 0;
             this.btn_Create.Text = "생성";
             this.btn_Create.UseVisualStyleBackColor = true;
@@ -46,20 +47,29 @@ namespace TestClient
             // 
             // btn_Close
             // 
-            this.btn_Close.Location = new System.Drawing.Point(274, 114);
+            this.btn_Close.Location = new System.Drawing.Point(148, 234);
             this.btn_Close.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btn_Close.Name = "btn_Close";
-            this.btn_Close.Size = new System.Drawing.Size(66, 37);
+            this.btn_Close.Size = new System.Drawing.Size(75, 46);
             this.btn_Close.TabIndex = 1;
             this.btn_Close.Text = "닫기";
             this.btn_Close.UseVisualStyleBackColor = true;
             this.btn_Close.Click += new System.EventHandler(this.btn_Close_Click);
             // 
+            // clb_GroupUser
+            // 
+            this.clb_GroupUser.FormattingEnabled = true;
+            this.clb_GroupUser.Location = new System.Drawing.Point(35, 22);
+            this.clb_GroupUser.Name = "clb_GroupUser";
+            this.clb_GroupUser.Size = new System.Drawing.Size(188, 184);
+            this.clb_GroupUser.TabIndex = 2;
+            // 
             // CreateGroupForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(376, 199);
+            this.ClientSize = new System.Drawing.Size(255, 307);
+            this.Controls.Add(this.clb_GroupUser);
             this.Controls.Add(this.btn_Close);
             this.Controls.Add(this.btn_Create);
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
@@ -74,5 +84,6 @@ namespace TestClient
 
         private System.Windows.Forms.Button btn_Create;
         private System.Windows.Forms.Button btn_Close;
+        private System.Windows.Forms.CheckedListBox clb_GroupUser;
     }
 }

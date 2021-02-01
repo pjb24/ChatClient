@@ -14,8 +14,6 @@ namespace TestClient
 {
     public partial class RegisterForm : Form
     {
-        public NetworkStream stream = default(NetworkStream);
-
         public RegisterForm()
         {
             InitializeComponent();
@@ -35,8 +33,8 @@ namespace TestClient
 
             byte[] buffer = Encoding.Unicode.GetBytes(sendMsg + "$");
             
-            stream.Write(buffer, 0, buffer.Length);
-            stream.Flush();
+            Initializer.stream.Write(buffer, 0, buffer.Length);
+            Initializer.stream.Flush();
 
             txt_ID.Clear();
             txt_PW.Clear();

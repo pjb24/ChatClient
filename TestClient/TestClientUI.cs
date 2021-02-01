@@ -11,11 +11,13 @@ using System.Windows.Forms;
 using System.Threading;
 using System.Net;
 using System.Net.Sockets;
+using System.Configuration;
 
 namespace TestClient
 {
     public partial class TestClientUI : Form
     {
+        /*
         // <ID>
         public List<string> userList = new List<string>();
         // <groupName>
@@ -24,7 +26,6 @@ namespace TestClient
         // class에서 사용할 변수 초기화
         TcpClient clientSocket = new TcpClient();
         NetworkStream stream = default(NetworkStream);
-        string message = string.Empty;
 
         // 사용되는 GroupForm이 1개이기 때문에 이곳에 선언
         GroupForm groupForm = new GroupForm();
@@ -32,6 +33,11 @@ namespace TestClient
         List<ChatGroupForm> chatGroupForms = new List<ChatGroupForm>();
 
         // SignInForm signInForm = new SignInForm();
+        */
+
+        TcpClient clientSocket = new TcpClient();
+        NetworkStream stream = default(NetworkStream);
+        string message = string.Empty;
 
         public TestClientUI()
         {
@@ -41,10 +47,15 @@ namespace TestClient
         // Form Load할 때 call
         private void TestClient_Load(object sender, EventArgs e)
         {
+            string IP = ConfigurationManager.AppSettings["IP"];
+            int port = int.Parse(ConfigurationManager.AppSettings["Port"]);
+
             // (serverIP, port) 연결 시도, 현재는 Loopback 사용중, Exception 처리 필요
-            clientSocket.Connect(IPAddress.Loopback, 11000);
+            Initializer.clientSocket.Connect(IP, port);
+            clientSocket = Initializer.clientSocket;
             // NetworkStream 정보 저장, NetworkStream?
-            stream = clientSocket.GetStream();
+            Initializer.stream = clientSocket.GetStream();
+            stream = Initializer.stream;
 
             message = "Connected to Chat Server";
             DisplayText(message);
@@ -56,6 +67,7 @@ namespace TestClient
             stream.Write(buffer, 0, buffer.Length);
             // MSDN : 파생 클래스에서 재정의되면 이 스트림에 대해 모든 버퍼를 지우고 버퍼링된 데이터가 내부 디바이스에 쓰여지도록 합니다.
             // NetworkStream에서는 구현되지 않음
+            // 버퍼에 있는 데이터를 바로 내보냄
             stream.Flush();
             */
 
@@ -133,12 +145,12 @@ namespace TestClient
 
                         foreach (string g in groups)
                         {
-                            if (!groupList.Contains(g))
+                            if (!Initializer.groupList.Contains(g))
                             {
                                 // groupList 추가
-                                groupList.Add(g);
+                                Initializer.groupList.Add(g);
                                 // groupForm.groupList.Clear();
-                                groupForm.groupList = groupList;
+                                // Initializer.groupForm.groupList = Initializer.groupList;
                             }
                         }
                         // 화면 갱신
@@ -151,15 +163,14 @@ namespace TestClient
 
                         foreach (string user in users)
                         {
-                            if (!userList.Contains(user))
+                            if (!Initializer.userList.Contains(user))
                             {
                                 // userList에 추가
-                                userList.Add(user);
+                                Initializer.userList.Add(user);
                                 // groupForm.userList.Clear();
-                                groupForm.userList = userList;
+                                // Initializer.groupForm.userList = Initializer.userList;
                             }
                         }
-                        GroupRefresh();
                     } // receive complete create group
                     else if (message.Contains("completeCreateGroup"))
                     {
@@ -183,10 +194,10 @@ namespace TestClient
 
                         string chat = msg;
 
-                        if (groupList.Contains(group))
+                        if (Initializer.groupList.Contains(group))
                         {
                             // 열려있는 ChatGroupForm 중에서 group이 일치하는 window에 출력
-                            foreach (ChatGroupForm temp in chatGroupForms)
+                            foreach (ChatGroupForm temp in Initializer.chatGroupForms)
                             {
                                 if (temp.group.Equals(group))
                                 {
@@ -238,17 +249,17 @@ namespace TestClient
         private void GroupRefresh()
         {
             // 크로스스레드가 발생할 때
-            if (groupForm.InvokeRequired)
+            if (Initializer.groupForm.InvokeRequired)
             {
                 // BeginInvoke - 비동기식 대리자 실행
                 // 익명함수? 익명대리자?
-                groupForm.BeginInvoke(new MethodInvoker(delegate
+                Initializer.groupForm.BeginInvoke(new MethodInvoker(delegate
                 {
                     GroupRefresh();
                 }));
             }
             else
-                groupForm.designGroup();
+                Initializer.groupForm.designGroup();
         }
 
         /*
@@ -262,10 +273,9 @@ namespace TestClient
         // 진입점 정리 필요
         private void btn_SignIn_Click(object sender, EventArgs e)
         {
-            SignInForm signInForm = new SignInForm();
-            signInForm.testClientUI = this;
-            signInForm.stream = stream;
-            signInForm.Show();
+            Initializer.testClientUI = this;
+            // Initializer.stream = stream;
+            Initializer.signInForm.Show();
 
             this.WindowState = FormWindowState.Minimized;
         }
@@ -273,20 +283,20 @@ namespace TestClient
         // ParameterizedThreadStart가 object만 받기 때문에 object 사용
         private void open_Group(object user_ID)
         {
-            groupForm.stream = stream;
-            groupForm.user_ID = string.Empty;
-            groupForm.user_ID = Convert.ToString(user_ID);
-            groupForm.userList = userList;
-            groupForm.groupList = groupList;
-            groupForm.testClientUI = this;
+            // Initializer.groupForm.stream = stream;
+            // Initializer.groupForm.user_ID = string.Empty;
+            Initializer.user_ID = Convert.ToString(user_ID);
+            // Initializer.groupForm.userList = Initializer.userList;
+            // Initializer.groupForm.groupList = Initializer.groupList;
+            // Initializer.groupForm.testClientUI = this;
             // Show를 사용하면 바로 꺼짐, 이유 확인 필요
-            groupForm.ShowDialog();
+            Initializer.groupForm.ShowDialog();
         }
 
         // ChatGroupForm이 열렸을 때 Form 정보 저장
         public void open_ChatGroupForm(ChatGroupForm chatGroupForm)
         {
-            chatGroupForms.Add(chatGroupForm);
+            Initializer.chatGroupForms.Add(chatGroupForm);
         }
     }
 }

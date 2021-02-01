@@ -14,11 +14,13 @@ namespace TestClient
 {
     public partial class CreateGroupForm : Form
     {
+        /*
         public NetworkStream stream = default(NetworkStream);
         public List<string> userList = new List<string>();
         public string user_ID;
+        */
 
-        private CheckedListBox chk_GroupUser = new CheckedListBox();
+        // private CheckedListBox chk_GroupUser = new CheckedListBox();
 
         public CreateGroupForm()
         {
@@ -33,18 +35,18 @@ namespace TestClient
         private void btn_Create_Click(object sender, EventArgs e)
         {
             string sendMsg = null;
-            foreach(var checkeditem in chk_GroupUser.CheckedItems)
+            foreach(var checkeditem in clb_GroupUser.CheckedItems)
             {
                 sendMsg = sendMsg + (string)checkeditem + "&";
             }
             Console.WriteLine(sendMsg);
 
             // send group info to server
-            sendMsg = sendMsg + user_ID + "&createGroup";
+            sendMsg = sendMsg + Initializer.user_ID + "&createGroup";
 
             byte[] buffer = Encoding.Unicode.GetBytes(sendMsg + "$");
-            stream.Write(buffer, 0, buffer.Length);
-            stream.Flush();
+            Initializer.stream.Write(buffer, 0, buffer.Length);
+            Initializer.stream.Flush();
 
             this.Close();
         }
@@ -53,15 +55,15 @@ namespace TestClient
         {
             // change design
             // chk_GroupUser = new CheckedListBox();
-            chk_GroupUser.Location = new Point(10, 10);
-            chk_GroupUser.Name = "chk_GroupUser";
-            chk_GroupUser.CheckOnClick = true;
+            clb_GroupUser.Location = new Point(10, 10);
+            clb_GroupUser.Name = "clb_GroupUser";
+            clb_GroupUser.CheckOnClick = true;
             // btn_OpenGroup.Size = new Size(50, 50);
-            for (int i = 0; i < userList.Count; i++)
+            for (int i = 0; i < Initializer.userList.Count; i++)
             {
-                chk_GroupUser.Items.Add(userList[i]);
+                clb_GroupUser.Items.Add(Initializer.userList[i]);
             }
-            Controls.Add(chk_GroupUser);
+            Controls.Add(clb_GroupUser);
         }
     }
 }

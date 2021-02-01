@@ -15,6 +15,7 @@ namespace TestClient
 {
     public partial class GroupForm : Form
     {
+        /*
         public NetworkStream stream = default(NetworkStream);
         public List<string> userList = new List<string>();
         public List<string> groupList = new List<string>();
@@ -22,6 +23,7 @@ namespace TestClient
 
         // new TestClientUI(); 로 생성해버리면 stackoverflowException 발생 
         public TestClientUI testClientUI = null;
+        */
         // 동적 생성되는 버튼 저장
         private List<Button> btn_OpenGroup = new List<Button>();
 
@@ -48,13 +50,32 @@ namespace TestClient
             // groupList를 사용하여 버튼 컨트롤 동적 생성
             // 버튼의 Text를 사용자 편의적으로 바꿀 필요가 있음
             // change design
-            for (int i = 0; i < groupList.Count; i++)
+            foreach (var item in Initializer.groupList)
+            {
+                if (!lb_GroupList.Items.Contains(item))
+                {
+                    lb_GroupList.Items.Add(item);
+                }                
+            }
+            // window를 비활성화하여 WM_PAINT call
+            // true 배경을 지우고 다시 그린다
+            // false 현 배경 위에 다시 그린다
+            Invalidate(false);
+        }
+
+        /*
+        public void designGroup()
+        {
+            // groupList를 사용하여 버튼 컨트롤 동적 생성
+            // 버튼의 Text를 사용자 편의적으로 바꿀 필요가 있음
+            // change design
+            for (int i = 0; i < Initializer.groupList.Count; i++)
             {
                 btn_OpenGroup.Add(new Button());
-                btn_OpenGroup[i].Location = new Point(10 + 40 * i, 10 + 40 * i);
+                btn_OpenGroup[i].Location = new Point(10 + 40, 10 + 40 * i);
                 btn_OpenGroup[i].Name = "btn_OpenGroup" + i.ToString();
                 //btn_OpenGroup[i].Size = new Size(50, 50);
-                btn_OpenGroup[i].Text = "채팅방" + i.ToString();
+                btn_OpenGroup[i].Text = Initializer.groupList[i];
                 btn_OpenGroup[i].UseVisualStyleBackColor = true;
                 btn_OpenGroup[i].Tag = i;
                 btn_OpenGroup[i].Click += new EventHandler(btn_OpenGroup_Click);
@@ -65,6 +86,7 @@ namespace TestClient
             // false 현 배경 위에 다시 그린다
             Invalidate(false);
         }
+        */
 
         private void open_ChatGroup(Control sender)
         {
@@ -84,15 +106,46 @@ namespace TestClient
                 }
             }
             ChatGroupForm chatGroupForm = new ChatGroupForm();
-            chatGroupForm.stream = stream;
-            chatGroupForm.group = groupList[(int)btn.Tag];
-            chatGroupForm.user_ID = user_ID;
+            // chatGroupForm.stream = stream;
+            chatGroupForm.group = Initializer.groupList[(int)btn.Tag];
+            // chatGroupForm.user_ID = user_ID;
             chatGroupForm.Tag = (int)btn.Tag;
-            chatGroupForm.Text = "채팅방" + (int)btn.Tag;
+            chatGroupForm.Text = Initializer.groupList[(int)btn.Tag];
             chatGroupForm.Name = "chatGroupForm" + (int)btn.Tag;
 
             // ChatGroupForm이 열렸을 때 TestClientUI에 Form 정보 저장
-            testClientUI.open_ChatGroupForm(chatGroupForm);
+            Initializer.testClientUI.open_ChatGroupForm(chatGroupForm);
+
+            chatGroupForm.Show();
+        }
+
+        private void open_ChatGroup(object sender)
+        {
+            ListBox lb = sender as ListBox;
+            // 해당 윈도우가 이미 열려있을 때 처리
+            foreach (Form openForm in Application.OpenForms)
+            {
+                if (openForm.Name.Equals("chatGroupForm" + lb.SelectedIndex))
+                {
+                    if (openForm.WindowState == FormWindowState.Minimized)
+                    {
+                        openForm.WindowState = FormWindowState.Normal;
+                        openForm.Location = new Point(this.Location.X + this.Width, this.Location.Y);
+                    }
+                    openForm.Activate();
+                    return;
+                }
+            }
+            ChatGroupForm chatGroupForm = new ChatGroupForm();
+            // chatGroupForm.stream = stream;
+            chatGroupForm.group = Initializer.groupList[lb.SelectedIndex];
+            // chatGroupForm.user_ID = user_ID;
+            chatGroupForm.Tag = lb.SelectedIndex;
+            chatGroupForm.Text = Initializer.groupList[lb.SelectedIndex];
+            chatGroupForm.Name = "chatGroupForm" + lb.SelectedIndex;
+
+            // ChatGroupForm이 열렸을 때 TestClientUI에 Form 정보 저장
+            Initializer.testClientUI.open_ChatGroupForm(chatGroupForm);
 
             chatGroupForm.Show();
         }
@@ -101,28 +154,28 @@ namespace TestClient
         {
             // 1번 사용하고 더 사용하지 않기 때문에 함수 안에서 CreateGroupForm 객체 생성
             CreateGroupForm createGroupForm = new CreateGroupForm();
-            createGroupForm.stream = stream;
-            createGroupForm.userList = userList;
-            createGroupForm.user_ID = user_ID;
+            // createGroupForm.stream = stream;
+            // createGroupForm.userList = userList;
+            // createGroupForm.user_ID = user_ID;
             createGroupForm.Show();
         }
 
         // groupList 동기화 요청
         public void btn_PullGroup_Click(object sender, EventArgs e)
         {
-            string sendMsg =  user_ID + "&requestGroupList";
+            string sendMsg = Initializer.user_ID + "&requestGroupList";
             byte[] buffer = Encoding.Unicode.GetBytes(sendMsg + "$");
-            stream.Write(buffer, 0, buffer.Length);
-            stream.Flush();
+            Initializer.stream.Write(buffer, 0, buffer.Length);
+            Initializer.stream.Flush();
         }
 
         // userList 동기화 요청
         private void btn_PullUser_Click(object sender, EventArgs e)
         {
-            string sendMsg = user_ID + "&requestUserList";
+            string sendMsg = Initializer.user_ID + "&requestUserList";
             byte[] buffer = Encoding.Unicode.GetBytes(sendMsg + "$");
-            stream.Write(buffer, 0, buffer.Length);
-            stream.Flush();
+            Initializer.stream.Write(buffer, 0, buffer.Length);
+            Initializer.stream.Flush();
         }
 
         // server에서 clientList 정리 필요
@@ -137,7 +190,15 @@ namespace TestClient
 
         private void GroupForm_Load(object sender, EventArgs e)
         {
-            this.lbl_UserID.Text = "클라이언트 ID : " + user_ID;
+            this.lbl_UserID.Text = "클라이언트 ID : " + Initializer.user_ID;
+        }
+
+        private void lb_GroupList_DoubleClick(object sender, EventArgs e)
+        {
+            if (lb_GroupList.SelectedItems.Count == 1)
+            {
+                open_ChatGroup(sender);
+            }
         }
     }
 }
