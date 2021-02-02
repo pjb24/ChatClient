@@ -38,10 +38,10 @@ namespace TestClient
             // txt_ID
             // 
             this.txt_ID.ForeColor = System.Drawing.SystemColors.InactiveCaption;
-            this.txt_ID.Location = new System.Drawing.Point(54, 171);
+            this.txt_ID.Location = new System.Drawing.Point(87, 256);
             this.txt_ID.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.txt_ID.Name = "txt_ID";
-            this.txt_ID.Size = new System.Drawing.Size(232, 25);
+            this.txt_ID.Size = new System.Drawing.Size(160, 21);
             this.txt_ID.TabIndex = 1;
             this.txt_ID.Text = "ID";
             this.txt_ID.Enter += new System.EventHandler(this.txt_ID_Enter);
@@ -50,10 +50,10 @@ namespace TestClient
             // txt_PW
             // 
             this.txt_PW.ForeColor = System.Drawing.SystemColors.InactiveCaption;
-            this.txt_PW.Location = new System.Drawing.Point(54, 239);
+            this.txt_PW.Location = new System.Drawing.Point(87, 295);
             this.txt_PW.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.txt_PW.Name = "txt_PW";
-            this.txt_PW.Size = new System.Drawing.Size(232, 25);
+            this.txt_PW.Size = new System.Drawing.Size(160, 21);
             this.txt_PW.TabIndex = 2;
             this.txt_PW.Text = "PW";
             this.txt_PW.Enter += new System.EventHandler(this.txt_PW_Enter);
@@ -61,10 +61,10 @@ namespace TestClient
             // 
             // btn_Submit
             // 
-            this.btn_Submit.Location = new System.Drawing.Point(54, 316);
+            this.btn_Submit.Location = new System.Drawing.Point(87, 354);
             this.btn_Submit.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btn_Submit.Name = "btn_Submit";
-            this.btn_Submit.Size = new System.Drawing.Size(75, 31);
+            this.btn_Submit.Size = new System.Drawing.Size(160, 30);
             this.btn_Submit.TabIndex = 3;
             this.btn_Submit.Text = "등록";
             this.btn_Submit.UseVisualStyleBackColor = true;
@@ -72,10 +72,10 @@ namespace TestClient
             // 
             // btn_Close
             // 
-            this.btn_Close.Location = new System.Drawing.Point(211, 316);
+            this.btn_Close.Location = new System.Drawing.Point(87, 404);
             this.btn_Close.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btn_Close.Name = "btn_Close";
-            this.btn_Close.Size = new System.Drawing.Size(75, 31);
+            this.btn_Close.Size = new System.Drawing.Size(160, 30);
             this.btn_Close.TabIndex = 0;
             this.btn_Close.Text = "닫기";
             this.btn_Close.UseVisualStyleBackColor = true;
@@ -83,9 +83,9 @@ namespace TestClient
             // 
             // RegisterForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(332, 553);
+            this.ClientSize = new System.Drawing.Size(334, 561);
             this.Controls.Add(this.btn_Close);
             this.Controls.Add(this.btn_Submit);
             this.Controls.Add(this.txt_PW);

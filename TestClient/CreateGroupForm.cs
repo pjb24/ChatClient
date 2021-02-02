@@ -55,15 +55,15 @@ namespace TestClient
         {
             // change design
             // chk_GroupUser = new CheckedListBox();
-            clb_GroupUser.Location = new Point(10, 10);
-            clb_GroupUser.Name = "clb_GroupUser";
-            clb_GroupUser.CheckOnClick = true;
+            // clb_GroupUser.Location = new Point(10, 10);
+            // clb_GroupUser.Name = "clb_GroupUser";
+            // clb_GroupUser.CheckOnClick = true;
             // btn_OpenGroup.Size = new Size(50, 50);
             for (int i = 0; i < Initializer.userList.Count; i++)
             {
                 clb_GroupUser.Items.Add(Initializer.userList[i]);
             }
-            Controls.Add(clb_GroupUser);
+            // Controls.Add(clb_GroupUser);
         }
     }
 }

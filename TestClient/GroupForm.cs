@@ -41,12 +41,12 @@ namespace TestClient
             foreach(Control temp in controls)
             {
                 // 확인된 컨트롤 정보로 open
-                open_ChatGroup(temp);
+                Open_ChatGroup(temp);
             }
         }
 
         /* ListView
-        public void designGroup()
+        public void DesignGroup()
         {
             // change design
             foreach (var item in Initializer.groupList)
@@ -68,7 +68,7 @@ namespace TestClient
         }*/
 
         
-        public void designGroup()
+        public void DesignGroup()
         {
             // groupList를 사용하여 버튼 컨트롤 동적 생성
             // 버튼의 Text를 사용자 편의적으로 바꿀 필요가 있음
@@ -87,7 +87,7 @@ namespace TestClient
         }
 
         /* Button
-        public void designGroup()
+        public void DesignGroup()
         {
             // groupList를 사용하여 버튼 컨트롤 동적 생성
             // 버튼의 Text를 사용자 편의적으로 바꿀 필요가 있음
@@ -111,7 +111,7 @@ namespace TestClient
         }
         */
 
-        private void open_ChatGroup(Control sender)
+        private void Open_ChatGroup(Control sender)
         {
             Button btn = sender as Button;
             // 해당 윈도우가 이미 열려있을 때 처리
@@ -137,12 +137,12 @@ namespace TestClient
             chatGroupForm.Name = "chatGroupForm" + (int)btn.Tag;
 
             // ChatGroupForm이 열렸을 때 TestClientUI에 Form 정보 저장
-            Initializer.testClientUI.open_ChatGroupForm(chatGroupForm);
+            Initializer.testClientUI.Open_ChatGroupForm(chatGroupForm);
 
             chatGroupForm.Show();
         }
 
-        private void open_ChatGroup(object sender)
+        private void Open_ChatGroup(object sender)
         {
             ListBox lb = sender as ListBox;
             // 해당 윈도우가 이미 열려있을 때 처리
@@ -168,7 +168,7 @@ namespace TestClient
             chatGroupForm.Name = "chatGroupForm" + lb.SelectedIndex;
 
             // ChatGroupForm이 열렸을 때 TestClientUI에 Form 정보 저장
-            Initializer.testClientUI.open_ChatGroupForm(chatGroupForm);
+            Initializer.testClientUI.Open_ChatGroupForm(chatGroupForm);
 
             chatGroupForm.Show();
         }
@@ -220,7 +220,7 @@ namespace TestClient
         {
             if (lb_GroupList.SelectedItems.Count == 1)
             {
-                open_ChatGroup(sender);
+                Open_ChatGroup(sender);
             }
         }
     }

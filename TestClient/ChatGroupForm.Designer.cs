@@ -38,29 +38,29 @@ namespace TestClient
             // lb_Result
             // 
             this.lb_Result.FormattingEnabled = true;
-            this.lb_Result.ItemHeight = 15;
+            this.lb_Result.ItemHeight = 12;
             this.lb_Result.Location = new System.Drawing.Point(0, 0);
             this.lb_Result.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.lb_Result.Name = "lb_Result";
-            this.lb_Result.Size = new System.Drawing.Size(333, 484);
+            this.lb_Result.Size = new System.Drawing.Size(335, 484);
             this.lb_Result.TabIndex = 1;
             // 
             // txt_Send
             // 
-            this.txt_Send.Location = new System.Drawing.Point(0, 492);
+            this.txt_Send.Location = new System.Drawing.Point(12, 501);
             this.txt_Send.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.txt_Send.Multiline = true;
             this.txt_Send.Name = "txt_Send";
-            this.txt_Send.Size = new System.Drawing.Size(239, 60);
+            this.txt_Send.Size = new System.Drawing.Size(204, 49);
             this.txt_Send.TabIndex = 2;
             this.txt_Send.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txt_Send_KeyDown);
             // 
             // btn_Send
             // 
-            this.btn_Send.Location = new System.Drawing.Point(245, 492);
+            this.btn_Send.Location = new System.Drawing.Point(222, 501);
             this.btn_Send.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btn_Send.Name = "btn_Send";
-            this.btn_Send.Size = new System.Drawing.Size(75, 25);
+            this.btn_Send.Size = new System.Drawing.Size(100, 35);
             this.btn_Send.TabIndex = 3;
             this.btn_Send.Text = "전송";
             this.btn_Send.UseVisualStyleBackColor = true;
@@ -69,19 +69,19 @@ namespace TestClient
             // lb_UserList
             // 
             this.lb_UserList.FormattingEnabled = true;
-            this.lb_UserList.ItemHeight = 15;
-            this.lb_UserList.Location = new System.Drawing.Point(11, 64);
+            this.lb_UserList.ItemHeight = 12;
+            this.lb_UserList.Location = new System.Drawing.Point(10, 51);
             this.lb_UserList.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.lb_UserList.Name = "lb_UserList";
-            this.lb_UserList.Size = new System.Drawing.Size(182, 214);
+            this.lb_UserList.Size = new System.Drawing.Size(160, 172);
             this.lb_UserList.TabIndex = 5;
             this.lb_UserList.Visible = false;
             // 
             // ChatGroupForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(332, 553);
+            this.ClientSize = new System.Drawing.Size(334, 561);
             this.Controls.Add(this.lb_UserList);
             this.Controls.Add(this.btn_Send);
             this.Controls.Add(this.txt_Send);

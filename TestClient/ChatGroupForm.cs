@@ -14,11 +14,11 @@ namespace TestClient
 {
     public partial class ChatGroupForm : Form
     {
-        // public NetworkStream stream = default(NetworkStream);
+        public NetworkStream stream = default(NetworkStream);
         // 열려있는 group의 name
         public string group = string.Empty;
         // 현재 클라이언트의 ID
-        // public string user_ID = string.Empty;
+        public string user_ID = string.Empty;
 
         public ChatGroupForm()
         {
@@ -27,11 +27,11 @@ namespace TestClient
 
         private void btn_Send_Click(object sender, EventArgs e)
         {
-            string sendMsg = this.txt_Send.Text + "&" + group + "&" + Initializer.user_ID + "&groupChat";
+            string sendMsg = this.txt_Send.Text + "&" + group + "&" + user_ID + "&groupChat";
 
             byte[] buffer = Encoding.Unicode.GetBytes(sendMsg + "$");
-            Initializer.stream.Write(buffer, 0, buffer.Length);
-            Initializer.stream.Flush();
+            stream.Write(buffer, 0, buffer.Length);
+            stream.Flush();
 
             txt_Send.Clear();
             txt_Send.Focus();

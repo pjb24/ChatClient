@@ -38,10 +38,10 @@ namespace TestClient
             // txt_ID
             // 
             this.txt_ID.ForeColor = System.Drawing.SystemColors.InactiveCaption;
-            this.txt_ID.Location = new System.Drawing.Point(78, 263);
+            this.txt_ID.Location = new System.Drawing.Point(87, 256);
             this.txt_ID.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.txt_ID.Name = "txt_ID";
-            this.txt_ID.Size = new System.Drawing.Size(180, 25);
+            this.txt_ID.Size = new System.Drawing.Size(160, 21);
             this.txt_ID.TabIndex = 1;
             this.txt_ID.Text = "ID";
             this.txt_ID.Enter += new System.EventHandler(this.txt_ID_Enter);
@@ -50,10 +50,10 @@ namespace TestClient
             // txt_PW
             // 
             this.txt_PW.ForeColor = System.Drawing.SystemColors.InactiveCaption;
-            this.txt_PW.Location = new System.Drawing.Point(78, 310);
+            this.txt_PW.Location = new System.Drawing.Point(87, 295);
             this.txt_PW.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.txt_PW.Name = "txt_PW";
-            this.txt_PW.Size = new System.Drawing.Size(180, 25);
+            this.txt_PW.Size = new System.Drawing.Size(160, 21);
             this.txt_PW.TabIndex = 2;
             this.txt_PW.Text = "PW";
             this.txt_PW.Enter += new System.EventHandler(this.txt_PW_Enter);
@@ -61,10 +61,10 @@ namespace TestClient
             // 
             // btn_SignIn
             // 
-            this.btn_SignIn.Location = new System.Drawing.Point(78, 361);
+            this.btn_SignIn.Location = new System.Drawing.Point(87, 354);
             this.btn_SignIn.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btn_SignIn.Name = "btn_SignIn";
-            this.btn_SignIn.Size = new System.Drawing.Size(180, 40);
+            this.btn_SignIn.Size = new System.Drawing.Size(160, 30);
             this.btn_SignIn.TabIndex = 0;
             this.btn_SignIn.Text = "로그인";
             this.btn_SignIn.UseVisualStyleBackColor = true;
@@ -72,10 +72,10 @@ namespace TestClient
             // 
             // btn_Register
             // 
-            this.btn_Register.Location = new System.Drawing.Point(78, 441);
+            this.btn_Register.Location = new System.Drawing.Point(87, 404);
             this.btn_Register.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btn_Register.Name = "btn_Register";
-            this.btn_Register.Size = new System.Drawing.Size(180, 40);
+            this.btn_Register.Size = new System.Drawing.Size(160, 30);
             this.btn_Register.TabIndex = 3;
             this.btn_Register.Text = "회원가입";
             this.btn_Register.UseVisualStyleBackColor = true;
@@ -83,9 +83,9 @@ namespace TestClient
             // 
             // SignInForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(332, 553);
+            this.ClientSize = new System.Drawing.Size(334, 561);
             this.Controls.Add(this.btn_Register);
             this.Controls.Add(this.btn_SignIn);
             this.Controls.Add(this.txt_PW);

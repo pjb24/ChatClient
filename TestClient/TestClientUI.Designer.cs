@@ -33,27 +33,36 @@ namespace TestClient
             this.txt_UserID = new System.Windows.Forms.TextBox();
             this.txt_UserPW = new System.Windows.Forms.TextBox();
             this.btn_SignInSubmit = new System.Windows.Forms.Button();
-            this.btn_SignInRegister = new System.Windows.Forms.Button();
+            this.btn_OpenRegister = new System.Windows.Forms.Button();
             this.btn_RegisterSubmit = new System.Windows.Forms.Button();
             this.btn_RegisterClose = new System.Windows.Forms.Button();
+            this.lb_GroupList = new System.Windows.Forms.ListBox();
+            this.btn_OpenCreateGroup = new System.Windows.Forms.Button();
+            this.btn_SignOut = new System.Windows.Forms.Button();
+            this.btn_PullUser = new System.Windows.Forms.Button();
+            this.btn_PullGroup = new System.Windows.Forms.Button();
+            this.clb_GroupingUser = new System.Windows.Forms.CheckedListBox();
+            this.btn_Create = new System.Windows.Forms.Button();
+            this.btn_CreateClose = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // lb_Result
             // 
             this.lb_Result.FormattingEnabled = true;
-            this.lb_Result.ItemHeight = 15;
-            this.lb_Result.Location = new System.Drawing.Point(1582, 778);
+            this.lb_Result.HorizontalScrollbar = true;
+            this.lb_Result.ItemHeight = 12;
+            this.lb_Result.Location = new System.Drawing.Point(430, 631);
             this.lb_Result.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.lb_Result.Name = "lb_Result";
-            this.lb_Result.Size = new System.Drawing.Size(308, 244);
+            this.lb_Result.Size = new System.Drawing.Size(1384, 196);
             this.lb_Result.TabIndex = 0;
             // 
             // txt_UserID
             // 
             this.txt_UserID.ForeColor = System.Drawing.SystemColors.InactiveCaption;
-            this.txt_UserID.Location = new System.Drawing.Point(78, 263);
+            this.txt_UserID.Location = new System.Drawing.Point(430, 139);
             this.txt_UserID.Name = "txt_UserID";
-            this.txt_UserID.Size = new System.Drawing.Size(180, 25);
+            this.txt_UserID.Size = new System.Drawing.Size(160, 21);
             this.txt_UserID.TabIndex = 1;
             this.txt_UserID.Text = "ID";
             this.txt_UserID.Enter += new System.EventHandler(this.txt_UserID_Enter);
@@ -62,9 +71,9 @@ namespace TestClient
             // txt_UserPW
             // 
             this.txt_UserPW.ForeColor = System.Drawing.SystemColors.InactiveCaption;
-            this.txt_UserPW.Location = new System.Drawing.Point(78, 310);
+            this.txt_UserPW.Location = new System.Drawing.Point(430, 206);
             this.txt_UserPW.Name = "txt_UserPW";
-            this.txt_UserPW.Size = new System.Drawing.Size(180, 25);
+            this.txt_UserPW.Size = new System.Drawing.Size(160, 21);
             this.txt_UserPW.TabIndex = 2;
             this.txt_UserPW.Text = "PW";
             this.txt_UserPW.Enter += new System.EventHandler(this.txt_UserPW_Enter);
@@ -72,50 +81,149 @@ namespace TestClient
             // 
             // btn_SignInSubmit
             // 
-            this.btn_SignInSubmit.Location = new System.Drawing.Point(78, 361);
+            this.btn_SignInSubmit.Location = new System.Drawing.Point(430, 266);
             this.btn_SignInSubmit.Name = "btn_SignInSubmit";
-            this.btn_SignInSubmit.Size = new System.Drawing.Size(180, 40);
+            this.btn_SignInSubmit.Size = new System.Drawing.Size(160, 30);
             this.btn_SignInSubmit.TabIndex = 3;
             this.btn_SignInSubmit.Text = "로그인";
             this.btn_SignInSubmit.UseVisualStyleBackColor = true;
-            this.btn_SignInSubmit.Click += new System.EventHandler(this.btn_SignIn_Click);
+            this.btn_SignInSubmit.Click += new System.EventHandler(this.btn_SignInSubmit_Click);
             // 
-            // btn_SignInRegister
+            // btn_OpenRegister
             // 
-            this.btn_SignInRegister.Location = new System.Drawing.Point(78, 441);
-            this.btn_SignInRegister.Name = "btn_SignInRegister";
-            this.btn_SignInRegister.Size = new System.Drawing.Size(180, 40);
-            this.btn_SignInRegister.TabIndex = 3;
-            this.btn_SignInRegister.Text = "회원가입";
-            this.btn_SignInRegister.UseVisualStyleBackColor = true;
-            this.btn_SignInRegister.Click += new System.EventHandler(this.btn_Register_Click);
+            this.btn_OpenRegister.Location = new System.Drawing.Point(430, 339);
+            this.btn_OpenRegister.Name = "btn_OpenRegister";
+            this.btn_OpenRegister.Size = new System.Drawing.Size(160, 30);
+            this.btn_OpenRegister.TabIndex = 3;
+            this.btn_OpenRegister.Text = "회원가입";
+            this.btn_OpenRegister.UseVisualStyleBackColor = true;
+            this.btn_OpenRegister.Click += new System.EventHandler(this.btn_OpenRegister_Click);
             // 
             // btn_RegisterSubmit
             // 
-            this.btn_RegisterSubmit.Location = new System.Drawing.Point(552, 399);
+            this.btn_RegisterSubmit.Location = new System.Drawing.Point(753, 266);
             this.btn_RegisterSubmit.Name = "btn_RegisterSubmit";
-            this.btn_RegisterSubmit.Size = new System.Drawing.Size(75, 40);
+            this.btn_RegisterSubmit.Size = new System.Drawing.Size(160, 30);
             this.btn_RegisterSubmit.TabIndex = 4;
+            this.btn_RegisterSubmit.TabStop = false;
             this.btn_RegisterSubmit.Text = "등록";
             this.btn_RegisterSubmit.UseVisualStyleBackColor = true;
+            this.btn_RegisterSubmit.Click += new System.EventHandler(this.btn_RegisterSubmit_Click);
             // 
             // btn_RegisterClose
             // 
-            this.btn_RegisterClose.Location = new System.Drawing.Point(682, 399);
+            this.btn_RegisterClose.Location = new System.Drawing.Point(753, 339);
             this.btn_RegisterClose.Name = "btn_RegisterClose";
-            this.btn_RegisterClose.Size = new System.Drawing.Size(75, 40);
+            this.btn_RegisterClose.Size = new System.Drawing.Size(160, 30);
             this.btn_RegisterClose.TabIndex = 5;
-            this.btn_RegisterClose.Text = "닫기";
+            this.btn_RegisterClose.TabStop = false;
+            this.btn_RegisterClose.Text = "취소";
             this.btn_RegisterClose.UseVisualStyleBackColor = true;
+            this.btn_RegisterClose.Click += new System.EventHandler(this.btn_RegisterClose_Click);
+            // 
+            // lb_GroupList
+            // 
+            this.lb_GroupList.FormattingEnabled = true;
+            this.lb_GroupList.ItemHeight = 12;
+            this.lb_GroupList.Location = new System.Drawing.Point(987, 12);
+            this.lb_GroupList.Name = "lb_GroupList";
+            this.lb_GroupList.Size = new System.Drawing.Size(335, 460);
+            this.lb_GroupList.TabIndex = 6;
+            this.lb_GroupList.TabStop = false;
+            this.lb_GroupList.DoubleClick += new System.EventHandler(this.lb_GroupList_DoubleClick);
+            // 
+            // btn_OpenCreateGroup
+            // 
+            this.btn_OpenCreateGroup.Location = new System.Drawing.Point(1202, 478);
+            this.btn_OpenCreateGroup.Name = "btn_OpenCreateGroup";
+            this.btn_OpenCreateGroup.Size = new System.Drawing.Size(120, 35);
+            this.btn_OpenCreateGroup.TabIndex = 7;
+            this.btn_OpenCreateGroup.TabStop = false;
+            this.btn_OpenCreateGroup.Text = "채팅방 생성";
+            this.btn_OpenCreateGroup.UseVisualStyleBackColor = true;
+            this.btn_OpenCreateGroup.Click += new System.EventHandler(this.btn_OpenCreateGroup_Click);
+            // 
+            // btn_SignOut
+            // 
+            this.btn_SignOut.Location = new System.Drawing.Point(1252, 519);
+            this.btn_SignOut.Name = "btn_SignOut";
+            this.btn_SignOut.Size = new System.Drawing.Size(70, 35);
+            this.btn_SignOut.TabIndex = 8;
+            this.btn_SignOut.TabStop = false;
+            this.btn_SignOut.Text = "로그아웃";
+            this.btn_SignOut.UseVisualStyleBackColor = true;
+            this.btn_SignOut.Click += new System.EventHandler(this.btn_SignOut_Click);
+            // 
+            // btn_PullUser
+            // 
+            this.btn_PullUser.Location = new System.Drawing.Point(987, 478);
+            this.btn_PullUser.Name = "btn_PullUser";
+            this.btn_PullUser.Size = new System.Drawing.Size(120, 35);
+            this.btn_PullUser.TabIndex = 9;
+            this.btn_PullUser.TabStop = false;
+            this.btn_PullUser.Text = "회원목록 가져오기";
+            this.btn_PullUser.UseVisualStyleBackColor = true;
+            this.btn_PullUser.Click += new System.EventHandler(this.btn_PullUser_Click);
+            // 
+            // btn_PullGroup
+            // 
+            this.btn_PullGroup.Location = new System.Drawing.Point(987, 519);
+            this.btn_PullGroup.Name = "btn_PullGroup";
+            this.btn_PullGroup.Size = new System.Drawing.Size(120, 35);
+            this.btn_PullGroup.TabIndex = 10;
+            this.btn_PullGroup.TabStop = false;
+            this.btn_PullGroup.Text = "채팅방 가져오기";
+            this.btn_PullGroup.UseVisualStyleBackColor = true;
+            this.btn_PullGroup.Click += new System.EventHandler(this.btn_PullGroup_Click);
+            // 
+            // clb_GroupingUser
+            // 
+            this.clb_GroupingUser.CheckOnClick = true;
+            this.clb_GroupingUser.FormattingEnabled = true;
+            this.clb_GroupingUser.Location = new System.Drawing.Point(1479, 12);
+            this.clb_GroupingUser.Name = "clb_GroupingUser";
+            this.clb_GroupingUser.Size = new System.Drawing.Size(335, 484);
+            this.clb_GroupingUser.TabIndex = 11;
+            this.clb_GroupingUser.TabStop = false;
+            // 
+            // btn_Create
+            // 
+            this.btn_Create.Location = new System.Drawing.Point(1479, 518);
+            this.btn_Create.Name = "btn_Create";
+            this.btn_Create.Size = new System.Drawing.Size(110, 45);
+            this.btn_Create.TabIndex = 12;
+            this.btn_Create.TabStop = false;
+            this.btn_Create.Text = "생성";
+            this.btn_Create.UseVisualStyleBackColor = true;
+            this.btn_Create.Click += new System.EventHandler(this.btn_Create_Click);
+            // 
+            // btn_CreateClose
+            // 
+            this.btn_CreateClose.Location = new System.Drawing.Point(1704, 519);
+            this.btn_CreateClose.Name = "btn_CreateClose";
+            this.btn_CreateClose.Size = new System.Drawing.Size(110, 45);
+            this.btn_CreateClose.TabIndex = 13;
+            this.btn_CreateClose.TabStop = false;
+            this.btn_CreateClose.Text = "취소";
+            this.btn_CreateClose.UseVisualStyleBackColor = true;
+            this.btn_CreateClose.Click += new System.EventHandler(this.btn_CreateClose_Click);
             // 
             // TestClientUI
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1902, 1033);
+            this.ClientSize = new System.Drawing.Size(1904, 1041);
+            this.Controls.Add(this.btn_CreateClose);
+            this.Controls.Add(this.btn_Create);
+            this.Controls.Add(this.clb_GroupingUser);
+            this.Controls.Add(this.btn_PullGroup);
+            this.Controls.Add(this.btn_PullUser);
+            this.Controls.Add(this.btn_SignOut);
+            this.Controls.Add(this.btn_OpenCreateGroup);
+            this.Controls.Add(this.lb_GroupList);
             this.Controls.Add(this.btn_RegisterClose);
             this.Controls.Add(this.btn_RegisterSubmit);
-            this.Controls.Add(this.btn_SignInRegister);
+            this.Controls.Add(this.btn_OpenRegister);
             this.Controls.Add(this.btn_SignInSubmit);
             this.Controls.Add(this.txt_UserPW);
             this.Controls.Add(this.txt_UserID);
@@ -134,9 +242,17 @@ namespace TestClient
         private System.Windows.Forms.TextBox txt_UserID;
         private System.Windows.Forms.TextBox txt_UserPW;
         private System.Windows.Forms.Button btn_SignInSubmit;
-        private System.Windows.Forms.Button btn_SignInRegister;
+        private System.Windows.Forms.Button btn_OpenRegister;
         private System.Windows.Forms.Button btn_RegisterSubmit;
         private System.Windows.Forms.Button btn_RegisterClose;
+        private System.Windows.Forms.ListBox lb_GroupList;
+        private System.Windows.Forms.Button btn_OpenCreateGroup;
+        private System.Windows.Forms.Button btn_SignOut;
+        private System.Windows.Forms.Button btn_PullUser;
+        private System.Windows.Forms.Button btn_PullGroup;
+        private System.Windows.Forms.CheckedListBox clb_GroupingUser;
+        private System.Windows.Forms.Button btn_Create;
+        private System.Windows.Forms.Button btn_CreateClose;
     }
 }
 
