@@ -137,7 +137,7 @@ namespace TestClient
             chatGroupForm.Name = "chatGroupForm" + (int)btn.Tag;
 
             // ChatGroupForm이 열렸을 때 TestClientUI에 Form 정보 저장
-            Initializer.testClientUI.Open_ChatGroupForm(chatGroupForm);
+            // Initializer.testClientUI.Open_ChatGroupForm(chatGroupForm);
 
             chatGroupForm.Show();
         }
@@ -168,7 +168,7 @@ namespace TestClient
             chatGroupForm.Name = "chatGroupForm" + lb.SelectedIndex;
 
             // ChatGroupForm이 열렸을 때 TestClientUI에 Form 정보 저장
-            Initializer.testClientUI.Open_ChatGroupForm(chatGroupForm);
+            // Initializer.testClientUI.Open_ChatGroupForm(chatGroupForm);
 
             chatGroupForm.Show();
         }

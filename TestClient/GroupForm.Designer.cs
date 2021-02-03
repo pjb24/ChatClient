@@ -35,11 +35,12 @@ namespace TestClient
             this.btn_PullUser = new System.Windows.Forms.Button();
             this.lb_GroupList = new System.Windows.Forms.ListBox();
             this.lvw_GroupList = new System.Windows.Forms.ListView();
+            this.listBox1 = new System.Windows.Forms.ListBox();
             this.SuspendLayout();
             // 
             // btn_CreateGroup
             // 
-            this.btn_CreateGroup.Location = new System.Drawing.Point(202, 474);
+            this.btn_CreateGroup.Location = new System.Drawing.Point(202, 476);
             this.btn_CreateGroup.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btn_CreateGroup.Name = "btn_CreateGroup";
             this.btn_CreateGroup.Size = new System.Drawing.Size(120, 35);
@@ -73,7 +74,7 @@ namespace TestClient
             // 
             // btn_PullUser
             // 
-            this.btn_PullUser.Location = new System.Drawing.Point(12, 474);
+            this.btn_PullUser.Location = new System.Drawing.Point(12, 476);
             this.btn_PullUser.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btn_PullUser.Name = "btn_PullUser";
             this.btn_PullUser.Size = new System.Drawing.Size(120, 35);
@@ -86,10 +87,10 @@ namespace TestClient
             // 
             this.lb_GroupList.FormattingEnabled = true;
             this.lb_GroupList.ItemHeight = 12;
-            this.lb_GroupList.Location = new System.Drawing.Point(0, 0);
+            this.lb_GroupList.Location = new System.Drawing.Point(0, 192);
             this.lb_GroupList.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.lb_GroupList.Name = "lb_GroupList";
-            this.lb_GroupList.Size = new System.Drawing.Size(335, 460);
+            this.lb_GroupList.Size = new System.Drawing.Size(335, 316);
             this.lb_GroupList.TabIndex = 5;
             this.lb_GroupList.DoubleClick += new System.EventHandler(this.lb_GroupList_DoubleClick);
             // 
@@ -105,11 +106,21 @@ namespace TestClient
             this.lvw_GroupList.View = System.Windows.Forms.View.List;
             this.lvw_GroupList.Visible = false;
             // 
+            // listBox1
+            // 
+            this.listBox1.FormattingEnabled = true;
+            this.listBox1.ItemHeight = 12;
+            this.listBox1.Location = new System.Drawing.Point(0, 0);
+            this.listBox1.Name = "listBox1";
+            this.listBox1.Size = new System.Drawing.Size(335, 184);
+            this.listBox1.TabIndex = 7;
+            // 
             // GroupForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(334, 561);
+            this.Controls.Add(this.listBox1);
             this.Controls.Add(this.btn_PullUser);
             this.Controls.Add(this.btn_PullGroup);
             this.Controls.Add(this.btn_SignOut);
@@ -132,5 +143,6 @@ namespace TestClient
         private System.Windows.Forms.Button btn_PullUser;
         private System.Windows.Forms.ListBox lb_GroupList;
         private System.Windows.Forms.ListView lvw_GroupList;
+        private System.Windows.Forms.ListBox listBox1;
     }
 }

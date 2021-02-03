@@ -44,6 +44,7 @@ namespace TestClient
             this.clb_GroupingUser = new System.Windows.Forms.CheckedListBox();
             this.btn_Create = new System.Windows.Forms.Button();
             this.btn_CreateClose = new System.Windows.Forms.Button();
+            this.lb_UserList = new System.Windows.Forms.ListBox();
             this.SuspendLayout();
             // 
             // lb_Result
@@ -125,9 +126,9 @@ namespace TestClient
             // 
             this.lb_GroupList.FormattingEnabled = true;
             this.lb_GroupList.ItemHeight = 12;
-            this.lb_GroupList.Location = new System.Drawing.Point(987, 12);
+            this.lb_GroupList.Location = new System.Drawing.Point(987, 204);
             this.lb_GroupList.Name = "lb_GroupList";
-            this.lb_GroupList.Size = new System.Drawing.Size(335, 460);
+            this.lb_GroupList.Size = new System.Drawing.Size(335, 316);
             this.lb_GroupList.TabIndex = 6;
             this.lb_GroupList.TabStop = false;
             this.lb_GroupList.DoubleClick += new System.EventHandler(this.lb_GroupList_DoubleClick);
@@ -163,6 +164,7 @@ namespace TestClient
             this.btn_PullUser.TabStop = false;
             this.btn_PullUser.Text = "회원목록 가져오기";
             this.btn_PullUser.UseVisualStyleBackColor = true;
+            this.btn_PullUser.Visible = false;
             this.btn_PullUser.Click += new System.EventHandler(this.btn_PullUser_Click);
             // 
             // btn_PullGroup
@@ -174,6 +176,7 @@ namespace TestClient
             this.btn_PullGroup.TabStop = false;
             this.btn_PullGroup.Text = "채팅방 가져오기";
             this.btn_PullGroup.UseVisualStyleBackColor = true;
+            this.btn_PullGroup.Visible = false;
             this.btn_PullGroup.Click += new System.EventHandler(this.btn_PullGroup_Click);
             // 
             // clb_GroupingUser
@@ -185,6 +188,7 @@ namespace TestClient
             this.clb_GroupingUser.Size = new System.Drawing.Size(335, 484);
             this.clb_GroupingUser.TabIndex = 11;
             this.clb_GroupingUser.TabStop = false;
+            this.clb_GroupingUser.SelectedIndexChanged += new System.EventHandler(this.clb_GroupingUser_SelectedIndexChanged);
             // 
             // btn_Create
             // 
@@ -208,11 +212,22 @@ namespace TestClient
             this.btn_CreateClose.UseVisualStyleBackColor = true;
             this.btn_CreateClose.Click += new System.EventHandler(this.btn_CreateClose_Click);
             // 
+            // lb_UserList
+            // 
+            this.lb_UserList.FormattingEnabled = true;
+            this.lb_UserList.ItemHeight = 12;
+            this.lb_UserList.Location = new System.Drawing.Point(987, 12);
+            this.lb_UserList.Name = "lb_UserList";
+            this.lb_UserList.Size = new System.Drawing.Size(335, 184);
+            this.lb_UserList.TabIndex = 14;
+            // 
             // TestClientUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1904, 1041);
+            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(46)))), ((int)(((byte)(46)))));
+            this.ClientSize = new System.Drawing.Size(334, 561);
+            this.Controls.Add(this.lb_UserList);
             this.Controls.Add(this.btn_CreateClose);
             this.Controls.Add(this.btn_Create);
             this.Controls.Add(this.clb_GroupingUser);
@@ -228,8 +243,11 @@ namespace TestClient
             this.Controls.Add(this.txt_UserPW);
             this.Controls.Add(this.txt_UserID);
             this.Controls.Add(this.lb_Result);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.MaximizeBox = false;
             this.Name = "TestClientUI";
+            this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.Text = "Client";
             this.Load += new System.EventHandler(this.TestClient_Load);
             this.ResumeLayout(false);
@@ -253,6 +271,7 @@ namespace TestClient
         private System.Windows.Forms.CheckedListBox clb_GroupingUser;
         private System.Windows.Forms.Button btn_Create;
         private System.Windows.Forms.Button btn_CreateClose;
+        private System.Windows.Forms.ListBox lb_UserList;
     }
 }
 

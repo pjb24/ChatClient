@@ -20,6 +20,9 @@ namespace TestClient
         // 현재 클라이언트의 ID
         public string user_ID = string.Empty;
 
+        public List<string> groupUserList = new List<string>();
+        public List<string> userList = new List<string>();
+
         public ChatGroupForm()
         {
             InitializeComponent();
@@ -27,12 +30,14 @@ namespace TestClient
 
         private void btn_Send_Click(object sender, EventArgs e)
         {
-            string sendMsg = this.txt_Send.Text + "&" + group + "&" + user_ID + "&groupChat";
+            if (txt_Send.Text != "")
+            {
+                string sendMsg = this.txt_Send.Text + "&" + group + "&" + user_ID + "&groupChat";
 
-            byte[] buffer = Encoding.Unicode.GetBytes(sendMsg + "$");
-            stream.Write(buffer, 0, buffer.Length);
-            stream.Flush();
-
+                byte[] buffer = Encoding.Unicode.GetBytes(sendMsg + "$");
+                stream.Write(buffer, 0, buffer.Length);
+                stream.Flush();
+            }
             txt_Send.Clear();
             txt_Send.Focus();
         }
@@ -42,7 +47,14 @@ namespace TestClient
             switch (e.KeyCode)
             {
                 case Keys.Enter:
-                    btn_Send_Click(sender, e);
+                    if (!((e.Modifiers & Keys.Shift) == Keys.Shift))
+                    {
+                        if (txt_Send.Text.Trim('\r', '\n') != "")
+                        {
+                            e.SuppressKeyPress = true;
+                            btn_Send_Click(sender, e);
+                        }
+                    }
                     break;
                 default:
                     break;
@@ -70,7 +82,60 @@ namespace TestClient
 
         private void ChatGroupForm_Load(object sender, EventArgs e)
         {
+            RedrawUserList();
+        }
 
+        private void btn_Leave_Click(object sender, EventArgs e)
+        {
+            string sendMsg = group + "&" + user_ID + "&LeaveGroup";
+
+            byte[] buffer = Encoding.Unicode.GetBytes(sendMsg + "$");
+            stream.Write(buffer, 0, buffer.Length);
+            stream.Flush();
+
+            this.Close();
+        }
+
+        private void btn_Invitation_Click(object sender, EventArgs e)
+        {
+            InvitationForm invitationForm = new InvitationForm
+            {
+                stream = stream,
+                group = group,
+                user_ID = user_ID,
+                userList = userList,
+                groupUserList = groupUserList
+            };
+            invitationForm.ShowDialog();
+        }
+
+        private void btn_SendFile_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        public void RedrawUserList()
+        {
+            if (lb_UserList.InvokeRequired)
+            {
+                lb_UserList.BeginInvoke(new MethodInvoker(delegate
+                {
+                    lb_UserList.Items.Clear();
+                    foreach (var temp in groupUserList)
+                    {
+                        lb_UserList.Items.Add(temp);
+                    }
+                }));
+            }
+            else
+            {
+                lb_UserList.Items.Clear();
+                foreach (var temp in groupUserList)
+                {
+                    lb_UserList.Items.Add(temp);
+                }
+            }
+            
         }
     }
 }
