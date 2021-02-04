@@ -13,10 +13,15 @@ using System.Net;
 using System.Net.Sockets;
 using System.Configuration;
 
+using log4net;
+using System.Security.Cryptography;
+
 namespace TestClient
 {
     public partial class TestClientUI : Form
     {
+        private static readonly ILog log = LogManager.GetLogger(typeof(TestClientUI));
+
         TcpClient clientSocket = new TcpClient();
         NetworkStream stream = default(NetworkStream);
         string message = string.Empty;
@@ -54,6 +59,7 @@ namespace TestClient
                 Thread t_handler = new Thread(GetMessage);
                 t_handler.IsBackground = true;
                 // GetMessage Thread 시작
+                log.Info("client start");
                 t_handler.Start();
             }
             catch (SocketException se)
@@ -395,8 +401,11 @@ namespace TestClient
 
         private void btn_SignInSubmit_Click(object sender, EventArgs e)
         {
+            SHA256Managed sHA256Managed = new SHA256Managed();
+            var temp = sHA256Managed.ComputeHash(Encoding.Unicode.GetBytes(txt_UserPW.Text));
+
             user_ID = txt_UserID.Text;
-            string user_PW = txt_UserPW.Text;
+            string user_PW = temp.ToString();
 
             string sendMsg = user_ID + "&" + user_PW + "signin";
 
@@ -591,8 +600,11 @@ namespace TestClient
 
         private void btn_RegisterSubmit_Click(object sender, EventArgs e)
         {
+            SHA256Managed sHA256Managed = new SHA256Managed();
+            var temp = sHA256Managed.ComputeHash(Encoding.Unicode.GetBytes(txt_UserPW.Text));
+
             user_ID = txt_UserID.Text;
-            string user_PW = txt_UserPW.Text;
+            string user_PW = temp.ToString();
 
             string sendMsg = user_ID + "&" + user_PW + "register";
 

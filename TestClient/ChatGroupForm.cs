@@ -9,11 +9,18 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 using System.Net.Sockets;
+using System.IO;
+
+using log4net;
 
 namespace TestClient
 {
     public partial class ChatGroupForm : Form
     {
+        private static readonly ILog log = LogManager.GetLogger(typeof(ChatGroupForm));
+
+        const int CHUNK_SIZE = 4096;
+
         public NetworkStream stream = default(NetworkStream);
         // 열려있는 group의 name
         public string group = string.Empty;
@@ -112,7 +119,67 @@ namespace TestClient
 
         private void btn_SendFile_Click(object sender, EventArgs e)
         {
+            string filePath = null;
+            openFileDialog1.InitialDirectory = "C:\\";
+            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                filePath = openFileDialog1.FileName;
 
+                string[] p = filePath.Split('\\');
+                long fileSize = new FileInfo(filePath).Length;
+                string fileName = p[p.Count() - 1];
+                
+                Console.WriteLine(fileSize);
+                Console.WriteLine(fileName);
+
+                byte[] buffer = Encoding.Unicode.GetBytes(fileName + "&" + fileSize + "&" + user_ID + "&requestSendFile" + "$");
+                stream.Write(buffer, 0, buffer.Length);
+                stream.Flush();
+
+                /*
+                using (Stream fileStream = new FileStream(filePath, FileMode.Open))
+                {
+                    byte[] rbytes = new byte[CHUNK_SIZE];
+
+                    long readValue = BitConverter.ToInt64(rbytes, 0);
+
+                    int totalRead = 0;
+                    ushort msgSeq = 0;
+                    // byte fragmented = (fileStream.Length < CHUNK_SIZE) ? not fragmented : fragmente;
+
+                    while (totalRead < fileStream.Length)
+                    {
+                        int read = fileStream.Read(rbytes, 0, CHUNK_SIZE);
+                        totalRead += read;
+                        Message fileMsg = new Message();
+
+                        byte[] sendBytes = new byte[read];
+                        Array.Copy(rbytes, 0, sendBytes, 0, read);
+
+                        fileMsg.Body = new BodyData(sendBytes);
+                        fileMsg.Header = new Header()
+                        {
+                            MSGID = msgId,
+                            MSGTYPE = CONSTANTS.FILE_SEND_DATA,
+                            BODYLEN = (uint)fileMsg.Body.GetSize(),
+                            FRAGMENTED = fragmented,
+                            LASTMSG = (totalRead < fileStream.Length) ? CONSTANTS.NOT_LASTMSG : CONSTANTS.LASTMSG,
+                            SEQ = msgSeq++
+                        };
+
+                        // 모든 파일의 내용이 전송될 때까지 파일 스트림을 0x03 메시지에 담아 서버로 보냄
+                        MessageUtil.Send(stream, fileMsg);
+                    }
+
+                    Console.WriteLine();
+
+                    // 서버에서 파일을 제대로 받았는지에 대한 응답을 받음
+                    Message rstMsg = MessageUtil.Receive(stream);
+
+                    BodyResult result = ((BodyResult)rstMsg.Body);
+                    Console.WriteLine("파일 전송 성공");
+                }*/
+            }
         }
 
         public void RedrawUserList()

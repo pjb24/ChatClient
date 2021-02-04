@@ -10,10 +10,14 @@ using System.Windows.Forms;
 
 using System.Net.Sockets;
 
+using log4net;
+
 namespace TestClient
 {
     public partial class InvitationForm : Form
     {
+        private static readonly ILog log = LogManager.GetLogger(typeof(InvitationForm));
+
         public NetworkStream stream = default(NetworkStream);
         // 열려있는 group의 name
         public string group = string.Empty;

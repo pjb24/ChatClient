@@ -37,6 +37,7 @@ namespace TestClient
             this.btn_Leave = new System.Windows.Forms.Button();
             this.btn_Invitation = new System.Windows.Forms.Button();
             this.btn_SendFile = new System.Windows.Forms.Button();
+            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.SuspendLayout();
             // 
             // lb_Result
@@ -161,5 +162,6 @@ namespace TestClient
         private System.Windows.Forms.Button btn_Leave;
         private System.Windows.Forms.Button btn_Invitation;
         private System.Windows.Forms.Button btn_SendFile;
+        private System.Windows.Forms.OpenFileDialog openFileDialog1;
     }
 }
