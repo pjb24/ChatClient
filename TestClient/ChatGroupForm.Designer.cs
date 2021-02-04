@@ -43,12 +43,13 @@ namespace TestClient
             // lb_Result
             // 
             this.lb_Result.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lb_Result.Font = new System.Drawing.Font("굴림", 14F);
             this.lb_Result.FormattingEnabled = true;
-            this.lb_Result.ItemHeight = 12;
+            this.lb_Result.ItemHeight = 19;
             this.lb_Result.Location = new System.Drawing.Point(0, 204);
             this.lb_Result.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.lb_Result.Name = "lb_Result";
-            this.lb_Result.Size = new System.Drawing.Size(335, 278);
+            this.lb_Result.Size = new System.Drawing.Size(335, 268);
             this.lb_Result.TabIndex = 1;
             // 
             // txt_Send
@@ -76,13 +77,14 @@ namespace TestClient
             // lb_UserList
             // 
             this.lb_UserList.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lb_UserList.Font = new System.Drawing.Font("굴림", 14F);
             this.lb_UserList.FormattingEnabled = true;
-            this.lb_UserList.ItemHeight = 12;
+            this.lb_UserList.ItemHeight = 19;
             this.lb_UserList.Location = new System.Drawing.Point(0, 35);
             this.lb_UserList.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.lb_UserList.Name = "lb_UserList";
             this.lb_UserList.SelectionMode = System.Windows.Forms.SelectionMode.None;
-            this.lb_UserList.Size = new System.Drawing.Size(216, 158);
+            this.lb_UserList.Size = new System.Drawing.Size(216, 154);
             this.lb_UserList.TabIndex = 5;
             this.lb_UserList.TabStop = false;
             // 

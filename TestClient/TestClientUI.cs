@@ -522,7 +522,7 @@ namespace TestClient
                     lb_UserList.Location = new Point(0, 0);
                     lb_GroupList.Location = new Point(0, 192);
                     btn_OpenCreateGroup.Location = new Point(12, 515);
-                    btn_SignOut.Location = new Point(252, 515);
+                    btn_SignOut.Location = new Point(202, 515);
 
                     // btn_PullUser.Location = new Point(12, 474);
                     // btn_PullGroup.Location = new Point(12, 515);
@@ -539,7 +539,7 @@ namespace TestClient
                 lb_UserList.Location = new Point(0, 0);
                 lb_GroupList.Location = new Point(0, 192);
                 btn_OpenCreateGroup.Location = new Point(12, 515);
-                btn_SignOut.Location = new Point(252, 515);
+                btn_SignOut.Location = new Point(202, 515);
 
                 // btn_PullUser.Location = new Point(12, 474);
                 // btn_PullGroup.Location = new Point(12, 515);

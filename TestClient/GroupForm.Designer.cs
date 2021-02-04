@@ -51,10 +51,11 @@ namespace TestClient
             // 
             // btn_SignOut
             // 
-            this.btn_SignOut.Location = new System.Drawing.Point(252, 515);
+            this.btn_SignOut.Font = new System.Drawing.Font("굴림", 14F);
+            this.btn_SignOut.Location = new System.Drawing.Point(202, 515);
             this.btn_SignOut.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btn_SignOut.Name = "btn_SignOut";
-            this.btn_SignOut.Size = new System.Drawing.Size(70, 35);
+            this.btn_SignOut.Size = new System.Drawing.Size(120, 35);
             this.btn_SignOut.TabIndex = 1;
             this.btn_SignOut.Text = "로그아웃";
             this.btn_SignOut.UseVisualStyleBackColor = true;

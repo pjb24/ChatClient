@@ -60,6 +60,7 @@ namespace TestClient
             // 
             this.clb_InviteUser.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.clb_InviteUser.CheckOnClick = true;
+            this.clb_InviteUser.Font = new System.Drawing.Font("굴림", 14F);
             this.clb_InviteUser.FormattingEnabled = true;
             this.clb_InviteUser.Location = new System.Drawing.Point(0, 4);
             this.clb_InviteUser.Name = "clb_InviteUser";

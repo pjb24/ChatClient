@@ -64,10 +64,11 @@ namespace TestClient
             // txt_UserID
             // 
             this.txt_UserID.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txt_UserID.Font = new System.Drawing.Font("굴림", 14F);
             this.txt_UserID.ForeColor = System.Drawing.SystemColors.InactiveCaption;
             this.txt_UserID.Location = new System.Drawing.Point(430, 139);
             this.txt_UserID.Name = "txt_UserID";
-            this.txt_UserID.Size = new System.Drawing.Size(160, 21);
+            this.txt_UserID.Size = new System.Drawing.Size(160, 29);
             this.txt_UserID.TabIndex = 1;
             this.txt_UserID.Text = "ID";
             this.txt_UserID.Enter += new System.EventHandler(this.txt_UserID_Enter);
@@ -76,10 +77,11 @@ namespace TestClient
             // txt_UserPW
             // 
             this.txt_UserPW.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txt_UserPW.Font = new System.Drawing.Font("굴림", 14F);
             this.txt_UserPW.ForeColor = System.Drawing.SystemColors.InactiveCaption;
             this.txt_UserPW.Location = new System.Drawing.Point(430, 206);
             this.txt_UserPW.Name = "txt_UserPW";
-            this.txt_UserPW.Size = new System.Drawing.Size(160, 21);
+            this.txt_UserPW.Size = new System.Drawing.Size(160, 29);
             this.txt_UserPW.TabIndex = 2;
             this.txt_UserPW.Text = "PW";
             this.txt_UserPW.Enter += new System.EventHandler(this.txt_UserPW_Enter);
@@ -87,6 +89,7 @@ namespace TestClient
             // 
             // btn_SignInSubmit
             // 
+            this.btn_SignInSubmit.Font = new System.Drawing.Font("굴림", 14F);
             this.btn_SignInSubmit.Location = new System.Drawing.Point(430, 266);
             this.btn_SignInSubmit.Name = "btn_SignInSubmit";
             this.btn_SignInSubmit.Size = new System.Drawing.Size(160, 30);
@@ -97,6 +100,7 @@ namespace TestClient
             // 
             // btn_OpenRegister
             // 
+            this.btn_OpenRegister.Font = new System.Drawing.Font("굴림", 14F);
             this.btn_OpenRegister.Location = new System.Drawing.Point(430, 339);
             this.btn_OpenRegister.Name = "btn_OpenRegister";
             this.btn_OpenRegister.Size = new System.Drawing.Size(160, 30);
@@ -107,6 +111,7 @@ namespace TestClient
             // 
             // btn_RegisterSubmit
             // 
+            this.btn_RegisterSubmit.Font = new System.Drawing.Font("굴림", 14F);
             this.btn_RegisterSubmit.Location = new System.Drawing.Point(753, 266);
             this.btn_RegisterSubmit.Name = "btn_RegisterSubmit";
             this.btn_RegisterSubmit.Size = new System.Drawing.Size(160, 30);
@@ -118,6 +123,7 @@ namespace TestClient
             // 
             // btn_RegisterClose
             // 
+            this.btn_RegisterClose.Font = new System.Drawing.Font("굴림", 14F);
             this.btn_RegisterClose.Location = new System.Drawing.Point(753, 339);
             this.btn_RegisterClose.Name = "btn_RegisterClose";
             this.btn_RegisterClose.Size = new System.Drawing.Size(160, 30);
@@ -130,17 +136,19 @@ namespace TestClient
             // lb_GroupList
             // 
             this.lb_GroupList.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lb_GroupList.Font = new System.Drawing.Font("굴림", 14F);
             this.lb_GroupList.FormattingEnabled = true;
-            this.lb_GroupList.ItemHeight = 12;
+            this.lb_GroupList.ItemHeight = 19;
             this.lb_GroupList.Location = new System.Drawing.Point(987, 204);
             this.lb_GroupList.Name = "lb_GroupList";
-            this.lb_GroupList.Size = new System.Drawing.Size(335, 314);
+            this.lb_GroupList.Size = new System.Drawing.Size(335, 306);
             this.lb_GroupList.TabIndex = 6;
             this.lb_GroupList.TabStop = false;
             this.lb_GroupList.DoubleClick += new System.EventHandler(this.lb_GroupList_DoubleClick);
             // 
             // btn_OpenCreateGroup
             // 
+            this.btn_OpenCreateGroup.Font = new System.Drawing.Font("굴림", 14F);
             this.btn_OpenCreateGroup.Location = new System.Drawing.Point(1202, 478);
             this.btn_OpenCreateGroup.Name = "btn_OpenCreateGroup";
             this.btn_OpenCreateGroup.Size = new System.Drawing.Size(120, 35);
@@ -152,9 +160,10 @@ namespace TestClient
             // 
             // btn_SignOut
             // 
-            this.btn_SignOut.Location = new System.Drawing.Point(1252, 519);
+            this.btn_SignOut.Font = new System.Drawing.Font("굴림", 14F);
+            this.btn_SignOut.Location = new System.Drawing.Point(1202, 519);
             this.btn_SignOut.Name = "btn_SignOut";
-            this.btn_SignOut.Size = new System.Drawing.Size(70, 35);
+            this.btn_SignOut.Size = new System.Drawing.Size(120, 35);
             this.btn_SignOut.TabIndex = 8;
             this.btn_SignOut.TabStop = false;
             this.btn_SignOut.Text = "로그아웃";
@@ -189,6 +198,7 @@ namespace TestClient
             // 
             this.clb_GroupingUser.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.clb_GroupingUser.CheckOnClick = true;
+            this.clb_GroupingUser.Font = new System.Drawing.Font("굴림", 14F);
             this.clb_GroupingUser.FormattingEnabled = true;
             this.clb_GroupingUser.Location = new System.Drawing.Point(1479, 12);
             this.clb_GroupingUser.Name = "clb_GroupingUser";
@@ -199,6 +209,7 @@ namespace TestClient
             // 
             // btn_Create
             // 
+            this.btn_Create.Font = new System.Drawing.Font("굴림", 14F);
             this.btn_Create.Location = new System.Drawing.Point(1479, 518);
             this.btn_Create.Name = "btn_Create";
             this.btn_Create.Size = new System.Drawing.Size(110, 45);
@@ -210,6 +221,7 @@ namespace TestClient
             // 
             // btn_CreateClose
             // 
+            this.btn_CreateClose.Font = new System.Drawing.Font("굴림", 14F);
             this.btn_CreateClose.Location = new System.Drawing.Point(1704, 519);
             this.btn_CreateClose.Name = "btn_CreateClose";
             this.btn_CreateClose.Size = new System.Drawing.Size(110, 45);
@@ -222,11 +234,12 @@ namespace TestClient
             // lb_UserList
             // 
             this.lb_UserList.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lb_UserList.Font = new System.Drawing.Font("굴림", 14F);
             this.lb_UserList.FormattingEnabled = true;
-            this.lb_UserList.ItemHeight = 12;
+            this.lb_UserList.ItemHeight = 19;
             this.lb_UserList.Location = new System.Drawing.Point(987, 12);
             this.lb_UserList.Name = "lb_UserList";
-            this.lb_UserList.Size = new System.Drawing.Size(335, 182);
+            this.lb_UserList.Size = new System.Drawing.Size(335, 173);
             this.lb_UserList.TabIndex = 14;
             // 
             // lbl_Register
@@ -256,7 +269,7 @@ namespace TestClient
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(46)))), ((int)(((byte)(46)))));
-            this.ClientSize = new System.Drawing.Size(334, 561);
+            this.ClientSize = new System.Drawing.Size(1904, 1041);
             this.Controls.Add(this.lbl_SignIn);
             this.Controls.Add(this.lbl_Register);
             this.Controls.Add(this.lb_UserList);
