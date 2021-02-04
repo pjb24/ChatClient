@@ -41,16 +41,18 @@ namespace TestClient
             // 
             // lb_Result
             // 
+            this.lb_Result.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.lb_Result.FormattingEnabled = true;
             this.lb_Result.ItemHeight = 12;
-            this.lb_Result.Location = new System.Drawing.Point(0, 144);
+            this.lb_Result.Location = new System.Drawing.Point(0, 204);
             this.lb_Result.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.lb_Result.Name = "lb_Result";
-            this.lb_Result.Size = new System.Drawing.Size(335, 340);
+            this.lb_Result.Size = new System.Drawing.Size(335, 278);
             this.lb_Result.TabIndex = 1;
             // 
             // txt_Send
             // 
+            this.txt_Send.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.txt_Send.Location = new System.Drawing.Point(12, 501);
             this.txt_Send.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.txt_Send.Multiline = true;
@@ -72,13 +74,14 @@ namespace TestClient
             // 
             // lb_UserList
             // 
+            this.lb_UserList.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.lb_UserList.FormattingEnabled = true;
             this.lb_UserList.ItemHeight = 12;
             this.lb_UserList.Location = new System.Drawing.Point(0, 35);
             this.lb_UserList.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.lb_UserList.Name = "lb_UserList";
             this.lb_UserList.SelectionMode = System.Windows.Forms.SelectionMode.None;
-            this.lb_UserList.Size = new System.Drawing.Size(216, 100);
+            this.lb_UserList.Size = new System.Drawing.Size(216, 158);
             this.lb_UserList.TabIndex = 5;
             this.lb_UserList.TabStop = false;
             // 
@@ -120,7 +123,6 @@ namespace TestClient
             this.btn_SendFile.TabIndex = 9;
             this.btn_SendFile.Text = "파일 전송";
             this.btn_SendFile.UseVisualStyleBackColor = true;
-            this.btn_SendFile.Visible = false;
             this.btn_SendFile.Click += new System.EventHandler(this.btn_SendFile_Click);
             // 
             // ChatGroupForm
@@ -142,6 +144,7 @@ namespace TestClient
             this.MaximizeBox = false;
             this.Name = "ChatGroupForm";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "채팅방";
             this.Load += new System.EventHandler(this.ChatGroupForm_Load);
             this.ResumeLayout(false);

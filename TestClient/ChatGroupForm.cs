@@ -100,6 +100,7 @@ namespace TestClient
         {
             InvitationForm invitationForm = new InvitationForm
             {
+                Location = new Point(this.Location.X + this.Width, this.Location.Y),
                 stream = stream,
                 group = group,
                 user_ID = user_ID,

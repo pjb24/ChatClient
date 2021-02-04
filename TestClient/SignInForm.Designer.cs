@@ -33,6 +33,7 @@ namespace TestClient
             this.txt_PW = new System.Windows.Forms.TextBox();
             this.btn_SignIn = new System.Windows.Forms.Button();
             this.btn_Register = new System.Windows.Forms.Button();
+            this.lbl_SignIn = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // txt_ID
@@ -81,11 +82,22 @@ namespace TestClient
             this.btn_Register.UseVisualStyleBackColor = true;
             this.btn_Register.Click += new System.EventHandler(this.btn_Register_Click);
             // 
+            // lbl_SignIn
+            // 
+            this.lbl_SignIn.AutoSize = true;
+            this.lbl_SignIn.Font = new System.Drawing.Font("굴림", 24F);
+            this.lbl_SignIn.Location = new System.Drawing.Point(112, 112);
+            this.lbl_SignIn.Name = "lbl_SignIn";
+            this.lbl_SignIn.Size = new System.Drawing.Size(111, 32);
+            this.lbl_SignIn.TabIndex = 4;
+            this.lbl_SignIn.Text = "로그인";
+            // 
             // SignInForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(334, 561);
+            this.Controls.Add(this.lbl_SignIn);
             this.Controls.Add(this.btn_Register);
             this.Controls.Add(this.btn_SignIn);
             this.Controls.Add(this.txt_PW);
@@ -106,5 +118,6 @@ namespace TestClient
         private System.Windows.Forms.TextBox txt_PW;
         private System.Windows.Forms.Button btn_SignIn;
         private System.Windows.Forms.Button btn_Register;
+        private System.Windows.Forms.Label lbl_SignIn;
     }
 }

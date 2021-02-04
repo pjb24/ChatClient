@@ -45,21 +45,25 @@ namespace TestClient
             this.btn_Create = new System.Windows.Forms.Button();
             this.btn_CreateClose = new System.Windows.Forms.Button();
             this.lb_UserList = new System.Windows.Forms.ListBox();
+            this.lbl_Register = new System.Windows.Forms.Label();
+            this.lbl_SignIn = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // lb_Result
             // 
+            this.lb_Result.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.lb_Result.FormattingEnabled = true;
             this.lb_Result.HorizontalScrollbar = true;
             this.lb_Result.ItemHeight = 12;
             this.lb_Result.Location = new System.Drawing.Point(430, 631);
             this.lb_Result.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.lb_Result.Name = "lb_Result";
-            this.lb_Result.Size = new System.Drawing.Size(1384, 196);
+            this.lb_Result.Size = new System.Drawing.Size(1384, 194);
             this.lb_Result.TabIndex = 0;
             // 
             // txt_UserID
             // 
+            this.txt_UserID.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.txt_UserID.ForeColor = System.Drawing.SystemColors.InactiveCaption;
             this.txt_UserID.Location = new System.Drawing.Point(430, 139);
             this.txt_UserID.Name = "txt_UserID";
@@ -71,6 +75,7 @@ namespace TestClient
             // 
             // txt_UserPW
             // 
+            this.txt_UserPW.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.txt_UserPW.ForeColor = System.Drawing.SystemColors.InactiveCaption;
             this.txt_UserPW.Location = new System.Drawing.Point(430, 206);
             this.txt_UserPW.Name = "txt_UserPW";
@@ -124,11 +129,12 @@ namespace TestClient
             // 
             // lb_GroupList
             // 
+            this.lb_GroupList.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.lb_GroupList.FormattingEnabled = true;
             this.lb_GroupList.ItemHeight = 12;
             this.lb_GroupList.Location = new System.Drawing.Point(987, 204);
             this.lb_GroupList.Name = "lb_GroupList";
-            this.lb_GroupList.Size = new System.Drawing.Size(335, 316);
+            this.lb_GroupList.Size = new System.Drawing.Size(335, 314);
             this.lb_GroupList.TabIndex = 6;
             this.lb_GroupList.TabStop = false;
             this.lb_GroupList.DoubleClick += new System.EventHandler(this.lb_GroupList_DoubleClick);
@@ -181,11 +187,12 @@ namespace TestClient
             // 
             // clb_GroupingUser
             // 
+            this.clb_GroupingUser.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.clb_GroupingUser.CheckOnClick = true;
             this.clb_GroupingUser.FormattingEnabled = true;
             this.clb_GroupingUser.Location = new System.Drawing.Point(1479, 12);
             this.clb_GroupingUser.Name = "clb_GroupingUser";
-            this.clb_GroupingUser.Size = new System.Drawing.Size(335, 484);
+            this.clb_GroupingUser.Size = new System.Drawing.Size(335, 482);
             this.clb_GroupingUser.TabIndex = 11;
             this.clb_GroupingUser.TabStop = false;
             this.clb_GroupingUser.SelectedIndexChanged += new System.EventHandler(this.clb_GroupingUser_SelectedIndexChanged);
@@ -214,19 +221,44 @@ namespace TestClient
             // 
             // lb_UserList
             // 
+            this.lb_UserList.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.lb_UserList.FormattingEnabled = true;
             this.lb_UserList.ItemHeight = 12;
             this.lb_UserList.Location = new System.Drawing.Point(987, 12);
             this.lb_UserList.Name = "lb_UserList";
-            this.lb_UserList.Size = new System.Drawing.Size(335, 184);
+            this.lb_UserList.Size = new System.Drawing.Size(335, 182);
             this.lb_UserList.TabIndex = 14;
+            // 
+            // lbl_Register
+            // 
+            this.lbl_Register.AutoSize = true;
+            this.lbl_Register.Font = new System.Drawing.Font("굴림", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.lbl_Register.ForeColor = System.Drawing.Color.White;
+            this.lbl_Register.Location = new System.Drawing.Point(761, 63);
+            this.lbl_Register.Name = "lbl_Register";
+            this.lbl_Register.Size = new System.Drawing.Size(143, 32);
+            this.lbl_Register.TabIndex = 15;
+            this.lbl_Register.Text = "회원가입";
+            // 
+            // lbl_SignIn
+            // 
+            this.lbl_SignIn.AutoSize = true;
+            this.lbl_SignIn.Font = new System.Drawing.Font("굴림", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.lbl_SignIn.ForeColor = System.Drawing.Color.White;
+            this.lbl_SignIn.Location = new System.Drawing.Point(455, 63);
+            this.lbl_SignIn.Name = "lbl_SignIn";
+            this.lbl_SignIn.Size = new System.Drawing.Size(111, 32);
+            this.lbl_SignIn.TabIndex = 15;
+            this.lbl_SignIn.Text = "로그인";
             // 
             // TestClientUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(46)))), ((int)(((byte)(46)))));
-            this.ClientSize = new System.Drawing.Size(334, 561);
+            this.ClientSize = new System.Drawing.Size(1904, 1041);
+            this.Controls.Add(this.lbl_SignIn);
+            this.Controls.Add(this.lbl_Register);
             this.Controls.Add(this.lb_UserList);
             this.Controls.Add(this.btn_CreateClose);
             this.Controls.Add(this.btn_Create);
@@ -272,6 +304,8 @@ namespace TestClient
         private System.Windows.Forms.Button btn_Create;
         private System.Windows.Forms.Button btn_CreateClose;
         private System.Windows.Forms.ListBox lb_UserList;
+        private System.Windows.Forms.Label lbl_Register;
+        private System.Windows.Forms.Label lbl_SignIn;
     }
 }
 

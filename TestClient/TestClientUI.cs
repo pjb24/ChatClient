@@ -40,19 +40,26 @@ namespace TestClient
             string IP = ConfigurationManager.AppSettings["IP"];
             int port = int.Parse(ConfigurationManager.AppSettings["Port"]);
 
-            // (serverIP, port) 연결 시도, 현재는 Loopback 사용중, Exception 처리 필요
-            clientSocket.Connect(IP, port);
-            // NetworkStream 정보 저장, NetworkStream?
-            stream = clientSocket.GetStream();
+            try
+            {
+                // (serverIP, port) 연결 시도, 현재는 Loopback 사용중, Exception 처리 필요
+                clientSocket.Connect(IP, port);
+                // NetworkStream 정보 저장, NetworkStream?
+                stream = clientSocket.GetStream();
 
-            message = "Connected to Chat Server";
-            DisplayText(message);
+                message = "Connected to Chat Server";
+                DisplayText(message);
 
-            // GetMessage Thread 생성
-            Thread t_handler = new Thread(GetMessage);
-            t_handler.IsBackground = true;
-            // GetMessage Thread 시작
-            t_handler.Start();
+                // GetMessage Thread 생성
+                Thread t_handler = new Thread(GetMessage);
+                t_handler.IsBackground = true;
+                // GetMessage Thread 시작
+                t_handler.Start();
+            }
+            catch (SocketException se)
+            {
+                Console.WriteLine(string.Format("clientSocket.Connect - SocketException : {0}", se.StackTrace));
+            }
         }
 
         // server message 대기
@@ -84,9 +91,6 @@ namespace TestClient
                     } // receive groupList, client용 groupList가 따로 있으니 groupList를 요청할 때는 client와 server간 동기화 할 때 뿐
                     else if (message.Contains("responseGroupList"))
                     {
-                        // 지금은 여러번 받게 되는데 차후 한번만 받게 바꾸자
-                        // 한번만 받게 변경 완료
-
                         try
                         {
                             string msg = message.Substring(0, message.LastIndexOf("&responseGroupList"));
@@ -109,25 +113,35 @@ namespace TestClient
                             // 화면 갱신
                             GroupRefresh();
                         }
-                        catch (Exception)
+                        catch (ArgumentOutOfRangeException aore)
                         {
+                            Console.WriteLine(aore.StackTrace);
+                            Console.WriteLine("만들어진 채팅방이 없습니다. 새로운 채팅방을 만들어보세요.");
                             MessageBox.Show("만들어진 채팅방이 없습니다.\n새로운 채팅방을 만들어보세요.", "알림");
                         }                        
                     } // receive userList 동기화
                     else if (message.Contains("responseUserList"))
                     {
-                        string msg = message.Substring(0, message.LastIndexOf("&responseUserList"));
-                        string[] users = msg.Split('&');
-
-                        foreach (string user in users)
+                        try
                         {
-                            if (!userList.Contains(user))
+                            string msg = message.Substring(0, message.LastIndexOf("&responseUserList"));
+                            string[] users = msg.Split('&');
+
+                            foreach (string user in users)
                             {
-                                // userList에 추가
-                                userList.Add(user);
+                                if (!userList.Contains(user))
+                                {
+                                    // userList에 추가
+                                    userList.Add(user);
+                                }
                             }
+                            GroupRefresh();
                         }
-                        GroupRefresh();
+                        catch (ArgumentOutOfRangeException aore)
+                        {
+                            Console.WriteLine(aore.StackTrace);
+                            Console.WriteLine("서버에 등록된 회원이 본인 밖에 없음");
+                        }
                     } // receive complete create group
                     else if (message.Contains("completeCreateGroup"))
                     {
@@ -260,6 +274,7 @@ namespace TestClient
                 {
                     Console.WriteLine(string.Format("GetMessage - IOException : {0}", ioe.StackTrace));
 
+                    /*
                     if (clientSocket != null)
                     {
                         OnDisconnected(clientSocket);
@@ -268,11 +283,21 @@ namespace TestClient
                         stream.Close();
                         break;
                     }
+                    */
+                }
+                catch (InvalidOperationException ioe)
+                {
+                    Console.WriteLine(string.Format("GetMessage - InvalidOperationException : {0}", ioe.StackTrace));
+                    if (clientSocket != null)
+                    {
+                        clientSocket.Close();
+                        stream.Close();
+                        break;
+                    }
                 }
                 catch (Exception e)
                 {
-                    DisplayText(e.ToString());
-                    Console.WriteLine(e.ToString());
+                    Console.WriteLine(e.StackTrace);
                     break;
                 }
             }
@@ -386,12 +411,14 @@ namespace TestClient
         private void SettingControlLocationReset()
         {
             // SignIn Form
+            lbl_SignIn.Location = new Point(455, 63);
             txt_UserID.Location = new Point(430, 139);
             txt_UserPW.Location = new Point(430, 206);
             btn_SignInSubmit.Location = new Point(430, 266);
             btn_OpenRegister.Location = new Point(430, 339);
 
             // Register Form
+            lbl_Register.Location = new Point(761, 63);
             btn_RegisterSubmit.Location = new Point(753, 266);
             btn_RegisterClose.Location = new Point(753, 339);
 
@@ -420,6 +447,8 @@ namespace TestClient
                 {
                     SettingControlLocationReset();
 
+                    this.Text = "로그인";
+                    lbl_SignIn.Location = new Point(112, 112);
                     txt_UserID.Location = new Point(87, 256);
                     txt_UserPW.Location = new Point(87, 295);
                     btn_SignInSubmit.Location = new Point(87, 354);
@@ -430,6 +459,8 @@ namespace TestClient
             {
                 SettingControlLocationReset();
 
+                this.Text = "로그인";
+                lbl_SignIn.Location = new Point(112, 112);
                 txt_UserID.Location = new Point(87, 256);
                 txt_UserPW.Location = new Point(87, 295);
                 btn_SignInSubmit.Location = new Point(87, 354);
@@ -446,6 +477,8 @@ namespace TestClient
                 {
                     SettingControlLocationReset();
 
+                    this.Text = "회원가입";
+                    lbl_Register.Location = new Point(96, 112);
                     txt_UserID.Location = new Point(87, 256);
                     txt_UserPW.Location = new Point(87, 295);
                     btn_RegisterSubmit.Location = new Point(87, 354);
@@ -456,6 +489,8 @@ namespace TestClient
             {
                 SettingControlLocationReset();
 
+                this.Text = "회원가입";
+                lbl_Register.Location = new Point(96, 112);
                 txt_UserID.Location = new Point(87, 256);
                 txt_UserPW.Location = new Point(87, 295);
                 btn_RegisterSubmit.Location = new Point(87, 354);
@@ -474,6 +509,7 @@ namespace TestClient
 
                     SettingControlLocationReset();
 
+                    this.Text = "로비";
                     lb_UserList.Location = new Point(0, 0);
                     lb_GroupList.Location = new Point(0, 192);
                     btn_OpenCreateGroup.Location = new Point(12, 515);
@@ -490,6 +526,7 @@ namespace TestClient
 
                 SettingControlLocationReset();
 
+                this.Text = "로비";
                 lb_UserList.Location = new Point(0, 0);
                 lb_GroupList.Location = new Point(0, 192);
                 btn_OpenCreateGroup.Location = new Point(12, 515);
@@ -508,6 +545,7 @@ namespace TestClient
                 {
                     SettingControlLocationReset();
 
+                    this.Text = "채팅방 생성";
                     clb_GroupingUser.Location = new Point(0, 0);
                     btn_Create.Location = new Point(12, 497);
                     btn_CreateClose.Location = new Point(210, 497);
@@ -517,6 +555,7 @@ namespace TestClient
             {
                 SettingControlLocationReset();
 
+                this.Text = "채팅방 생성";
                 clb_GroupingUser.Location = new Point(0, 0);
                 btn_Create.Location = new Point(12, 497);
                 btn_CreateClose.Location = new Point(210, 497);
@@ -715,6 +754,7 @@ namespace TestClient
                     }
                 }
                 ChatGroupForm chatGroupForm = new ChatGroupForm();
+                chatGroupForm.Location = new Point(this.Location.X + this.Width, this.Location.Y);
                 chatGroupForm.stream = stream;
                 chatGroupForm.group = item;
                 chatGroupForm.user_ID = user_ID;

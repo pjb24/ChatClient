@@ -33,6 +33,7 @@ namespace TestClient
             this.txt_PW = new System.Windows.Forms.TextBox();
             this.btn_Submit = new System.Windows.Forms.Button();
             this.btn_Close = new System.Windows.Forms.Button();
+            this.lbl_Register = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // txt_ID
@@ -81,11 +82,22 @@ namespace TestClient
             this.btn_Close.UseVisualStyleBackColor = true;
             this.btn_Close.Click += new System.EventHandler(this.btn_Close_Click);
             // 
+            // lbl_Register
+            // 
+            this.lbl_Register.AutoSize = true;
+            this.lbl_Register.Font = new System.Drawing.Font("굴림", 24F);
+            this.lbl_Register.Location = new System.Drawing.Point(96, 112);
+            this.lbl_Register.Name = "lbl_Register";
+            this.lbl_Register.Size = new System.Drawing.Size(143, 32);
+            this.lbl_Register.TabIndex = 4;
+            this.lbl_Register.Text = "회원가입";
+            // 
             // RegisterForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(334, 561);
+            this.Controls.Add(this.lbl_Register);
             this.Controls.Add(this.btn_Close);
             this.Controls.Add(this.btn_Submit);
             this.Controls.Add(this.txt_PW);
@@ -104,5 +116,6 @@ namespace TestClient
         private System.Windows.Forms.TextBox txt_PW;
         private System.Windows.Forms.Button btn_Submit;
         private System.Windows.Forms.Button btn_Close;
+        private System.Windows.Forms.Label lbl_Register;
     }
 }

@@ -58,11 +58,12 @@ namespace TestClient
             // 
             // clb_InviteUser
             // 
+            this.clb_InviteUser.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.clb_InviteUser.CheckOnClick = true;
             this.clb_InviteUser.FormattingEnabled = true;
             this.clb_InviteUser.Location = new System.Drawing.Point(0, 4);
             this.clb_InviteUser.Name = "clb_InviteUser";
-            this.clb_InviteUser.Size = new System.Drawing.Size(335, 484);
+            this.clb_InviteUser.Size = new System.Drawing.Size(335, 482);
             this.clb_InviteUser.TabIndex = 14;
             this.clb_InviteUser.TabStop = false;
             // 
@@ -79,6 +80,7 @@ namespace TestClient
             this.MaximizeBox = false;
             this.Name = "InvitationForm";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "채팅방 초대";
             this.Load += new System.EventHandler(this.InvitationForm_Load);
             this.ResumeLayout(false);
