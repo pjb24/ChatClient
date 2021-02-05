@@ -49,7 +49,7 @@ namespace TestClient
         public void DesignGroup()
         {
             // change design
-            foreach (var item in Initializer.groupList)
+            foreach (string item in Initializer.groupList)
             {
                 //if (!lvw_GroupList.Items.)
                 //{
@@ -73,7 +73,7 @@ namespace TestClient
             // groupList를 사용하여 버튼 컨트롤 동적 생성
             // 버튼의 Text를 사용자 편의적으로 바꿀 필요가 있음
             // change design
-            foreach (var item in Initializer.groupList)
+            foreach (string item in Initializer.groupList)
             {
                 if (!lb_GroupList.Items.Contains(item))
                 {

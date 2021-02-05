@@ -215,7 +215,7 @@ namespace TestClient
                         else
                         {
                             groupList[group].Remove(receivedID);
-                            foreach (var chatGroupForm in chatGroupForms)
+                            foreach (ChatGroupForm chatGroupForm in chatGroupForms)
                             {
                                 if (chatGroupForm.group.Equals(group))
                                 {
@@ -240,12 +240,12 @@ namespace TestClient
 
                         List<string> InvitedUsers = msg.Split('&').ToList<string>();
 
-                        foreach (var user in InvitedUsers)
+                        foreach (string user in InvitedUsers)
                         {
                             if (!user_ID.Equals(user))
                             {
                                 groupList[group].Add(user);
-                                foreach (var chatGroupForm in chatGroupForms)
+                                foreach (ChatGroupForm chatGroupForm in chatGroupForms)
                                 {
                                     if (chatGroupForm.group.Equals(group))
                                     {
@@ -402,10 +402,10 @@ namespace TestClient
         private void btn_SignInSubmit_Click(object sender, EventArgs e)
         {
             SHA256Managed sHA256Managed = new SHA256Managed();
-            var temp = sHA256Managed.ComputeHash(Encoding.Unicode.GetBytes(txt_UserPW.Text));
+            byte[] temp = sHA256Managed.ComputeHash(Encoding.Unicode.GetBytes(txt_UserPW.Text));
 
             user_ID = txt_UserID.Text;
-            string user_PW = temp.ToString();
+            string user_PW = string.Join(string.Empty, Array.ConvertAll(temp, b => b.ToString("X2")));
 
             string sendMsg = user_ID + "&" + user_PW + "signin";
 
@@ -601,10 +601,10 @@ namespace TestClient
         private void btn_RegisterSubmit_Click(object sender, EventArgs e)
         {
             SHA256Managed sHA256Managed = new SHA256Managed();
-            var temp = sHA256Managed.ComputeHash(Encoding.Unicode.GetBytes(txt_UserPW.Text));
+            byte[] temp = sHA256Managed.ComputeHash(Encoding.Unicode.GetBytes(txt_UserPW.Text));
 
             user_ID = txt_UserID.Text;
-            string user_PW = temp.ToString();
+            string user_PW = string.Join(string.Empty, Array.ConvertAll(temp, b => b.ToString("X2")));
 
             string sendMsg = user_ID + "&" + user_PW + "register";
 
@@ -702,7 +702,7 @@ namespace TestClient
             // change design
 
             // lb_UserList
-            foreach (var item in userList)
+            foreach (string item in userList)
             {
                 if (!lb_UserList.Items.Contains(item))
                 {
@@ -713,13 +713,13 @@ namespace TestClient
             // lb_GroupList
 
             lb_GroupList.Items.Clear();
-            foreach (var item in groupList)
+            foreach (KeyValuePair<string, List<string>> item in groupList)
             {
                 //if (!lb_GroupList.Items.Contains(item.Key))
                 //{
                     string tmp = null;
                     lb_GroupList.Items.Add(item.Key);
-                    foreach (var temp in item.Value)
+                    foreach (string temp in item.Value)
                     {
                         tmp = tmp + temp + ", ";  
                     }

@@ -189,18 +189,18 @@ namespace TestClient
                 lb_UserList.BeginInvoke(new MethodInvoker(delegate
                 {
                     lb_UserList.Items.Clear();
-                    foreach (var temp in groupUserList)
+                    foreach (string user in groupUserList)
                     {
-                        lb_UserList.Items.Add(temp);
+                        lb_UserList.Items.Add(user);
                     }
                 }));
             }
             else
             {
                 lb_UserList.Items.Clear();
-                foreach (var temp in groupUserList)
+                foreach (string user in groupUserList)
                 {
-                    lb_UserList.Items.Add(temp);
+                    lb_UserList.Items.Add(user);
                 }
             }
             

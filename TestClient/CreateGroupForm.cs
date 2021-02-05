@@ -35,7 +35,7 @@ namespace TestClient
         private void btn_Create_Click(object sender, EventArgs e)
         {
             string sendMsg = null;
-            foreach(var checkeditem in clb_GroupUser.CheckedItems)
+            foreach(object checkeditem in clb_GroupUser.CheckedItems)
             {
                 sendMsg = sendMsg + (string)checkeditem + "&";
             }
