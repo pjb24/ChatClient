@@ -130,7 +130,7 @@ namespace TestClient
             }
             ChatGroupForm chatGroupForm = new ChatGroupForm();
             // chatGroupForm.stream = stream;
-            chatGroupForm.group = Initializer.groupList[(int)btn.Tag];
+            chatGroupForm.pid = long.Parse(Initializer.groupList[(int)btn.Tag]);
             // chatGroupForm.user_ID = user_ID;
             chatGroupForm.Tag = (int)btn.Tag;
             chatGroupForm.Text = Initializer.groupList[(int)btn.Tag];
@@ -161,7 +161,7 @@ namespace TestClient
             }
             ChatGroupForm chatGroupForm = new ChatGroupForm();
             // chatGroupForm.stream = stream;
-            chatGroupForm.group = Initializer.groupList[lb.SelectedIndex];
+            chatGroupForm.pid = long.Parse(Initializer.groupList[lb.SelectedIndex]);
             // chatGroupForm.user_ID = user_ID;
             chatGroupForm.Tag = lb.SelectedIndex;
             chatGroupForm.Text = Initializer.groupList[lb.SelectedIndex];

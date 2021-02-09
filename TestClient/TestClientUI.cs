@@ -15,6 +15,7 @@ using System.Configuration;
 
 using log4net;
 using System.Security.Cryptography;
+using System.IO;
 
 namespace TestClient
 {
@@ -28,7 +29,7 @@ namespace TestClient
 
         string user_ID = null;
         List<string> userList = new List<string>();
-        Dictionary<string, List<string>> groupList = new Dictionary<string, List<string>>();
+        Dictionary<long, Tuple<string, string>> groupList = new Dictionary<long, Tuple<string, string>>();
 
         List<ChatGroupForm> chatGroupForms = new List<ChatGroupForm>();
 
@@ -102,18 +103,19 @@ namespace TestClient
                             string msg = message.Substring(0, message.LastIndexOf("&responseGroupList"));
                             string[] groups = msg.Split('&');
 
-
-
                             foreach (string group in groups)
                             {
-                                string groupName = group.Substring(group.LastIndexOf("^")+1);
+                                string usersInGroup = group.Substring(group.LastIndexOf("^") + 1);
+                                string temp = group.Substring(0, group.LastIndexOf("^"));
 
-                                if (!groupList.ContainsKey(groupName))
+                                string groupName = temp.Substring(temp.LastIndexOf("^") + 1);
+
+                                long pid = long.Parse(temp.Substring(0, temp.LastIndexOf("^")));
+
+                                if (!groupList.ContainsKey(pid))
                                 {
-                                    string temp = group.Substring(0, group.LastIndexOf("^"));
-                                    List<string> tmp = temp.Split('^').ToList();
                                     // groupList 추가
-                                    groupList.Add(groupName, tmp);
+                                    groupList.Add(pid, new Tuple<string, string>(groupName, usersInGroup));
                                 }
                             }
                             // 화면 갱신
@@ -151,8 +153,8 @@ namespace TestClient
                     } // receive complete create group
                     else if (message.Contains("completeCreateGroup"))
                     {
-                        string msg = message.Substring(0, message.LastIndexOf("completeCreateGroup"));
-                        user_ID = msg.Substring(0, msg.LastIndexOf("&"));
+                        // string msg = message.Substring(0, message.LastIndexOf("completeCreateGroup"));
+                        // user_ID = msg.Substring(0, msg.LastIndexOf("&"));
 
                         btn_PullGroup_Click();
                     } // default
@@ -163,17 +165,17 @@ namespace TestClient
                         user_ID = msg.Substring(msg.LastIndexOf("&") + 1);
                         msg = msg.Substring(0, msg.LastIndexOf("&"));
 
-                        string group = msg.Substring(msg.LastIndexOf("&") + 1);
+                        long pid = long.Parse(msg.Substring(msg.LastIndexOf("&") + 1));
                         msg = msg.Substring(0, msg.LastIndexOf("&"));
 
                         string chat = msg;
 
-                        if (groupList.ContainsKey(group))
+                        if (groupList.ContainsKey(pid))
                         {
-                            // 열려있는 ChatGroupForm 중에서 group이 일치하는 window에 출력
+                            // 열려있는 ChatGroupForm 중에서 pid가 일치하는 window에 출력
                             foreach (ChatGroupForm temp in chatGroupForms)
                             {
-                                if (temp.group.Equals(group))
+                                if (temp.pid == pid)
                                 {
                                     temp.DisplayText(user_ID + " : " + chat);
                                 }
@@ -205,19 +207,26 @@ namespace TestClient
                     {
                         string msg = message.Substring(0, message.LastIndexOf("&LeaveGroup"));
                         string receivedID = msg.Substring(msg.LastIndexOf("&") + 1);
-                        string group = msg.Substring(0, msg.LastIndexOf("&"));
+                        long pid = long.Parse(msg.Substring(0, msg.LastIndexOf("&")));
 
                         if (user_ID.Equals(receivedID))
                         {
-                            groupList.Remove(group);
+                            groupList.Remove(pid);
                             SettingControlLocationGroup();
                         }
                         else
                         {
-                            groupList[group].Remove(receivedID);
+                            string[] delimiterChars = { ", " };
+                            List<string> users = new List<string>(groupList[pid].Item2.Split(delimiterChars, StringSplitOptions.RemoveEmptyEntries));
+
+                            users.Remove(receivedID);
+                            string usersInGroup = string.Join(", ", users);
+
+                            groupList[pid] = new Tuple<string, string>(groupList[pid].Item1, usersInGroup);
+
                             foreach (ChatGroupForm chatGroupForm in chatGroupForms)
                             {
-                                if (chatGroupForm.group.Equals(group))
+                                if (chatGroupForm.pid == pid)
                                 {
                                     chatGroupForm.DisplayText(receivedID + "님이 채팅방에서 나가셨습니다.");
                                     chatGroupForm.groupUserList.Remove(receivedID);
@@ -236,30 +245,47 @@ namespace TestClient
                         msg = msg.Substring(0, msg.LastIndexOf("&"));
 
                         string group = msg.Substring(msg.LastIndexOf("&") + 1);
-                        msg = msg.Substring(0, msg.LastIndexOf("&"));
 
-                        List<string> InvitedUsers = msg.Split('&').ToList<string>();
+                        long pid = long.Parse(msg.Substring(0, msg.LastIndexOf("&")));
 
-                        foreach (string user in InvitedUsers)
+                        // 변환
+                        string[] delimiterChars = { ", " };
+                        List<string> InvitedUsers = new List<string>(group.Split(delimiterChars, StringSplitOptions.RemoveEmptyEntries));
+
+                        // 초대된 회원이라면
+                        if (InvitedUsers.Contains(user_ID))
                         {
-                            if (!user_ID.Equals(user))
+                            btn_PullGroup_Click();
+                        }
+                        // 채팅방에 원래 있던 회원이라면
+                        else
+                        {
+                            List<string> users = new List<string>(groupList[pid].Item2.Split(delimiterChars, StringSplitOptions.RemoveEmptyEntries));
+
+                            // 초대된 인원 추가
+                            users.AddRange(InvitedUsers);
+                            // 정렬
+                            users.Sort();
+
+                            // 변환
+                            string usersInGroup = string.Join(", ", users);
+
+                            foreach (string user in InvitedUsers)
                             {
-                                groupList[group].Add(user);
+                                // groupList 변경
+                                groupList[pid] = new Tuple<string, string>(groupList[pid].Item1, usersInGroup);
+                                // 열려있는 채팅방 중 변경된 채팅방이 있다면
                                 foreach (ChatGroupForm chatGroupForm in chatGroupForms)
                                 {
-                                    if (chatGroupForm.group.Equals(group))
+                                    if (chatGroupForm.pid == pid)
                                     {
                                         chatGroupForm.DisplayText(user + "님이 채팅방에 초대되셨습니다.");
                                         chatGroupForm.RedrawUserList();
                                     }
                                 }
                             }
-                            else
-                            {
-                                btn_PullGroup_Click();
-                            }
+                            GroupRefresh();
                         }
-                        GroupRefresh();
                     }
                 }
                 /*
@@ -675,15 +701,26 @@ namespace TestClient
 
         private void btn_Create_Click(object sender, EventArgs e)
         {
-            string sendMsg = null;
+            // 채팅방에 들어갈 회원들 수집
+            List<string> usersInGroup = new List<string>();
+            usersInGroup.Add(user_ID);
             foreach (object checkeditem in clb_GroupingUser.CheckedItems)
             {
-                sendMsg = sendMsg + (string)checkeditem + "&";
+                usersInGroup.Add(checkeditem.ToString());
             }
-            Console.WriteLine(sendMsg);
+            // 정렬
+            usersInGroup.Sort();
+
+            string group = string.Join(", ", usersInGroup);
+            string groupName = group + "Group";
+            // 채팅방 이름이 20자가 넘어가면 20자로 자르기
+            if (groupName.Length > 20)
+            {
+                groupName = groupName.Substring(0, 20);
+            }
 
             // send group info to server
-            sendMsg = sendMsg + user_ID + "&createGroup";
+            string sendMsg = groupName + "&" + group + "&" + user_ID + "&createGroup";
 
             byte[] buffer = Encoding.Unicode.GetBytes(sendMsg + "$");
             stream.Write(buffer, 0, buffer.Length);
@@ -713,19 +750,13 @@ namespace TestClient
             // lb_GroupList
 
             lb_GroupList.Items.Clear();
-            foreach (KeyValuePair<string, List<string>> item in groupList)
+            foreach (KeyValuePair<long, Tuple<string, string>> item in groupList)
             {
                 //if (!lb_GroupList.Items.Contains(item.Key))
                 //{
-                    string tmp = null;
                     lb_GroupList.Items.Add(item.Key);
-                    foreach (string temp in item.Value)
-                    {
-                        tmp = tmp + temp + ", ";  
-                    }
-                    tmp = tmp.Substring(0, tmp.LastIndexOf(", "));
-                    lb_GroupList.Items.Add("채팅방 인원 : " + tmp);
-                    lb_GroupList.Items.Add("");
+                    lb_GroupList.Items.Add(item.Value.Item1);
+                    lb_GroupList.Items.Add("채팅방 인원 : " + item.Value.Item2);
                 //}
             }
             // window를 비활성화하여 WM_PAINT call
@@ -744,54 +775,123 @@ namespace TestClient
 
         private void Open_ChatGroup(object sender)
         {
-            try
+            ListBox lb = sender as ListBox;
+
+            int index = lb.SelectedIndex - (lb.SelectedIndex % 3);
+            long pid = long.Parse(lb.Items[index].ToString());
+            string roomName = lb.Items[index + 1].ToString();
+
+            // 해당 윈도우가 이미 열려있을 때 처리
+            foreach (Form openForm in Application.OpenForms)
             {
-                ListBox lb = sender as ListBox;
-
-                int index = lb.SelectedIndex - (lb.SelectedIndex % 3);
-                string item = lb.Items[index].ToString();
-
-                // 해당 윈도우가 이미 열려있을 때 처리
-                foreach (Form openForm in Application.OpenForms)
+                if (openForm.Name.Equals("chatGroupForm" + index))
                 {
-                    if (openForm.Name.Equals("chatGroupForm" + index))
+                    if (openForm.WindowState == FormWindowState.Minimized)
                     {
-                        if (openForm.WindowState == FormWindowState.Minimized)
-                        {
-                            openForm.WindowState = FormWindowState.Normal;
-                            openForm.Location = new Point(this.Location.X + this.Width, this.Location.Y);
-                        }
-                        openForm.Activate();
-                        return;
+                        openForm.WindowState = FormWindowState.Normal;
+                        openForm.Location = new Point(this.Location.X + this.Width, this.Location.Y);
                     }
+                    openForm.Activate();
+                    return;
                 }
-                ChatGroupForm chatGroupForm = new ChatGroupForm();
-                chatGroupForm.Location = new Point(this.Location.X + this.Width, this.Location.Y);
-                chatGroupForm.stream = stream;
-                chatGroupForm.group = item;
-                chatGroupForm.user_ID = user_ID;
-                chatGroupForm.Tag = index;
-                chatGroupForm.Text = item;
-                chatGroupForm.Name = "chatGroupForm" + index;
-                chatGroupForm.groupUserList = groupList[item];
-                chatGroupForm.userList = userList;
-
-                // ChatGroupForm이 열렸을 때 TestClientUI에 Form 정보 저장
-                // Open_ChatGroupForm(chatGroupForm);
-
-                chatGroupForms.Add(chatGroupForm);
-
-                chatGroupForm.Show();
             }
-            catch (KeyNotFoundException)
+            ChatGroupForm chatGroupForm = new ChatGroupForm();
+            chatGroupForm.Location = new Point(this.Location.X + this.Width, this.Location.Y);
+            chatGroupForm.stream = stream;
+            chatGroupForm.pid = pid;
+            chatGroupForm.roomName = roomName;
+            chatGroupForm.user_ID = user_ID;
+            chatGroupForm.Tag = index;
+            chatGroupForm.Text = roomName;
+            chatGroupForm.Name = "chatGroupForm" + index;
+
+            // List 변환
+            string[] delimiterChars = { ", " };
+            List<string> groupUserList = new List<string>(groupList[pid].Item2.Split(delimiterChars, StringSplitOptions.RemoveEmptyEntries));
+            /*
+            foreach(var tmp in groupUserList)
             {
-
+                Console.WriteLine(tmp);
             }
+            Console.WriteLine(groupList[pid].Item2);
+            */
+
+            chatGroupForm.groupUserList = groupUserList;
+            chatGroupForm.userList = userList;
+
+            // ChatGroupForm이 열렸을 때 TestClientUI에 Form 정보 저장
+            // Open_ChatGroupForm(chatGroupForm);
+
+            chatGroupForms.Add(chatGroupForm);
+
+            chatGroupForm.Show();
         }
 
         private void clb_GroupingUser_SelectedIndexChanged(object sender, EventArgs e)
         {
 
+        }
+
+        private string AESEncrypt256(string input, string key)
+        {
+            SHA256Managed sHA256Managed = new SHA256Managed();
+            byte[] salt = sHA256Managed.ComputeHash(Encoding.UTF8.GetBytes(key.Length.ToString()));
+
+            RijndaelManaged aes = new RijndaelManaged();
+            aes.KeySize = 256;
+            aes.BlockSize = 128;
+            aes.Mode = CipherMode.CBC;
+            aes.Padding = PaddingMode.PKCS7;
+            // aes.Key = Encoding.UTF8.GetBytes(key);
+            aes.Key = salt;
+            aes.IV = new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+
+            ICryptoTransform encrypt = aes.CreateEncryptor(aes.Key, aes.IV);
+            byte[] xBuff = null;
+            using (MemoryStream ms = new MemoryStream())
+            {
+                using (CryptoStream cs = new CryptoStream(ms, encrypt, CryptoStreamMode.Write))
+                {
+                    byte[] xXml = Encoding.UTF8.GetBytes(input);
+                    cs.Write(xXml, 0, xXml.Length);
+                }
+
+                xBuff = ms.ToArray();
+            }
+
+            string Output = Convert.ToBase64String(xBuff);
+            return Output;
+        }
+
+        private string AESDecrypt256(string input, string key)
+        {
+            SHA256Managed sHA256Managed = new SHA256Managed();
+            byte[] salt = sHA256Managed.ComputeHash(Encoding.UTF8.GetBytes(key.Length.ToString()));
+
+            RijndaelManaged aes = new RijndaelManaged();
+            aes.KeySize = 256;
+            aes.BlockSize = 128;
+            aes.Mode = CipherMode.CBC;
+            aes.Padding = PaddingMode.PKCS7;
+            // aes.Key = Encoding.UTF8.GetBytes(key);
+            aes.Key = salt;
+            aes.IV = new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+
+            ICryptoTransform decrypt = aes.CreateDecryptor();
+            byte[] xBuff = null;
+            using (MemoryStream ms = new MemoryStream())
+            {
+                using (CryptoStream cs = new CryptoStream(ms, decrypt, CryptoStreamMode.Write))
+                {
+                    byte[] xXml = Convert.FromBase64String(input);
+                    cs.Write(xXml, 0, xXml.Length);
+                }
+
+                xBuff = ms.ToArray();
+            }
+
+            string Output = Encoding.UTF8.GetString(xBuff);
+            return Output;
         }
     }
 }

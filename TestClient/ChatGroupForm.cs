@@ -22,12 +22,16 @@ namespace TestClient
         const int CHUNK_SIZE = 4096;
 
         public NetworkStream stream = default(NetworkStream);
-        // 열려있는 group의 name
-        public string group = string.Empty;
+        // 열려있는 group의 id
+        public long pid = 0;
+        // 열려있는 group의 roomName
+        public string roomName = string.Empty;
         // 현재 클라이언트의 ID
         public string user_ID = string.Empty;
 
+        // 열려있는 group에 속한 회원목록
         public List<string> groupUserList = new List<string>();
+        // 전체 회원목록
         public List<string> userList = new List<string>();
 
         public ChatGroupForm()
@@ -39,7 +43,7 @@ namespace TestClient
         {
             if (txt_Send.Text != "")
             {
-                string sendMsg = this.txt_Send.Text + "&" + group + "&" + user_ID + "&groupChat";
+                string sendMsg = this.txt_Send.Text + "&" + pid + "&" + user_ID + "&groupChat";
 
                 byte[] buffer = Encoding.Unicode.GetBytes(sendMsg + "$");
                 stream.Write(buffer, 0, buffer.Length);
@@ -94,7 +98,7 @@ namespace TestClient
 
         private void btn_Leave_Click(object sender, EventArgs e)
         {
-            string sendMsg = group + "&" + user_ID + "&LeaveGroup";
+            string sendMsg = pid + "&" + user_ID + "&LeaveGroup";
 
             byte[] buffer = Encoding.Unicode.GetBytes(sendMsg + "$");
             stream.Write(buffer, 0, buffer.Length);
@@ -109,7 +113,8 @@ namespace TestClient
             {
                 Location = new Point(this.Location.X + this.Width, this.Location.Y),
                 stream = stream,
-                group = group,
+                pid = pid,
+                roomName = roomName,
                 user_ID = user_ID,
                 userList = userList,
                 groupUserList = groupUserList
