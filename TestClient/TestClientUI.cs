@@ -17,21 +17,25 @@ using log4net;
 using System.Security.Cryptography;
 using System.IO;
 
+using MyMessageProtocol;
+
 namespace TestClient
 {
     public partial class TestClientUI : Form
     {
         private static readonly ILog log = LogManager.GetLogger(typeof(TestClientUI));
 
-        TcpClient clientSocket = new TcpClient();
+        TcpClient clientSocket = null;
         NetworkStream stream = default(NetworkStream);
         string message = string.Empty;
 
-        string user_ID = null;
-        List<string> userList = new List<string>();
-        Dictionary<long, Tuple<string, string>> groupList = new Dictionary<long, Tuple<string, string>>();
+        string user_ID = string.Empty;
+        List<string> userList = null;
+        Dictionary<long, Tuple<string, string>> groupList = null;
 
-        List<ChatGroupForm> chatGroupForms = new List<ChatGroupForm>();
+        List<ChatGroupForm> chatGroupForms = null;
+
+        uint msgid = 0;
 
         public TestClientUI()
         {
@@ -66,6 +70,82 @@ namespace TestClient
             catch (SocketException se)
             {
                 Console.WriteLine(string.Format("clientSocket.Connect - SocketException : {0}", se.StackTrace));
+            }
+        }
+
+        private void GetMessage(NetworkStream stream)
+        {
+            while (true)
+            {
+                try
+                {
+                    stream = clientSocket.GetStream();
+
+                    PacketMessage message = MessageUtil.Receive(stream);
+
+                    switch (message.Header.MSGTYPE)
+                    {
+                        // 회원가입 성공
+                        case CONSTANTS.RES_REGISTER_SUCCESS:
+                            ResponseRegisterSuccess resBody = (ResponseRegisterSuccess)message.Body;
+
+                            // 회원가입한 사람일 때
+                            if (user_ID.Length == 0)
+                            {
+                                MessageBox.Show("회원가입 되었습니다.", "알림");
+                            } 
+                            // 회원가입한 사람이 아닐 때
+                            else
+                            {
+                                userList.Add(resBody.userID);
+                            }
+
+                            break;
+                        // 회원가입 실패 - 이미 존재하는 사용자
+                        case CONSTANTS.RES_REGISTER_FAIL_EXIST:
+                            MessageBox.Show("이미 등록된 회원입니다.", "알림");
+                            break;
+                        // 로그인 성공
+                        case CONSTANTS.RES_SIGNIN_SUCCESS:
+                            // 폼 컨트롤 위치 조정
+                            SettingControlLocationGroup();
+                            break;
+                        // 로그인 실패 - 존재하지 않는 사용자
+                        case CONSTANTS.RES_SIGNIN_FAIL_NOT_EXIST:
+                            MessageBox.Show("등록된 회원이 아닙니다.", "알림");
+                            break;
+                        // 로그인 실패 - 잘못된 비밀번호
+                        case CONSTANTS.RES_SIGNIN_FAIL_WRONG_PASSWORD:
+                            break;
+                        // 로그인 실패 - 이미 접속 중인 사용자
+                        case CONSTANTS.RES_SIGNIN_FAIL_ONLINE_USER:
+                            break;
+                        // 회원목록 반환
+                        case CONSTANTS.RES_USERLIST:
+                            break;
+                        // 채팅방목록 반환
+                        case CONSTANTS.RES_GROUPLIST:
+                            break;
+                        // 채팅방 생성 완료
+                        case CONSTANTS.RES_CREATE_GROUP_SUCCESS:
+                            break;
+                        // 채팅 메시지 발송
+                        case CONSTANTS.RES_CHAT:
+                            break;
+                        // 채팅방 초대 완료
+                        case CONSTANTS.RES_INVITATION_SUCCESS:
+                            break;
+                        // 채팅방 나가기 완료
+                        case CONSTANTS.RES_LEAVE_GROUP_SUCCESS:
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                catch (Exception)
+                {
+                    throw;
+                } 
             }
         }
 
@@ -193,10 +273,6 @@ namespace TestClient
                     } else if (message.Contains(" is register"))
                     {
                         MessageBox.Show("회원가입 되었습니다.", "알림");
-                    } else if (message.Contains("&existGroup"))
-                    {
-                        string msg = message.Substring(0, message.LastIndexOf("&existGroup"));
-                        MessageBox.Show(msg + "은 이미 존재하는 채팅방입니다.", "알림");
                     } else if (message.Contains("is already online"))
                     {
                         string msg = message.Substring(0, message.LastIndexOf("is already online"));
@@ -433,11 +509,32 @@ namespace TestClient
             user_ID = txt_UserID.Text;
             string user_PW = string.Join(string.Empty, Array.ConvertAll(temp, b => b.ToString("X2")));
 
+            // 로그인 메시지 작성
+            PacketMessage reqMsg = new PacketMessage();
+            reqMsg.Body = new RequestSignIn()
+            {
+                userID = user_ID,
+                userPW = user_PW
+            };
+            reqMsg.Header = new Header()
+            {
+                MSGID = msgid++,
+                MSGTYPE = CONSTANTS.REQ_SIGNIN,
+                BODYLEN = (uint)reqMsg.Body.GetSize(),
+                FRAGMENTED = CONSTANTS.NOT_FRAGMENTED,
+                LASTMSG = CONSTANTS.LASTMSG,
+                SEQ = 0
+            };
+            // 로그인 메시지 발송
+            MessageUtil.Send(stream, reqMsg);
+
+            /*
             string sendMsg = user_ID + "&" + user_PW + "signin";
 
             byte[] buffer = Encoding.Unicode.GetBytes(sendMsg + "$");
             stream.Write(buffer, 0, buffer.Length);
             stream.Flush();
+            */
 
             txt_UserID.Clear();
             txt_UserPW.Clear();
@@ -632,12 +729,29 @@ namespace TestClient
             user_ID = txt_UserID.Text;
             string user_PW = string.Join(string.Empty, Array.ConvertAll(temp, b => b.ToString("X2")));
 
-            string sendMsg = user_ID + "&" + user_PW + "register";
+            PacketMessage reqMsg = new PacketMessage();
+            reqMsg.Body = new RequestRegister()
+            {
+                msg = user_ID + "&" + user_PW
+            };
+            reqMsg.Header = new Header()
+            {
+                MSGID = msgid++,
+                MSGTYPE = CONSTANTS.REQ_REGISTER,
+                BODYLEN = (uint) reqMsg.Body.GetSize(),
+                FRAGMENTED = CONSTANTS.NOT_FRAGMENTED,
+                LASTMSG = CONSTANTS.LASTMSG,
+                SEQ = 0
+            };
 
+            MessageUtil.Send(stream, reqMsg);
+
+            // string sendMsg = user_ID + "&" + user_PW + "register";
+            /*
             byte[] buffer = Encoding.Unicode.GetBytes(sendMsg + "$");
-
             stream.Write(buffer, 0, buffer.Length);
             stream.Flush();
+            */
 
             txt_UserID.Clear();
             txt_UserPW.Clear();
@@ -720,7 +834,7 @@ namespace TestClient
             }
 
             // send group info to server
-            string sendMsg = groupName + "&" + group + "&" + user_ID + "&createGroup";
+            string sendMsg = groupName + "&" + group + "&createGroup";
 
             byte[] buffer = Encoding.Unicode.GetBytes(sendMsg + "$");
             stream.Write(buffer, 0, buffer.Length);
