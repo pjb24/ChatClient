@@ -11,6 +11,7 @@ using System.Windows.Forms;
 using System.Net.Sockets;
 
 using log4net;
+using MyMessageProtocol;
 
 namespace TestClient
 {
@@ -38,7 +39,6 @@ namespace TestClient
 
         private void btn_Invitation_Click(object sender, EventArgs e)
         {
-            string sendMsg = null;
             List<string> usersInGroup = new List<string>();
             // 채팅방에 들어갈 회원 수집
             foreach (object checkeditem in clb_InviteUser.CheckedItems)
@@ -49,11 +49,24 @@ namespace TestClient
             string group = string.Join(", ", usersInGroup);
 
             // send group info to server
-            sendMsg = pid + "&" + group + "&" + user_ID + "&Invitation";
+            string msg = pid + "&" + group;
 
-            byte[] buffer = Encoding.Unicode.GetBytes(sendMsg + "$");
-            stream.Write(buffer, 0, buffer.Length);
-            stream.Flush();
+            PacketMessage reqMsg = new PacketMessage();
+            reqMsg.Body = new RequestInvitation()
+            {
+                msg = msg
+            };
+            reqMsg.Header = new Header()
+            {
+                MSGID = TestClientUI.msgid++,
+                MSGTYPE = CONSTANTS.REQ_INVITATION,
+                BODYLEN = (uint)reqMsg.Body.GetSize(),
+                FRAGMENTED = CONSTANTS.NOT_FRAGMENTED,
+                LASTMSG = CONSTANTS.LASTMSG,
+                SEQ = 0
+            };
+
+            MessageUtil.Send(stream, reqMsg);
 
             this.Close();
         }

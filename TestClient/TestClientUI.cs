@@ -25,17 +25,19 @@ namespace TestClient
     {
         private static readonly ILog log = LogManager.GetLogger(typeof(TestClientUI));
 
-        TcpClient clientSocket = null;
+        const int CHUNK_SIZE = 4096;
+
+        TcpClient clientSocket = new TcpClient();
         NetworkStream stream = default(NetworkStream);
         string message = string.Empty;
 
         string user_ID = string.Empty;
-        List<string> userList = null;
-        Dictionary<long, Tuple<string, string>> groupList = null;
+        List<string> userList = new List<string>();
+        Dictionary<long, Tuple<string, string>> groupList = new Dictionary<long, Tuple<string, string>>();
 
-        List<ChatGroupForm> chatGroupForms = null;
+        List<ChatGroupForm> chatGroupForms = new List<ChatGroupForm>();
 
-        uint msgid = 0;
+        public static uint msgid = 0;
 
         public TestClientUI()
         {
@@ -73,82 +75,6 @@ namespace TestClient
             }
         }
 
-        private void GetMessage(NetworkStream stream)
-        {
-            while (true)
-            {
-                try
-                {
-                    stream = clientSocket.GetStream();
-
-                    PacketMessage message = MessageUtil.Receive(stream);
-
-                    switch (message.Header.MSGTYPE)
-                    {
-                        // 회원가입 성공
-                        case CONSTANTS.RES_REGISTER_SUCCESS:
-                            ResponseRegisterSuccess resBody = (ResponseRegisterSuccess)message.Body;
-
-                            // 회원가입한 사람일 때
-                            if (user_ID.Length == 0)
-                            {
-                                MessageBox.Show("회원가입 되었습니다.", "알림");
-                            } 
-                            // 회원가입한 사람이 아닐 때
-                            else
-                            {
-                                userList.Add(resBody.userID);
-                            }
-
-                            break;
-                        // 회원가입 실패 - 이미 존재하는 사용자
-                        case CONSTANTS.RES_REGISTER_FAIL_EXIST:
-                            MessageBox.Show("이미 등록된 회원입니다.", "알림");
-                            break;
-                        // 로그인 성공
-                        case CONSTANTS.RES_SIGNIN_SUCCESS:
-                            // 폼 컨트롤 위치 조정
-                            SettingControlLocationGroup();
-                            break;
-                        // 로그인 실패 - 존재하지 않는 사용자
-                        case CONSTANTS.RES_SIGNIN_FAIL_NOT_EXIST:
-                            MessageBox.Show("등록된 회원이 아닙니다.", "알림");
-                            break;
-                        // 로그인 실패 - 잘못된 비밀번호
-                        case CONSTANTS.RES_SIGNIN_FAIL_WRONG_PASSWORD:
-                            break;
-                        // 로그인 실패 - 이미 접속 중인 사용자
-                        case CONSTANTS.RES_SIGNIN_FAIL_ONLINE_USER:
-                            break;
-                        // 회원목록 반환
-                        case CONSTANTS.RES_USERLIST:
-                            break;
-                        // 채팅방목록 반환
-                        case CONSTANTS.RES_GROUPLIST:
-                            break;
-                        // 채팅방 생성 완료
-                        case CONSTANTS.RES_CREATE_GROUP_SUCCESS:
-                            break;
-                        // 채팅 메시지 발송
-                        case CONSTANTS.RES_CHAT:
-                            break;
-                        // 채팅방 초대 완료
-                        case CONSTANTS.RES_INVITATION_SUCCESS:
-                            break;
-                        // 채팅방 나가기 완료
-                        case CONSTANTS.RES_LEAVE_GROUP_SUCCESS:
-                            break;
-                        default:
-                            break;
-                    }
-                }
-                catch (Exception)
-                {
-                    throw;
-                } 
-            }
-        }
-
         // server message 대기
         private void GetMessage()
         {
@@ -157,257 +83,277 @@ namespace TestClient
                 try
                 {
                     stream = clientSocket.GetStream();
-                    int BUFFERSIZE = clientSocket.ReceiveBufferSize;
-                    byte[] buffer = new byte[BUFFERSIZE];
-                    int bytes = stream.Read(buffer, 0, buffer.Length);
 
-                    message = Encoding.Unicode.GetString(buffer, 0, bytes);
-
-                    // DisplayText(message);
-
-                    // received message 처리
-                    // allow sign in message
-                    if (message.Contains("allowSignin"))
+                    PacketMessage message = MessageUtil.Receive(stream);
+                    if (message != null)
                     {
-                        // 정보 추출
-                        string msg = message.Substring(0, message.LastIndexOf("allowSignin"));
-                        user_ID = msg.Substring(0, msg.LastIndexOf("&"));
-                        DisplayText(user_ID);
-
-                        SettingControlLocationGroup();
-                    } // receive groupList, client용 groupList가 따로 있으니 groupList를 요청할 때는 client와 server간 동기화 할 때 뿐
-                    else if (message.Contains("responseGroupList"))
-                    {
-                        try
+                        switch (message.Header.MSGTYPE)
                         {
-                            string msg = message.Substring(0, message.LastIndexOf("&responseGroupList"));
-                            string[] groups = msg.Split('&');
-
-                            foreach (string group in groups)
-                            {
-                                string usersInGroup = group.Substring(group.LastIndexOf("^") + 1);
-                                string temp = group.Substring(0, group.LastIndexOf("^"));
-
-                                string groupName = temp.Substring(temp.LastIndexOf("^") + 1);
-
-                                long pid = long.Parse(temp.Substring(0, temp.LastIndexOf("^")));
-
-                                if (!groupList.ContainsKey(pid))
+                            // 회원가입 성공
+                            case CONSTANTS.RES_REGISTER_SUCCESS:
                                 {
-                                    // groupList 추가
-                                    groupList.Add(pid, new Tuple<string, string>(groupName, usersInGroup));
-                                }
-                            }
-                            // 화면 갱신
-                            GroupRefresh();
-                        }
-                        catch (ArgumentOutOfRangeException aore)
-                        {
-                            Console.WriteLine(aore.StackTrace);
-                            Console.WriteLine("만들어진 채팅방이 없습니다. 새로운 채팅방을 만들어보세요.");
-                            MessageBox.Show("만들어진 채팅방이 없습니다.\n새로운 채팅방을 만들어보세요.", "알림");
-                        }                        
-                    } // receive userList 동기화
-                    else if (message.Contains("responseUserList"))
-                    {
-                        try
-                        {
-                            string msg = message.Substring(0, message.LastIndexOf("&responseUserList"));
-                            string[] users = msg.Split('&');
+                                    ResponseRegisterSuccess resBody = (ResponseRegisterSuccess)message.Body;
 
-                            foreach (string user in users)
-                            {
-                                if (!userList.Contains(user))
-                                {
-                                    // userList에 추가
-                                    userList.Add(user);
-                                }
-                            }
-                            GroupRefresh();
-                        }
-                        catch (ArgumentOutOfRangeException aore)
-                        {
-                            Console.WriteLine(aore.StackTrace);
-                            Console.WriteLine("서버에 등록된 회원이 본인 밖에 없음");
-                        }
-                    } // receive complete create group
-                    else if (message.Contains("completeCreateGroup"))
-                    {
-                        // string msg = message.Substring(0, message.LastIndexOf("completeCreateGroup"));
-                        // user_ID = msg.Substring(0, msg.LastIndexOf("&"));
-
-                        btn_PullGroup_Click();
-                    } // default
-                    else if (message.Contains("&groupChat"))
-                    {
-                        string msg = message.Substring(0, message.LastIndexOf("&groupChat"));
-
-                        user_ID = msg.Substring(msg.LastIndexOf("&") + 1);
-                        msg = msg.Substring(0, msg.LastIndexOf("&"));
-
-                        long pid = long.Parse(msg.Substring(msg.LastIndexOf("&") + 1));
-                        msg = msg.Substring(0, msg.LastIndexOf("&"));
-
-                        string chat = msg;
-
-                        if (groupList.ContainsKey(pid))
-                        {
-                            // 열려있는 ChatGroupForm 중에서 pid가 일치하는 window에 출력
-                            foreach (ChatGroupForm temp in chatGroupForms)
-                            {
-                                if (temp.pid == pid)
-                                {
-                                    temp.DisplayText(user_ID + " : " + chat);
-                                }
-                            }
-                        }
-                    } else if (message.Contains(" is aleady registered"))
-                    {
-                        MessageBox.Show("이미 등록된 회원입니다.", "알림");
-                    } else if (message.Contains(" is not registered"))
-                    {
-                        MessageBox.Show("등록된 회원이 아닙니다.", "알림");
-                    } else if (message.Contains("incorrect PW"))
-                    {
-                        MessageBox.Show("올바르지 못한 비밀번호입니다.", "알림");
-                    } else if (message.Contains(" is register"))
-                    {
-                        MessageBox.Show("회원가입 되었습니다.", "알림");
-                    } else if (message.Contains("is already online"))
-                    {
-                        string msg = message.Substring(0, message.LastIndexOf("is already online"));
-                        MessageBox.Show(msg + "는 이미 접속 중입니다.", "알림");
-                    }
-                    // 채팅방 나감
-                    else if (message.Contains("&LeaveGroup"))
-                    {
-                        string msg = message.Substring(0, message.LastIndexOf("&LeaveGroup"));
-                        string receivedID = msg.Substring(msg.LastIndexOf("&") + 1);
-                        long pid = long.Parse(msg.Substring(0, msg.LastIndexOf("&")));
-
-                        if (user_ID.Equals(receivedID))
-                        {
-                            groupList.Remove(pid);
-                            SettingControlLocationGroup();
-                        }
-                        else
-                        {
-                            string[] delimiterChars = { ", " };
-                            List<string> users = new List<string>(groupList[pid].Item2.Split(delimiterChars, StringSplitOptions.RemoveEmptyEntries));
-
-                            users.Remove(receivedID);
-                            string usersInGroup = string.Join(", ", users);
-
-                            groupList[pid] = new Tuple<string, string>(groupList[pid].Item1, usersInGroup);
-
-                            foreach (ChatGroupForm chatGroupForm in chatGroupForms)
-                            {
-                                if (chatGroupForm.pid == pid)
-                                {
-                                    chatGroupForm.DisplayText(receivedID + "님이 채팅방에서 나가셨습니다.");
-                                    chatGroupForm.groupUserList.Remove(receivedID);
-                                    chatGroupForm.RedrawUserList(); 
-                                }
-                            }
-                            GroupRefresh();
-                        }
-                    }
-                    // 채팅방 초대
-                    else if (message.Contains("&Invitation"))
-                    {
-                        string msg = message.Substring(0, message.LastIndexOf("&Invitation"));
-
-                        // string user_ID = msg.Substring(msg.LastIndexOf("&") + 1);
-                        msg = msg.Substring(0, msg.LastIndexOf("&"));
-
-                        string group = msg.Substring(msg.LastIndexOf("&") + 1);
-
-                        long pid = long.Parse(msg.Substring(0, msg.LastIndexOf("&")));
-
-                        // 변환
-                        string[] delimiterChars = { ", " };
-                        List<string> InvitedUsers = new List<string>(group.Split(delimiterChars, StringSplitOptions.RemoveEmptyEntries));
-
-                        // 초대된 회원이라면
-                        if (InvitedUsers.Contains(user_ID))
-                        {
-                            btn_PullGroup_Click();
-                        }
-                        // 채팅방에 원래 있던 회원이라면
-                        else
-                        {
-                            List<string> users = new List<string>(groupList[pid].Item2.Split(delimiterChars, StringSplitOptions.RemoveEmptyEntries));
-
-                            // 초대된 인원 추가
-                            users.AddRange(InvitedUsers);
-                            // 정렬
-                            users.Sort();
-
-                            // 변환
-                            string usersInGroup = string.Join(", ", users);
-
-                            foreach (string user in InvitedUsers)
-                            {
-                                // groupList 변경
-                                groupList[pid] = new Tuple<string, string>(groupList[pid].Item1, usersInGroup);
-                                // 열려있는 채팅방 중 변경된 채팅방이 있다면
-                                foreach (ChatGroupForm chatGroupForm in chatGroupForms)
-                                {
-                                    if (chatGroupForm.pid == pid)
+                                    // 회원가입한 사람일 때
+                                    if (user_ID.Length == 0)
                                     {
-                                        chatGroupForm.DisplayText(user + "님이 채팅방에 초대되셨습니다.");
-                                        chatGroupForm.RedrawUserList();
+                                        MessageBox.Show("회원가입 되었습니다.", "알림");
+                                        SettingControlLocationSignIn();
                                     }
+                                    // 회원가입한 사람이 아닐 때
+                                    else
+                                    {
+                                        userList.Add(resBody.userID);
+                                        GroupRefresh();
+                                    }
+                                    break;
                                 }
-                            }
-                            GroupRefresh();
+                            // 회원가입 실패 - 이미 존재하는 사용자
+                            case CONSTANTS.RES_REGISTER_FAIL_EXIST:
+                                {
+                                    MessageBox.Show("이미 등록된 회원입니다.", "알림");
+                                    break;
+                                }
+                            // 로그인 성공
+                            case CONSTANTS.RES_SIGNIN_SUCCESS:
+                                {
+                                    // 폼 컨트롤 위치 조정
+                                    SettingControlLocationGroup();
+                                    break;
+                                }
+                            // 로그인 실패 - 존재하지 않는 사용자
+                            case CONSTANTS.RES_SIGNIN_FAIL_NOT_EXIST:
+                                {
+                                    MessageBox.Show("등록된 회원이 아닙니다.", "알림");
+                                    break;
+                                }
+                            // 로그인 실패 - 잘못된 비밀번호
+                            case CONSTANTS.RES_SIGNIN_FAIL_WRONG_PASSWORD:
+                                {
+                                    MessageBox.Show("잘못된 비밀번호 입니다.", "알림");
+                                    break;
+                                }
+                            // 로그인 실패 - 이미 접속 중인 사용자
+                            case CONSTANTS.RES_SIGNIN_FAIL_ONLINE_USER:
+                                {
+                                    MessageBox.Show("이미 접속 중인 사용자 입니다.", "알림");
+                                    break;
+                                }
+                            // 회원목록 반환
+                            case CONSTANTS.RES_USERLIST:
+                                {
+                                    ResponseUserList resBody = (ResponseUserList)message.Body;
+                                    foreach (string user in resBody.users)
+                                    {
+                                        if (!userList.Contains(user) && !user_ID.Equals(user))
+                                        {
+                                            userList.Add(user);
+                                        }
+                                    }
+                                    GroupRefresh();
+                                    break;
+                                }
+                            // 채팅방목록 반환
+                            case CONSTANTS.RES_GROUPLIST:
+                                {
+                                    ResponseGroupList resBody = (ResponseGroupList)message.Body;
+                                    if (resBody.GetSize() != 0)
+                                    {
+                                        string[] delimiterChars = { "&" };
+                                        List<string> groups = new List<string>(resBody.msg.Split(delimiterChars, StringSplitOptions.RemoveEmptyEntries));
+
+                                        foreach (string group in groups)
+                                        {
+                                            string usersInGroup = group.Substring(group.LastIndexOf("^") + 1);
+                                            string temp = group.Substring(0, group.LastIndexOf("^"));
+
+                                            string groupName = temp.Substring(temp.LastIndexOf("^") + 1);
+
+                                            long pid = long.Parse(temp.Substring(0, temp.LastIndexOf("^")));
+
+                                            if (!groupList.ContainsKey(pid))
+                                            {
+                                                // groupList 추가
+                                                groupList.Add(pid, new Tuple<string, string>(groupName, usersInGroup));
+                                            }
+                                        }
+                                        // 화면 갱신
+                                        GroupRefresh();
+                                    }
+                                    else
+                                    {
+                                        MessageBox.Show("만들어진 채팅방이 없습니다.\n새로운 채팅방을 만들어보세요.", "알림");
+                                    }
+                                    break;
+                                }
+                            // 채팅방 생성 완료
+                            case CONSTANTS.RES_CREATE_GROUP_SUCCESS:
+                                {
+                                    ResponseCreateGroupSuccess resBody = (ResponseCreateGroupSuccess)message.Body;
+                                    if (!groupList.ContainsKey(resBody.pid))
+                                    {
+                                        // groupList 추가
+                                        groupList.Add(resBody.pid, new Tuple<string, string>(resBody.roomName, resBody.users));
+                                        GroupRefresh();
+                                    }
+                                    break;
+                                }
+                            // 채팅 메시지 수신
+                            case CONSTANTS.RES_CHAT:
+                                {
+                                    ResponseChat resBody = (ResponseChat)message.Body;
+
+                                    if (groupList.ContainsKey(resBody.pid))
+                                    {
+                                        // 열려있는 ChatGroupForm 중에서 pid가 일치하는 window에 출력
+                                        foreach (ChatGroupForm temp in chatGroupForms)
+                                        {
+                                            if (temp.pid == resBody.pid)
+                                            {
+                                                temp.DisplayText(resBody.userID + " : " + resBody.chatMsg);
+                                            }
+                                        }
+                                    }
+                                    break;
+                                }
+                            // 채팅방 초대 완료
+                            case CONSTANTS.RES_INVITATION_SUCCESS:
+                                {
+                                    ResponseInvitationSuccess resBody = (ResponseInvitationSuccess)message.Body;
+
+                                    // 초대된 회원이라면
+                                    if (resBody.invitedUsers.Contains(user_ID))
+                                    {
+                                        btn_PullGroup_Click();
+                                    }
+                                    // 채팅방에 원래 있던 회원이라면
+                                    else
+                                    {
+                                        string[] delimiterChars = { ", " };
+                                        List<string> users = new List<string>(groupList[resBody.pid].Item2.Split(delimiterChars, StringSplitOptions.RemoveEmptyEntries));
+
+                                        // 초대된 인원 추가
+                                        users.AddRange(resBody.invitedUsers);
+                                        // 정렬
+                                        users.Sort();
+
+                                        // 변환
+                                        string usersInGroup = string.Join(", ", users);
+
+                                        foreach (string user in resBody.invitedUsers)
+                                        {
+                                            // groupList 변경
+                                            groupList[resBody.pid] = new Tuple<string, string>(groupList[resBody.pid].Item1, usersInGroup);
+                                            // 열려있는 채팅방 중 변경된 채팅방이 있다면
+                                            foreach (ChatGroupForm chatGroupForm in chatGroupForms)
+                                            {
+                                                if (chatGroupForm.pid == resBody.pid)
+                                                {
+                                                    chatGroupForm.DisplayText(user + "님이 채팅방에 초대되셨습니다.");
+                                                    chatGroupForm.RedrawUserList();
+                                                }
+                                            }
+                                        }
+                                        GroupRefresh();
+                                    }
+
+                                    break;
+                                }
+                            // 채팅방 나가기 완료
+                            case CONSTANTS.RES_LEAVE_GROUP_SUCCESS:
+                                {
+                                    ResponseLeaveGroupSuccess resBody = (ResponseLeaveGroupSuccess)message.Body;
+
+                                    // 나간 사람일 때
+                                    if (user_ID.Equals(resBody.receivedID))
+                                    {
+                                        groupList.Remove(resBody.pid);
+                                    }
+                                    else
+                                    {
+                                        string[] delimiterChars = { ", " };
+                                        List<string> users = new List<string>(groupList[resBody.pid].Item2.Split(delimiterChars, StringSplitOptions.RemoveEmptyEntries));
+
+                                        users.Remove(resBody.receivedID);
+                                        string usersInGroup = string.Join(", ", users);
+
+                                        groupList[resBody.pid] = new Tuple<string, string>(groupList[resBody.pid].Item1, usersInGroup);
+
+                                        foreach (ChatGroupForm chatGroupForm in chatGroupForms)
+                                        {
+                                            if (chatGroupForm.pid == resBody.pid)
+                                            {
+                                                chatGroupForm.DisplayText(resBody.receivedID + "님이 채팅방에서 나가셨습니다.");
+                                                chatGroupForm.groupUserList.Remove(resBody.receivedID);
+                                                chatGroupForm.RedrawUserList();
+                                            }
+                                        }
+                                    }
+                                    GroupRefresh();
+                                    break;
+                                }
+                            case CONSTANTS.RES_SEND_FILE:
+                                {
+                                    ResponseSendFile resBody = (ResponseSendFile)message.Body;
+
+                                    using (Stream fileStream = new FileStream(resBody.filePath, FileMode.Open))
+                                    {
+                                        byte[] rbytes = new byte[CHUNK_SIZE];
+
+                                        long readValue = BitConverter.ToInt64(rbytes, 0);
+
+                                        int totalRead = 0;
+                                        ushort msgSeq = 0;
+                                        byte fragmented = (fileStream.Length < CHUNK_SIZE) ? CONSTANTS.NOT_FRAGMENTED : CONSTANTS.FRAGMENT;
+
+                                        while (totalRead < fileStream.Length)
+                                        {
+                                            int read = fileStream.Read(rbytes, 0, CHUNK_SIZE);
+                                            totalRead += read;
+                                            PacketMessage fileMsg = new PacketMessage();
+
+                                            byte[] sendBytes = new byte[read];
+                                            Array.Copy(rbytes, 0, sendBytes, 0, read);
+
+                                            fileMsg.Body = new RequestSendFileData(sendBytes);
+                                            fileMsg.Header = new Header()
+                                            {
+                                                MSGID = msgid,
+                                                MSGTYPE = CONSTANTS.REQ_SEND_FILE_DATA,
+                                                BODYLEN = (uint)fileMsg.Body.GetSize(),
+                                                FRAGMENTED = fragmented,
+                                                LASTMSG = (totalRead < fileStream.Length) ? CONSTANTS.NOT_LASTMSG : CONSTANTS.LASTMSG,
+                                                SEQ = msgSeq++
+                                            };
+
+                                            // 모든 파일의 내용이 전송될 때까지 파일 스트림을 0x03 메시지에 담아 서버로 보냄
+                                            MessageUtil.Send(stream, fileMsg);
+                                        }
+                                    }
+                                    break;
+                                }
+                            case CONSTANTS.RES_FILE_SEND_COMPLETE:
+                                {
+                                    // 서버에서 파일을 제대로 받았는지에 대한 응답을 받음
+                                    ResponseFileSendComplete resBody = (ResponseFileSendComplete)message.Body;
+                                    Console.WriteLine("파일 전송 성공");
+                                    break;
+                                }
+                            default:
+                                {
+                                    break;
+                                }
                         }
                     }
                 }
-                /*
-                catch (SocketException se)
+                catch (IOException IOe)
                 {
-                    Console.WriteLine(string.Format("GetMessage - SocketException : {0}", se.StackTrace));
-
-                    if (clientSocket != null)
-                    {
-                        OnDisconnected(clientSocket);
-
-                        clientSocket.Close();
-                        stream.Close();
-                        break;
-                    }
-                }*/
-                catch (System.IO.IOException ioe)
-                {
-                    Console.WriteLine(string.Format("GetMessage - IOException : {0}", ioe.StackTrace));
-
-                    /*
-                    if (clientSocket != null)
-                    {
-                        OnDisconnected(clientSocket);
-
-                        clientSocket.Close();
-                        stream.Close();
-                        break;
-                    }
-                    */
-                }
-                catch (InvalidOperationException ioe)
-                {
-                    Console.WriteLine(string.Format("GetMessage - InvalidOperationException : {0}", ioe.StackTrace));
-                    if (clientSocket != null)
-                    {
-                        clientSocket.Close();
-                        stream.Close();
-                        break;
-                    }
+                    Console.WriteLine(IOe.StackTrace);
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine(e.StackTrace);
-                    break;
-                }
+                } 
             }
         }
 
@@ -513,8 +459,7 @@ namespace TestClient
             PacketMessage reqMsg = new PacketMessage();
             reqMsg.Body = new RequestSignIn()
             {
-                userID = user_ID,
-                userPW = user_PW
+                msg = user_ID + "&" + user_PW
             };
             reqMsg.Header = new Header()
             {
@@ -767,10 +712,25 @@ namespace TestClient
 
         private void btn_PullUser_Click()
         {
+            PacketMessage reqMsg = new PacketMessage();
+            reqMsg.Header = new Header()
+            {
+                MSGID = msgid++,
+                MSGTYPE = CONSTANTS.REQ_USERLIST,
+                BODYLEN = 0,
+                FRAGMENTED = CONSTANTS.NOT_FRAGMENTED,
+                LASTMSG = CONSTANTS.LASTMSG,
+                SEQ = 0
+            };
+
+            MessageUtil.Send(stream, reqMsg);
+
+            /*
             string sendMsg = user_ID + "&requestUserList";
             byte[] buffer = Encoding.Unicode.GetBytes(sendMsg + "$");
             stream.Write(buffer, 0, buffer.Length);
             stream.Flush();
+            */
         }
 
         private void btn_PullGroup_Click(object sender, EventArgs e)
@@ -783,10 +743,29 @@ namespace TestClient
 
         private void btn_PullGroup_Click()
         {
+            PacketMessage reqMsg = new PacketMessage();
+            reqMsg.Body = new RequestGroupList()
+            {
+                userID = user_ID
+            };
+            reqMsg.Header = new Header()
+            {
+                MSGID = msgid++,
+                MSGTYPE = CONSTANTS.REQ_GROUPLIST,
+                BODYLEN = (uint)reqMsg.Body.GetSize(),
+                FRAGMENTED = CONSTANTS.NOT_FRAGMENTED,
+                LASTMSG = CONSTANTS.LASTMSG,
+                SEQ = 0
+            };
+
+            MessageUtil.Send(stream, reqMsg);
+
+            /*
             string sendMsg = user_ID + "&requestGroupList";
             byte[] buffer = Encoding.Unicode.GetBytes(sendMsg + "$");
             stream.Write(buffer, 0, buffer.Length);
             stream.Flush();
+            */
         }
 
         private void btn_SignOut_Click(object sender, EventArgs e)
@@ -799,12 +778,32 @@ namespace TestClient
                 }
             }
 
+            // 로그아웃 메시지 작성 및 발송
+            PacketMessage reqMsg = new PacketMessage();
+            reqMsg.Body = new RequestSignOut()
+            {
+                userID = user_ID
+            };
+            reqMsg.Header = new Header()
+            {
+                MSGID = msgid++,
+                MSGTYPE = CONSTANTS.REQ_SIGNOUT,
+                BODYLEN = (uint)reqMsg.Body.GetSize(),
+                FRAGMENTED = CONSTANTS.NOT_FRAGMENTED,
+                LASTMSG = CONSTANTS.LASTMSG,
+                SEQ = 0
+            };
+            MessageUtil.Send(stream, reqMsg);
+
+            /*
             string sendMsg = user_ID + "&SignOut";
 
             byte[] buffer = Encoding.Unicode.GetBytes(sendMsg + "$");
             stream.Write(buffer, 0, buffer.Length);
             stream.Flush();
+            */
 
+            // 상태 초기화
             user_ID = null;
             userList.Clear();
             groupList.Clear();
@@ -833,13 +832,34 @@ namespace TestClient
                 groupName = groupName.Substring(0, 20);
             }
 
+            string msg = groupName + "&" + group;
+
             // send group info to server
+            PacketMessage reqMsg = new PacketMessage();
+            reqMsg.Body = new RequestCreateGroup()
+            {
+                msg = msg
+            };
+            reqMsg.Header = new Header()
+            {
+                MSGID = msgid++,
+                MSGTYPE = CONSTANTS.REQ_CREATE_GROUP,
+                BODYLEN = (uint)reqMsg.GetSize(),
+                FRAGMENTED = CONSTANTS.NOT_FRAGMENTED,
+                LASTMSG = CONSTANTS.LASTMSG,
+                SEQ = 0
+            };
+            MessageUtil.Send(stream, reqMsg);
+
+            /*
             string sendMsg = groupName + "&" + group + "&createGroup";
 
             byte[] buffer = Encoding.Unicode.GetBytes(sendMsg + "$");
             stream.Write(buffer, 0, buffer.Length);
             stream.Flush();
+            */
 
+            // 초대 회원 선택 초기화
             for (int i = 0; i < clb_GroupingUser.Items.Count; i++)
             {
                 clb_GroupingUser.SetItemChecked(i, false);
@@ -1009,6 +1029,3 @@ namespace TestClient
         }
     }
 }
-
-// 출처: https://it-jerryfamily.tistory.com/80 [IT 이야기]
-// 출처: https://yeolco.tistory.com/53 [열코의 프로그래밍 일기]

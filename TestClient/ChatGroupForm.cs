@@ -12,6 +12,7 @@ using System.Net.Sockets;
 using System.IO;
 
 using log4net;
+using MyMessageProtocol;
 
 namespace TestClient
 {
@@ -43,11 +44,22 @@ namespace TestClient
         {
             if (txt_Send.Text != "")
             {
-                string sendMsg = this.txt_Send.Text + "&" + pid + "&" + user_ID + "&groupChat";
-
-                byte[] buffer = Encoding.Unicode.GetBytes(sendMsg + "$");
-                stream.Write(buffer, 0, buffer.Length);
-                stream.Flush();
+                string msg = pid + "&" + user_ID + "&" + this.txt_Send.Text;
+                PacketMessage reqMsg = new PacketMessage();
+                reqMsg.Body = new RequestChat() {
+                    msg = msg
+                };
+                
+                reqMsg.Header = new Header()
+                {
+                    MSGID = TestClientUI.msgid++,
+                    MSGTYPE = CONSTANTS.REQ_CHAT,
+                    BODYLEN = (uint)reqMsg.Body.GetSize(),
+                    FRAGMENTED = CONSTANTS.NOT_FRAGMENTED,
+                    LASTMSG = CONSTANTS.LASTMSG,
+                    SEQ = 0
+                };
+                MessageUtil.Send(stream, reqMsg);
             }
             txt_Send.Clear();
             txt_Send.Focus();
@@ -98,11 +110,21 @@ namespace TestClient
 
         private void btn_Leave_Click(object sender, EventArgs e)
         {
-            string sendMsg = pid + "&" + user_ID + "&LeaveGroup";
-
-            byte[] buffer = Encoding.Unicode.GetBytes(sendMsg + "$");
-            stream.Write(buffer, 0, buffer.Length);
-            stream.Flush();
+            PacketMessage reqMsg = new PacketMessage();
+            reqMsg.Body = new RequestLeaveGroup()
+            {
+                msg = pid + "&" + user_ID
+            };
+            reqMsg.Header = new Header()
+            {
+                MSGID = TestClientUI.msgid++,
+                MSGTYPE = CONSTANTS.REQ_LEAVE_GROUP,
+                BODYLEN = (uint)reqMsg.Body.GetSize(),
+                FRAGMENTED = CONSTANTS.NOT_FRAGMENTED,
+                LASTMSG = CONSTANTS.LASTMSG,
+                SEQ = 0
+            };
+            MessageUtil.Send(stream, reqMsg);            
 
             this.Close();
         }
@@ -124,7 +146,7 @@ namespace TestClient
 
         private void btn_SendFile_Click(object sender, EventArgs e)
         {
-            string filePath = null;
+            string filePath = string.Empty;
             openFileDialog1.InitialDirectory = "C:\\";
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
@@ -137,53 +159,22 @@ namespace TestClient
                 Console.WriteLine(fileSize);
                 Console.WriteLine(fileName);
 
-                byte[] buffer = Encoding.Unicode.GetBytes(fileName + "&" + fileSize + "&" + user_ID + "&requestSendFile" + "$");
-                stream.Write(buffer, 0, buffer.Length);
-                stream.Flush();
-
-                /*
-                using (Stream fileStream = new FileStream(filePath, FileMode.Open))
+                PacketMessage reqMsg = new PacketMessage();
+                reqMsg.Body = new RequestSendFile()
                 {
-                    byte[] rbytes = new byte[CHUNK_SIZE];
+                    msg = pid + "&" + user_ID + "&" + fileSize + "&" + fileName + "&" + filePath
+                };
+                reqMsg.Header = new Header()
+                {
+                    MSGID = TestClientUI.msgid++,
+                    MSGTYPE = CONSTANTS.REQ_SEND_FILE,
+                    BODYLEN = (uint)reqMsg.Body.GetSize(),
+                    FRAGMENTED = CONSTANTS.NOT_FRAGMENTED,
+                    LASTMSG = CONSTANTS.LASTMSG,
+                    SEQ = 0
+                };
 
-                    long readValue = BitConverter.ToInt64(rbytes, 0);
-
-                    int totalRead = 0;
-                    ushort msgSeq = 0;
-                    // byte fragmented = (fileStream.Length < CHUNK_SIZE) ? not fragmented : fragmente;
-
-                    while (totalRead < fileStream.Length)
-                    {
-                        int read = fileStream.Read(rbytes, 0, CHUNK_SIZE);
-                        totalRead += read;
-                        Message fileMsg = new Message();
-
-                        byte[] sendBytes = new byte[read];
-                        Array.Copy(rbytes, 0, sendBytes, 0, read);
-
-                        fileMsg.Body = new BodyData(sendBytes);
-                        fileMsg.Header = new Header()
-                        {
-                            MSGID = msgId,
-                            MSGTYPE = CONSTANTS.FILE_SEND_DATA,
-                            BODYLEN = (uint)fileMsg.Body.GetSize(),
-                            FRAGMENTED = fragmented,
-                            LASTMSG = (totalRead < fileStream.Length) ? CONSTANTS.NOT_LASTMSG : CONSTANTS.LASTMSG,
-                            SEQ = msgSeq++
-                        };
-
-                        // 모든 파일의 내용이 전송될 때까지 파일 스트림을 0x03 메시지에 담아 서버로 보냄
-                        MessageUtil.Send(stream, fileMsg);
-                    }
-
-                    Console.WriteLine();
-
-                    // 서버에서 파일을 제대로 받았는지에 대한 응답을 받음
-                    Message rstMsg = MessageUtil.Receive(stream);
-
-                    BodyResult result = ((BodyResult)rstMsg.Body);
-                    Console.WriteLine("파일 전송 성공");
-                }*/
+                MessageUtil.Send(stream, reqMsg);
             }
         }
 
