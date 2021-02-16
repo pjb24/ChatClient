@@ -155,7 +155,47 @@ namespace TestClient
                 string[] p = filePath.Split('\\');
                 long fileSize = new FileInfo(filePath).Length;
                 string fileName = p[p.Count() - 1];
-                
+
+                using (Stream fileStream = new FileStream(filePath, FileMode.Open))
+                {
+                    byte[] rbytes = new byte[CHUNK_SIZE];
+
+                    long readValue = BitConverter.ToInt64(rbytes, 0);
+
+                    int totalRead = 0;
+                    ushort msgSeq = 0;
+                    byte fragmented = (fileStream.Length < CHUNK_SIZE) ? CONSTANTS.NOT_FRAGMENTED : CONSTANTS.FRAGMENT;
+
+                    while (totalRead < fileStream.Length)
+                    {
+                        int read = fileStream.Read(rbytes, 0, CHUNK_SIZE);
+                        totalRead += read;
+                        PacketMessage fileMsg = new PacketMessage();
+
+                        byte[] sendBytes = new byte[read];
+                        Array.Copy(rbytes, 0, sendBytes, 0, read);
+
+                        fileMsg.Body = new SendFile()
+                        {
+                            msg = pid + "&" + user_ID + "&" + fileName + "&" + fileSize + "&" + Encoding.Unicode.GetString(sendBytes)
+                        };
+                        fileMsg.Header = new Header()
+                        {
+                            MSGID = TestClientUI.msgid,
+                            MSGTYPE = CONSTANTS.SEND_FILE,
+                            BODYLEN = (uint)fileMsg.Body.GetSize(),
+                            FRAGMENTED = fragmented,
+                            LASTMSG = (totalRead < fileStream.Length) ? CONSTANTS.NOT_LASTMSG : CONSTANTS.LASTMSG,
+                            SEQ = msgSeq++
+                        };
+
+                        // 모든 파일의 내용이 전송될 때까지 파일 스트림을 0x03 메시지에 담아 서버로 보냄
+                        MessageUtil.Send(stream, fileMsg);
+                    }
+                }
+
+
+                /*
                 Console.WriteLine(fileSize);
                 Console.WriteLine(fileName);
 
@@ -175,6 +215,7 @@ namespace TestClient
                 };
 
                 MessageUtil.Send(stream, reqMsg);
+                */
             }
         }
 

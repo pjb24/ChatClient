@@ -292,6 +292,7 @@ namespace TestClient
                                     GroupRefresh();
                                     break;
                                 }
+                            // 파일 전송 준비 완료
                             case CONSTANTS.RES_SEND_FILE:
                                 {
                                     ResponseSendFile resBody = (ResponseSendFile)message.Body;
@@ -337,6 +338,138 @@ namespace TestClient
                                     // 서버에서 파일을 제대로 받았는지에 대한 응답을 받음
                                     ResponseFileSendComplete resBody = (ResponseFileSendComplete)message.Body;
                                     Console.WriteLine("파일 전송 성공");
+                                    break;
+                                }
+                            case CONSTANTS.REQ_SEND_FILE:
+                                {
+                                    RequestSendFile reqBody = (RequestSendFile)message.Body;
+
+                                    string msg = message.Header.MSGID + "&" + CONSTANTS.ACCEPTED + "&" + reqBody.pid + "&" + reqBody.filePath;
+
+                                    PacketMessage resMsg = new PacketMessage();
+                                    resMsg.Body = new ResponseSendFile()
+                                    {
+                                        msg = msg
+                                        // MSGID = message.Header.MSGID,
+                                        // RESPONSE = CONSTANTS.ACCEPTED,
+                                        // pid = reqBody.pid
+                                        // filePath = reqBody.filePath
+                                    };
+                                    resMsg.Header = new Header()
+                                    {
+                                        MSGID = msgid++,
+                                        MSGTYPE = CONSTANTS.RES_SEND_FILE,
+                                        BODYLEN = (uint)resMsg.Body.GetSize(),
+                                        FRAGMENTED = CONSTANTS.NOT_FRAGMENTED,
+                                        LASTMSG = CONSTANTS.LASTMSG,
+                                        SEQ = 0
+                                    };
+
+                                    MessageUtil.Send(stream, resMsg);
+
+                                    long fileSize = reqBody.FILESIZE;
+                                    string fileName = reqBody.FILENAME;
+
+                                    string dir = System.Windows.Forms.Application.StartupPath + "\\file";
+                                    if (Directory.Exists(dir) == false)
+                                    {
+                                        Directory.CreateDirectory(dir);
+                                    }
+
+                                    // 파일 스트림 생성
+                                    FileStream file = new FileStream(dir + "\\" + fileName, FileMode.Create);
+                                    uint? dataMsgId = null;
+                                    ushort prevSeq = 0;
+                                    while ((message = MessageUtil.Receive(stream)) != null)
+                                    {
+                                        Console.Write("#");
+                                        if (message.Header.MSGTYPE != CONSTANTS.REQ_SEND_FILE_DATA)
+                                            break;
+
+                                        if (dataMsgId == null)
+                                            dataMsgId = message.Header.MSGID;
+                                        else
+                                        {
+                                            if (dataMsgId != message.Header.MSGID)
+                                                break;
+                                        }
+
+                                        // 메시지 순서가 어긋나면 전송 중단
+                                        if (prevSeq++ != message.Header.SEQ)
+                                        {
+                                            Console.WriteLine("{0}, {1}", prevSeq, message.Header.SEQ);
+                                            break;
+                                        }
+
+                                        file.Write(message.Body.GetBytes(), 0, message.Body.GetSize());
+
+                                        // 분할 메시지가 아니면 반복을 한번만하고 빠져나옴
+                                        if (message.Header.FRAGMENTED == CONSTANTS.NOT_FRAGMENTED)
+                                            break;
+                                        //마지막 메시지면 반복문을 빠져나옴
+                                        if (message.Header.LASTMSG == CONSTANTS.LASTMSG)
+                                            break;
+                                    }
+                                    long recvFileSize = file.Length;
+                                    file.Close();
+
+                                    resMsg.Body = new ResponseFileSendComplete()
+                                    {
+                                        MSGID = message.Header.MSGID,
+                                        RESULT = CONSTANTS.SUCCESS
+                                    };
+                                    resMsg.Header = new Header()
+                                    {
+                                        MSGID = msgid++,
+                                        MSGTYPE = CONSTANTS.RES_FILE_SEND_COMPLETE,
+                                        BODYLEN = (uint)resMsg.Body.GetSize(),
+                                        FRAGMENTED = CONSTANTS.NOT_FRAGMENTED,
+                                        LASTMSG = CONSTANTS.LASTMSG,
+                                        SEQ = 0
+                                    };
+                                    MessageUtil.Send(stream, resMsg);
+                                    break;
+                                }
+                            case CONSTANTS.SEND_FILE:
+                                {
+                                    SendFile reqBody = (SendFile)message.Body;
+
+                                    long fileSize = reqBody.FILESIZE;
+                                    string fileName = reqBody.FILENAME;
+
+                                    long pid = reqBody.pid;
+                                    string userID = reqBody.userID;
+                                    byte[] DATA = reqBody.DATA;
+
+                                    string dir = System.Windows.Forms.Application.StartupPath + "\\file";
+                                    if (Directory.Exists(dir) == false)
+                                    {
+                                        Directory.CreateDirectory(dir);
+                                    }
+
+                                    // 파일 스트림 생성
+                                    FileStream file = new FileStream(dir + "\\" + fileName, FileMode.Append);
+
+                                    Console.Write("#");
+
+                                    file.Write(reqBody.DATA, 0, reqBody.DATA.Length);
+                                    file.Close();
+
+                                    if (message.Header.LASTMSG == CONSTANTS.LASTMSG)
+                                    {
+                                        if (groupList.ContainsKey(pid))
+                                        {
+                                            // 열려있는 ChatGroupForm 중에서 pid가 일치하는 window에 출력
+                                            foreach (ChatGroupForm temp in chatGroupForms)
+                                            {
+                                                if (temp.pid == pid)
+                                                {
+                                                    temp.DisplayText(userID + " : " + fileName + " 파일을 전송했습니다.");
+                                                }
+                                            }
+                                        }
+                                        break;
+                                    }
                                     break;
                                 }
                             default:
@@ -844,7 +977,7 @@ namespace TestClient
             {
                 MSGID = msgid++,
                 MSGTYPE = CONSTANTS.REQ_CREATE_GROUP,
-                BODYLEN = (uint)reqMsg.GetSize(),
+                BODYLEN = (uint)reqMsg.Body.GetSize(),
                 FRAGMENTED = CONSTANTS.NOT_FRAGMENTED,
                 LASTMSG = CONSTANTS.LASTMSG,
                 SEQ = 0
