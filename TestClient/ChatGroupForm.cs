@@ -156,6 +156,7 @@ namespace TestClient
                 long fileSize = new FileInfo(filePath).Length;
                 string fileName = p[p.Count() - 1];
 
+                /*
                 using (Stream fileStream = new FileStream(filePath, FileMode.Open))
                 {
                     byte[] rbytes = new byte[CHUNK_SIZE];
@@ -177,7 +178,7 @@ namespace TestClient
 
                         fileMsg.Body = new SendFile()
                         {
-                            msg = pid + "&" + user_ID + "&" + fileName + "&" + fileSize + "&" + Encoding.Unicode.GetString(sendBytes)
+                            msg = pid + "&^%$#&^%$&^%$" + user_ID + "&^%$#&^%$&^%$" + fileName + "&^%$#&^%$&^%$" + fileSize + "&^%$#&^%$&^%$" + Encoding.Unicode.GetString(sendBytes)
                         };
                         fileMsg.Header = new Header()
                         {
@@ -193,9 +194,9 @@ namespace TestClient
                         MessageUtil.Send(stream, fileMsg);
                     }
                 }
+                */
 
-
-                /*
+                
                 Console.WriteLine(fileSize);
                 Console.WriteLine(fileName);
 
@@ -215,7 +216,7 @@ namespace TestClient
                 };
 
                 MessageUtil.Send(stream, reqMsg);
-                */
+                
             }
         }
 
