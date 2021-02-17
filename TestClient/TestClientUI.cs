@@ -369,7 +369,7 @@ namespace TestClient
                                 {
                                     RequestSendFile reqBody = (RequestSendFile)message.Body;
 
-                                    string msg = message.Header.MSGID + "&" + CONSTANTS.ACCEPTED + "&" + reqBody.pid + "&" + reqBody.filePath + "&" + user_ID;
+                                    string msg = message.Header.MSGID + "&" + reqBody.pid + "&" + reqBody.filePath + "&" + user_ID;
 
                                     PacketMessage resMsg = new PacketMessage();
                                     resMsg.Body = new ResponseSendFile()
@@ -860,7 +860,7 @@ namespace TestClient
                 LASTMSG = CONSTANTS.LASTMSG,
                 SEQ = 0
             };
-
+            Console.WriteLine((uint) reqMsg.Body.GetSize());
             MessageUtil.Send(stream, reqMsg);
 
             // string sendMsg = user_ID + "&" + user_PW + "register";
