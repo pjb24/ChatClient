@@ -72,6 +72,8 @@ namespace TestClient
             catch (SocketException se)
             {
                 Console.WriteLine(string.Format("clientSocket.Connect - SocketException : {0}", se.StackTrace));
+                MessageBox.Show("서버에 접속할 수 없습니다.\n 잠시 후 프로그램을 다시 실행해주십시오.", "알림");
+                ProgramClose();
             }
         }
 
@@ -240,16 +242,28 @@ namespace TestClient
                                         // 변환
                                         string usersInGroup = string.Join(", ", users);
 
+                                        // 채팅방 이름
+                                        string roomName = string.Empty;
+                                        if (usersInGroup.Length > 20)
+                                        {
+                                            roomName = usersInGroup.Substring(0, 20);
+                                        }
+                                        else
+                                        {
+                                            roomName = usersInGroup;
+                                        }
+
                                         foreach (string user in resBody.invitedUsers)
                                         {
                                             // groupList 변경
-                                            groupList[resBody.pid] = new Tuple<string, string>(groupList[resBody.pid].Item1, usersInGroup);
+                                            groupList[resBody.pid] = new Tuple<string, string>(roomName, usersInGroup);
                                             // 열려있는 채팅방 중 변경된 채팅방이 있다면
                                             foreach (ChatGroupForm chatGroupForm in chatGroupForms)
                                             {
                                                 if (chatGroupForm.pid == resBody.pid)
                                                 {
                                                     chatGroupForm.DisplayText(user + "님이 채팅방에 초대되셨습니다.");
+                                                    chatGroupForm.groupUserList.Add(user);
                                                     chatGroupForm.RedrawUserList();
                                                 }
                                             }
@@ -277,7 +291,18 @@ namespace TestClient
                                         users.Remove(resBody.receivedID);
                                         string usersInGroup = string.Join(", ", users);
 
-                                        groupList[resBody.pid] = new Tuple<string, string>(groupList[resBody.pid].Item1, usersInGroup);
+                                        // 채팅방 이름
+                                        string roomName = string.Empty;
+                                        if (usersInGroup.Length > 20)
+                                        {
+                                            roomName = usersInGroup.Substring(0, 20);
+                                        }
+                                        else
+                                        {
+                                            roomName = usersInGroup;
+                                        }
+
+                                        groupList[resBody.pid] = new Tuple<string, string>(roomName, usersInGroup);
 
                                         foreach (ChatGroupForm chatGroupForm in chatGroupForms)
                                         {
@@ -494,6 +519,8 @@ namespace TestClient
                 catch (IOException IOe)
                 {
                     Console.WriteLine(IOe.StackTrace);
+                    MessageBox.Show("서버에서 연결을 종료했습니다.\n 프로그램을 다시 실행해주십시오.", "알림");
+                    ProgramClose();
                 }
                 catch (Exception e)
                 {
@@ -1018,6 +1045,7 @@ namespace TestClient
             // change design
 
             // lb_UserList
+            lb_UserList.Items.Clear();
             foreach (string item in userList)
             {
                 if (!lb_UserList.Items.Contains(item))
@@ -1171,6 +1199,21 @@ namespace TestClient
 
             string Output = Encoding.UTF8.GetString(xBuff);
             return Output;
+        }
+
+        private void ProgramClose()
+        {
+            if (this.InvokeRequired)
+            {
+                this.BeginInvoke(new MethodInvoker(delegate
+                {
+                    this.Close();
+                }));
+            }
+            else
+            {
+                this.Close();
+            }
         }
     }
 }
