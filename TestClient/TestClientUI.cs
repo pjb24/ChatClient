@@ -344,7 +344,7 @@ namespace TestClient
                                 {
                                     RequestSendFile reqBody = (RequestSendFile)message.Body;
 
-                                    string msg = message.Header.MSGID + "&" + CONSTANTS.ACCEPTED + "&" + reqBody.pid + "&" + reqBody.filePath;
+                                    string msg = message.Header.MSGID + "&" + CONSTANTS.ACCEPTED + "&" + reqBody.pid + "&" + reqBody.filePath + "&" + user_ID;
 
                                     PacketMessage resMsg = new PacketMessage();
                                     resMsg.Body = new ResponseSendFile()
@@ -412,6 +412,18 @@ namespace TestClient
                                     }
                                     long recvFileSize = file.Length;
                                     file.Close();
+
+                                    if (groupList.ContainsKey(reqBody.pid))
+                                    {
+                                        // 열려있는 ChatGroupForm 중에서 pid가 일치하는 window에 출력
+                                        foreach (ChatGroupForm temp in chatGroupForms)
+                                        {
+                                            if (temp.pid == reqBody.pid)
+                                            {
+                                                temp.DisplayText(reqBody.userID + " : " + fileName + " 파일을 전송했습니다.");
+                                            }
+                                        }
+                                    }
 
                                     resMsg.Body = new ResponseFileSendComplete()
                                     {
