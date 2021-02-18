@@ -243,14 +243,10 @@ namespace TestClient
                                         string usersInGroup = string.Join(", ", users);
 
                                         // 채팅방 이름
-                                        string roomName = string.Empty;
+                                        string roomName = usersInGroup + " Group";
                                         if (usersInGroup.Length > 20)
                                         {
                                             roomName = usersInGroup.Substring(0, 20);
-                                        }
-                                        else
-                                        {
-                                            roomName = usersInGroup;
                                         }
 
                                         foreach (string user in resBody.invitedUsers)
@@ -292,14 +288,10 @@ namespace TestClient
                                         string usersInGroup = string.Join(", ", users);
 
                                         // 채팅방 이름
-                                        string roomName = string.Empty;
+                                        string roomName = usersInGroup + " Group";
                                         if (usersInGroup.Length > 20)
                                         {
                                             roomName = usersInGroup.Substring(0, 20);
-                                        }
-                                        else
-                                        {
-                                            roomName = usersInGroup;
                                         }
 
                                         groupList[resBody.pid] = new Tuple<string, string>(roomName, usersInGroup);
