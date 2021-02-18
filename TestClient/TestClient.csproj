@@ -47,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Program.cs" />
+    <Compile Include="SocketListener.cs" />
     <Compile Include="TestClientUI.cs">
       <SubType>Form</SubType>
     </Compile>
