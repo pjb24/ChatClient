@@ -624,12 +624,18 @@ namespace TestClient
             user_ID = txt_UserID.Text;
             if (user_ID.Equals("ID") || user_ID.Length == 0)
             {
-                MessageBox.Show("회원 ID를 입력해주세요", "알림");
+                MessageBox.Show("회원 ID를 입력해주세요.", "알림");
+                return;
+            }
+            if (user_ID.Length > 20)
+            {
+                MessageBox.Show("회원 ID는 20자를 초과할 수 없습니다.", "알림");
+                txt_UserID.Clear();
                 return;
             }
             if (txt_UserPW.Text.Equals("PW") || txt_UserPW.Text.Length == 0)
             {
-                MessageBox.Show("회원 PW를 입력해주세요", "알림");
+                MessageBox.Show("회원 PW를 입력해주세요.", "알림");
                 return;
             }
 
@@ -853,12 +859,17 @@ namespace TestClient
             user_ID = txt_UserID.Text;
             if (user_ID.Equals("ID") || user_ID.Length == 0)
             {
-                MessageBox.Show("회원 ID를 입력해주세요", "알림");
+                MessageBox.Show("회원 ID를 입력해주세요.", "알림");
+                return;
+            }
+            if (user_ID.Length > 20)
+            {
+                MessageBox.Show("회원 ID는 20자를 초과할 수 없습니다.", "알림");
                 return;
             }
             if (txt_UserPW.Text.Equals("PW") || txt_UserPW.Text.Length == 0)
             {
-                MessageBox.Show("회원 PW를 입력해주세요", "알림");
+                MessageBox.Show("회원 PW를 입력해주세요.", "알림");
                 return;
             }
 
