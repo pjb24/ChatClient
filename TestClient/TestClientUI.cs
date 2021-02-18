@@ -97,7 +97,7 @@ namespace TestClient
                                     ResponseRegisterSuccess resBody = (ResponseRegisterSuccess)message.Body;
 
                                     // 회원가입한 사람일 때
-                                    if (user_ID.Length == 0)
+                                    if (user_ID.Equals(resBody.userID))
                                     {
                                         MessageBox.Show("회원가입 되었습니다.", "알림");
                                         SettingControlLocationSignIn();
@@ -621,10 +621,20 @@ namespace TestClient
 
         private void btn_SignInSubmit_Click(object sender, EventArgs e)
         {
+            user_ID = txt_UserID.Text;
+            if (user_ID.Equals("ID") || user_ID.Length == 0)
+            {
+                MessageBox.Show("회원 ID를 입력해주세요", "알림");
+                return;
+            }
+            if (txt_UserPW.Text.Equals("PW") || txt_UserPW.Text.Length == 0)
+            {
+                MessageBox.Show("회원 PW를 입력해주세요", "알림");
+                return;
+            }
+
             SHA256Managed sHA256Managed = new SHA256Managed();
             byte[] temp = sHA256Managed.ComputeHash(Encoding.Unicode.GetBytes(txt_UserPW.Text));
-
-            user_ID = txt_UserID.Text;
             string user_PW = string.Join(string.Empty, Array.ConvertAll(temp, b => b.ToString("X2")));
 
             // 로그인 메시지 작성
@@ -840,10 +850,20 @@ namespace TestClient
 
         private void btn_RegisterSubmit_Click(object sender, EventArgs e)
         {
+            user_ID = txt_UserID.Text;
+            if (user_ID.Equals("ID") || user_ID.Length == 0)
+            {
+                MessageBox.Show("회원 ID를 입력해주세요", "알림");
+                return;
+            }
+            if (txt_UserPW.Text.Equals("PW") || txt_UserPW.Text.Length == 0)
+            {
+                MessageBox.Show("회원 PW를 입력해주세요", "알림");
+                return;
+            }
+
             SHA256Managed sHA256Managed = new SHA256Managed();
             byte[] temp = sHA256Managed.ComputeHash(Encoding.Unicode.GetBytes(txt_UserPW.Text));
-
-            user_ID = txt_UserID.Text;
             string user_PW = string.Join(string.Empty, Array.ConvertAll(temp, b => b.ToString("X2")));
 
             PacketMessage reqMsg = new PacketMessage();
