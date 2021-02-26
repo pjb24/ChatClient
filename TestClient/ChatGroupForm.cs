@@ -23,17 +23,17 @@ namespace TestClient
         const int CHUNK_SIZE = 4096;
 
         public NetworkStream stream = default(NetworkStream);
-        // 열려있는 group의 id
-        public long pid = 0;
-        // 열려있는 group의 roomName
+        // 열려있는 room의 No
+        public int roomNo = 0;
+        // 열려있는 room의 roomName
         public string roomName = string.Empty;
         // 현재 클라이언트의 ID
         public string user_ID = string.Empty;
 
-        // 열려있는 group에 속한 회원목록
-        public List<string> groupUserList = new List<string>();
+        // 열려있는 room에 속한 회원목록
+        public Dictionary<int, Tuple<int, int, int>> usersInRoom = new Dictionary<int, Tuple<int, int, int>>();
         // 전체 회원목록
-        public List<string> userList = new List<string>();
+        public Dictionary<int, string> userList = new Dictionary<int, string>();
 
         public ChatGroupForm()
         {
@@ -44,7 +44,7 @@ namespace TestClient
         {
             if (txt_Send.Text != "")
             {
-                string msg = pid + "&" + user_ID + "&" + this.txt_Send.Text;
+                string msg = roomNo + "&" + user_ID + "&" + this.txt_Send.Text;
                 PacketMessage reqMsg = new PacketMessage();
                 reqMsg.Body = new RequestChat() {
                     msg = msg
@@ -111,14 +111,14 @@ namespace TestClient
         private void btn_Leave_Click(object sender, EventArgs e)
         {
             PacketMessage reqMsg = new PacketMessage();
-            reqMsg.Body = new RequestLeaveGroup()
+            reqMsg.Body = new RequestLeaveRoom()
             {
-                msg = pid + "&" + user_ID
+                msg = roomNo + "&" + user_ID
             };
             reqMsg.Header = new Header()
             {
                 MSGID = TestClientUI.msgid++,
-                MSGTYPE = CONSTANTS.REQ_LEAVE_GROUP,
+                MSGTYPE = CONSTANTS.REQ_LEAVE_ROOM,
                 BODYLEN = (uint)reqMsg.Body.GetSize(),
                 FRAGMENTED = CONSTANTS.NOT_FRAGMENTED,
                 LASTMSG = CONSTANTS.LASTMSG,
@@ -131,15 +131,23 @@ namespace TestClient
 
         private void btn_Invitation_Click(object sender, EventArgs e)
         {
+            List<string> roomUserList = new List<string>();
+            foreach(KeyValuePair<int, Tuple<int, int, int>> temp in usersInRoom)
+            {
+                if (temp.Value.Item1.Equals(roomNo))
+                {
+                    roomUserList.Add(userList[temp.Value.Item2]);
+                }
+            }
             InvitationForm invitationForm = new InvitationForm
             {
                 Location = new Point(this.Location.X + this.Width, this.Location.Y),
                 stream = stream,
-                pid = pid,
+                roomNo = roomNo,
                 roomName = roomName,
                 user_ID = user_ID,
                 userList = userList,
-                groupUserList = groupUserList
+                roomUserList = roomUserList
             };
             invitationForm.ShowDialog();
         }
@@ -156,54 +164,10 @@ namespace TestClient
                 long fileSize = new FileInfo(filePath).Length;
                 string fileName = p[p.Count() - 1];
 
-                /*
-                using (Stream fileStream = new FileStream(filePath, FileMode.Open))
-                {
-                    byte[] rbytes = new byte[CHUNK_SIZE];
-
-                    long readValue = BitConverter.ToInt64(rbytes, 0);
-
-                    int totalRead = 0;
-                    ushort msgSeq = 0;
-                    byte fragmented = (fileStream.Length < CHUNK_SIZE) ? CONSTANTS.NOT_FRAGMENTED : CONSTANTS.FRAGMENT;
-
-                    while (totalRead < fileStream.Length)
-                    {
-                        int read = fileStream.Read(rbytes, 0, CHUNK_SIZE);
-                        totalRead += read;
-                        PacketMessage fileMsg = new PacketMessage();
-
-                        byte[] sendBytes = new byte[read];
-                        Array.Copy(rbytes, 0, sendBytes, 0, read);
-
-                        fileMsg.Body = new SendFile()
-                        {
-                            msg = pid + "&^%$#&^%$&^%$" + user_ID + "&^%$#&^%$&^%$" + fileName + "&^%$#&^%$&^%$" + fileSize + "&^%$#&^%$&^%$" + Encoding.Unicode.GetString(sendBytes)
-                        };
-                        fileMsg.Header = new Header()
-                        {
-                            MSGID = TestClientUI.msgid,
-                            MSGTYPE = CONSTANTS.SEND_FILE,
-                            BODYLEN = (uint)fileMsg.Body.GetSize(),
-                            FRAGMENTED = fragmented,
-                            LASTMSG = (totalRead < fileStream.Length) ? CONSTANTS.NOT_LASTMSG : CONSTANTS.LASTMSG,
-                            SEQ = msgSeq++
-                        };
-
-                        // 모든 파일의 내용이 전송될 때까지 파일 스트림을 0x03 메시지에 담아 서버로 보냄
-                        MessageUtil.Send(stream, fileMsg);
-                    }
-                }
-                */
-
-                
-                Console.WriteLine(fileSize);
-                Console.WriteLine(fileName);
-
                 PacketMessage reqMsg = new PacketMessage();
                 reqMsg.Body = new RequestSendFile()
                 {
-                    msg = pid + "&" + user_ID + "&" + fileSize + "&" + fileName + "&" + filePath
+                    msg = roomNo + "&" + user_ID + "&" + fileSize + "&" + fileName + "&" + filePath
                 };
                 reqMsg.Header = new Header()
                 {
@@ -216,7 +180,6 @@ namespace TestClient
                 };
 
                 MessageUtil.Send(stream, reqMsg);
-                
             }
         }
 
@@ -227,18 +190,24 @@ namespace TestClient
                 lb_UserList.BeginInvoke(new MethodInvoker(delegate
                 {
                     lb_UserList.Items.Clear();
-                    foreach (string user in groupUserList)
+                    foreach (KeyValuePair<int, Tuple<int, int, int>> user in usersInRoom)
                     {
-                        lb_UserList.Items.Add(user);
+                        if (user.Value.Item1.Equals(roomNo))
+                        {
+                            lb_UserList.Items.Add(userList[user.Value.Item2]);
+                        }
                     }
                 }));
             }
             else
             {
                 lb_UserList.Items.Clear();
-                foreach (string user in groupUserList)
+                foreach (KeyValuePair<int, Tuple<int, int, int>> user in usersInRoom)
                 {
-                    lb_UserList.Items.Add(user);
+                    if (user.Value.Item1.Equals(roomNo))
+                    {
+                        lb_UserList.Items.Add(userList[user.Value.Item2]);
+                    }
                 }
             }
             

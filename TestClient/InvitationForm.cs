@@ -20,17 +20,17 @@ namespace TestClient
         private static readonly ILog log = LogManager.GetLogger(typeof(InvitationForm));
 
         public NetworkStream stream = default(NetworkStream);
-        // 열려있는 group의 pid
-        public long pid = 0;
-        // 열려있는 group의 roomName
+        // 열려있는 room의 pid
+        public int roomNo = 0;
+        // 열려있는 room의 roomName
         public string roomName = string.Empty;
         // 현재 클라이언트의 ID
         public string user_ID = string.Empty;
 
-        // 열려있는 group에 속한 회원 목록
-        public List<string> groupUserList = new List<string>();
+        // 열려있는 room에 속한 회원 목록
+        public List<string> roomUserList = new List<string>();
         // 전체 회원 목록
-        public List<string> userList = new List<string>();
+        public Dictionary<int, string> userList = new Dictionary<int, string>();
 
         public InvitationForm()
         {
@@ -49,7 +49,7 @@ namespace TestClient
             string group = string.Join(", ", usersInGroup);
 
             // send group info to server
-            string msg = pid + "&" + group;
+            string msg = roomNo + "&" + group;
 
             PacketMessage reqMsg = new PacketMessage();
             reqMsg.Body = new RequestInvitation()
@@ -78,13 +78,14 @@ namespace TestClient
 
         private void InvitationForm_Load(object sender, EventArgs e)
         {
-            foreach (string user in userList)
+            foreach (KeyValuePair<int, string> user in userList)
             {
-                if (!groupUserList.Contains(user))
+                // 현재 room에 없고 checkedListBox에 표시되지 않음
+                if (!roomUserList.Contains(user.Value))
                 {
-                    if (!clb_InviteUser.Items.Contains(user))
+                    if (!clb_InviteUser.Items.Contains(user.Value))
                     {
-                        clb_InviteUser.Items.Add(user);
+                        clb_InviteUser.Items.Add(user.Value);
                     }
                 }
             }

@@ -32,8 +32,9 @@ namespace TestClient
         string message = string.Empty;
 
         string user_ID = string.Empty;
-        List<string> userList = new List<string>();
-        Dictionary<long, Tuple<string, string>> groupList = new Dictionary<long, Tuple<string, string>>();
+        Dictionary<int, string> userList = new Dictionary<int, string>();
+        Dictionary<int, Tuple<int, string>> roomList = new Dictionary<int, Tuple<int, string>>();
+        Dictionary<int, Tuple<int, int, int>> usersInRoom = new Dictionary<int, Tuple<int, int, int>>();
 
         List<ChatGroupForm> chatGroupForms = new List<ChatGroupForm>();
 
@@ -99,13 +100,15 @@ namespace TestClient
                                     // 회원가입한 사람일 때
                                     if (user_ID.Equals(resBody.userID))
                                     {
-                                        MessageBox.Show("회원가입 되었습니다.", "알림");
+                                        MessageBox.Show("회원가입 되었습니다.", "회원가입 성공");
+                                        txt_UserID.Clear();
+                                        txt_UserPW.Clear();
                                         SettingControlLocationSignIn();
                                     }
                                     // 회원가입한 사람이 아닐 때
                                     else
                                     {
-                                        userList.Add(resBody.userID);
+                                        userList.Add(resBody.No, resBody.userID);
                                         GroupRefresh();
                                     }
                                     break;
@@ -113,70 +116,71 @@ namespace TestClient
                             // 회원가입 실패 - 이미 존재하는 사용자
                             case CONSTANTS.RES_REGISTER_FAIL_EXIST:
                                 {
-                                    MessageBox.Show("이미 등록된 회원입니다.", "알림");
+                                    MessageBox.Show("이미 등록된 회원입니다.", "회원가입 실패");
                                     break;
                                 }
                             // 로그인 성공
                             case CONSTANTS.RES_SIGNIN_SUCCESS:
                                 {
                                     // 폼 컨트롤 위치 조정
+                                    txt_UserID.Clear();
+                                    txt_UserPW.Clear();
                                     SettingControlLocationGroup();
                                     break;
                                 }
                             // 로그인 실패 - 존재하지 않는 사용자
                             case CONSTANTS.RES_SIGNIN_FAIL_NOT_EXIST:
                                 {
-                                    MessageBox.Show("등록된 회원이 아닙니다.", "알림");
+                                    MessageBox.Show("등록된 회원이 아닙니다.", "로그인 실패");
                                     break;
                                 }
                             // 로그인 실패 - 잘못된 비밀번호
                             case CONSTANTS.RES_SIGNIN_FAIL_WRONG_PASSWORD:
                                 {
-                                    MessageBox.Show("잘못된 비밀번호 입니다.", "알림");
+                                    MessageBox.Show("잘못된 비밀번호 입니다.", "로그인 실패");
                                     break;
                                 }
                             // 로그인 실패 - 이미 접속 중인 사용자
                             case CONSTANTS.RES_SIGNIN_FAIL_ONLINE_USER:
                                 {
-                                    MessageBox.Show("이미 접속 중인 사용자 입니다.", "알림");
+                                    MessageBox.Show("이미 접속 중인 사용자 입니다.", "로그인 실패");
                                     break;
                                 }
                             // 회원목록 반환
                             case CONSTANTS.RES_USERLIST:
                                 {
                                     ResponseUserList resBody = (ResponseUserList)message.Body;
-                                    foreach (string user in resBody.users)
+                                    foreach (KeyValuePair<int, string> user in resBody.userList)
                                     {
-                                        if (!userList.Contains(user) && !user_ID.Equals(user))
+                                        if (!userList.ContainsKey(user.Key) && !user_ID.Equals(user.Value))
                                         {
-                                            userList.Add(user);
+                                            userList.Add(user.Key, user.Value);
                                         }
                                     }
                                     GroupRefresh();
                                     break;
                                 }
                             // 채팅방목록 반환
-                            case CONSTANTS.RES_GROUPLIST:
+                            case CONSTANTS.RES_ROOMLIST:
                                 {
-                                    ResponseGroupList resBody = (ResponseGroupList)message.Body;
+                                    ResponseRoomList resBody = (ResponseRoomList)message.Body;
                                     if (resBody.GetSize() != 0)
                                     {
-                                        string[] delimiterChars = { "&" };
-                                        List<string> groups = new List<string>(resBody.msg.Split(delimiterChars, StringSplitOptions.RemoveEmptyEntries));
-
-                                        foreach (string group in groups)
+                                        foreach (KeyValuePair<int, Tuple<int, string>> room in resBody.roomList)
                                         {
-                                            string usersInGroup = group.Substring(group.LastIndexOf("^") + 1);
-                                            string temp = group.Substring(0, group.LastIndexOf("^"));
-
-                                            string groupName = temp.Substring(temp.LastIndexOf("^") + 1);
-
-                                            long pid = long.Parse(temp.Substring(0, temp.LastIndexOf("^")));
-
-                                            if (!groupList.ContainsKey(pid))
+                                            if (!roomList.ContainsKey(room.Key))
                                             {
-                                                // groupList 추가
-                                                groupList.Add(pid, new Tuple<string, string>(groupName, usersInGroup));
+                                                // roomList 추가
+                                                roomList.Add(room.Key, new Tuple<int, string>(room.Value.Item1, room.Value.Item2));
+                                            }
+                                        }
+
+                                        foreach (KeyValuePair<int, Tuple<int, int, int>> users in resBody.usersInRoom)
+                                        {
+                                            if (!usersInRoom.ContainsKey(users.Key))
+                                            {
+                                                // roomList 추가
+                                                usersInRoom.Add(users.Key, new Tuple<int, int, int>(users.Value.Item1, users.Value.Item2, users.Value.Item3));
                                             }
                                         }
                                         // 화면 갱신
@@ -189,13 +193,31 @@ namespace TestClient
                                     break;
                                 }
                             // 채팅방 생성 완료
-                            case CONSTANTS.RES_CREATE_GROUP_SUCCESS:
+                            case CONSTANTS.RES_CREATE_ROOM_SUCCESS:
                                 {
-                                    ResponseCreateGroupSuccess resBody = (ResponseCreateGroupSuccess)message.Body;
-                                    if (!groupList.ContainsKey(resBody.pid))
+                                    ResponseCreateRoomSuccess resBody = (ResponseCreateRoomSuccess)message.Body;
+                                    if (!roomList.ContainsKey(resBody.roomNo))
                                     {
-                                        // groupList 추가
-                                        groupList.Add(resBody.pid, new Tuple<string, string>(resBody.roomName, resBody.users));
+                                        // roomList 추가
+                                        roomList.Add(resBody.roomNo, new Tuple<int, string>(resBody.accessRight, resBody.roomName));
+
+                                        // 채팅방 생성자 추가
+                                        int creatorNo = 0;
+                                        foreach (KeyValuePair<int, string> temp in userList)
+                                        {
+                                            if (temp.Value == resBody.creator)
+                                            {
+                                                creatorNo = temp.Key;
+                                                break;
+                                            }
+                                        }
+                                        usersInRoom.Add(resBody.usersInRoomNoCreator, new Tuple<int, int, int>(resBody.roomNo, creatorNo, 2));
+
+                                        // 채팅방 회원 추가
+                                        foreach(KeyValuePair<int, Tuple<int, int, int>> temp in resBody.usersInRoom)
+                                        {
+                                            usersInRoom.Add(temp.Key, new Tuple<int, int, int>(temp.Value.Item1, temp.Value.Item2, temp.Value.Item3));
+                                        }
                                         GroupRefresh();
                                     }
                                     break;
@@ -205,12 +227,12 @@ namespace TestClient
                                 {
                                     ResponseChat resBody = (ResponseChat)message.Body;
 
-                                    if (groupList.ContainsKey(resBody.pid))
+                                    if (roomList.ContainsKey(resBody.roomNo))
                                     {
-                                        // 열려있는 ChatGroupForm 중에서 pid가 일치하는 window에 출력
+                                        // 열려있는 ChatGroupForm 중에서 roomNo가 일치하는 window에 출력
                                         foreach (ChatGroupForm temp in chatGroupForms)
                                         {
-                                            if (temp.pid == resBody.pid)
+                                            if (temp.roomNo == resBody.roomNo)
                                             {
                                                 temp.DisplayText(resBody.userID + " : " + resBody.chatMsg);
                                             }
@@ -223,66 +245,77 @@ namespace TestClient
                                 {
                                     ResponseInvitationSuccess resBody = (ResponseInvitationSuccess)message.Body;
 
+                                    int userNo = 0;
+
+                                    foreach(KeyValuePair<int, string> temp in userList)
+                                    {
+                                        if (temp.Value.Equals(user_ID))
+                                        {
+                                            userNo = temp.Key;
+                                            break;
+                                        }
+                                    }
+
+                                    bool invited = false;
+                                    foreach(KeyValuePair<int, Tuple<int, int, int>> temp in resBody.usersInRoom)
+                                    {
+                                        if (temp.Value.Item2.Equals(userNo))
+                                        {
+                                            invited = true;
+                                            break;
+                                        }
+                                    }
+
+                                    string userName = string.Empty;
                                     // 초대된 회원이라면
-                                    if (resBody.invitedUsers.Contains(user_ID))
+                                    if (invited)
                                     {
                                         btn_PullGroup_Click();
                                     }
                                     // 채팅방에 원래 있던 회원이라면
                                     else
                                     {
-                                        string[] delimiterChars = { ", " };
-                                        List<string> users = new List<string>(groupList[resBody.pid].Item2.Split(delimiterChars, StringSplitOptions.RemoveEmptyEntries));
-
-                                        // 초대된 인원 추가
-                                        users.AddRange(resBody.invitedUsers);
-                                        // 정렬
-                                        users.Sort();
-
-                                        // 변환
-                                        string usersInGroup = string.Join(", ", users);
-
-                                        // 채팅방 이름
-                                        string roomName = usersInGroup + " Group";
-                                        if (usersInGroup.Length > 20)
+                                        // usersInRoom 추가
+                                        foreach (KeyValuePair<int, Tuple<int, int, int>> temp in resBody.usersInRoom)
                                         {
-                                            roomName = usersInGroup.Substring(0, 20);
-                                        }
-
-                                        foreach (string user in resBody.invitedUsers)
-                                        {
-                                            // groupList 변경
-                                            groupList[resBody.pid] = new Tuple<string, string>(roomName, usersInGroup);
+                                            usersInRoom.Add(temp.Key, new Tuple<int, int, int>(temp.Value.Item1, temp.Value.Item2, temp.Value.Item3));
                                             // 열려있는 채팅방 중 변경된 채팅방이 있다면
                                             foreach (ChatGroupForm chatGroupForm in chatGroupForms)
                                             {
-                                                if (chatGroupForm.pid == resBody.pid)
+                                                if (chatGroupForm.roomNo == resBody.roomNo)
                                                 {
-                                                    chatGroupForm.DisplayText(user + "님이 채팅방에 초대되셨습니다.");
-                                                    chatGroupForm.groupUserList.Add(user);
+                                                    foreach(KeyValuePair<int, string> tmp in userList)
+                                                    {
+                                                        if (tmp.Key.Equals(temp.Value.Item2))
+                                                        {
+                                                            userName = tmp.Value;
+                                                            break;
+                                                        }
+                                                    }
+                                                    chatGroupForm.DisplayText(userName + "님이 채팅방에 초대되셨습니다.");
+                                                    chatGroupForm.usersInRoom.Add(temp.Key, new Tuple<int, int, int>(temp.Value.Item1, temp.Value.Item2, temp.Value.Item3));
                                                     chatGroupForm.RedrawUserList();
                                                 }
                                             }
                                         }
                                         GroupRefresh();
                                     }
-
                                     break;
                                 }
                             // 채팅방 나가기 완료
-                            case CONSTANTS.RES_LEAVE_GROUP_SUCCESS:
+                            case CONSTANTS.RES_LEAVE_ROOM_SUCCESS:
                                 {
-                                    ResponseLeaveGroupSuccess resBody = (ResponseLeaveGroupSuccess)message.Body;
+                                    ResponseLeaveRoomSuccess resBody = (ResponseLeaveRoomSuccess)message.Body;
 
                                     // 나간 사람일 때
                                     if (user_ID.Equals(resBody.receivedID))
                                     {
-                                        groupList.Remove(resBody.pid);
+                                        roomList.Remove(resBody.pid);
                                     }
                                     else
                                     {
                                         string[] delimiterChars = { ", " };
-                                        List<string> users = new List<string>(groupList[resBody.pid].Item2.Split(delimiterChars, StringSplitOptions.RemoveEmptyEntries));
+                                        List<string> users = new List<string>(roomList[resBody.pid].Item2.Split(delimiterChars, StringSplitOptions.RemoveEmptyEntries));
 
                                         users.Remove(resBody.receivedID);
                                         string usersInGroup = string.Join(", ", users);
@@ -294,7 +327,7 @@ namespace TestClient
                                             roomName = usersInGroup.Substring(0, 20);
                                         }
 
-                                        groupList[resBody.pid] = new Tuple<string, string>(roomName, usersInGroup);
+                                        roomList[resBody.pid] = new Tuple<string, string>(roomName, usersInGroup);
 
                                         foreach (ChatGroupForm chatGroupForm in chatGroupForms)
                                         {
@@ -430,7 +463,7 @@ namespace TestClient
                                     long recvFileSize = file.Length;
                                     file.Close();
 
-                                    if (groupList.ContainsKey(reqBody.pid))
+                                    if (roomList.ContainsKey(reqBody.pid))
                                     {
                                         // 열려있는 ChatGroupForm 중에서 pid가 일치하는 window에 출력
                                         foreach (ChatGroupForm temp in chatGroupForms)
@@ -486,7 +519,7 @@ namespace TestClient
 
                                     if (message.Header.LASTMSG == CONSTANTS.LASTMSG)
                                     {
-                                        if (groupList.ContainsKey(pid))
+                                        if (roomList.ContainsKey(pid))
                                         {
                                             // 열려있는 ChatGroupForm 중에서 pid가 일치하는 window에 출력
                                             foreach (ChatGroupForm temp in chatGroupForms)
@@ -832,11 +865,11 @@ namespace TestClient
         private void btn_OpenCreateGroup_Click(object sender, EventArgs e)
         {
             SettingControlLocationCreateGroup();
-            foreach(string user in userList)
+            foreach(KeyValuePair<int, string> user in userList)
             {
-                if (!clb_GroupingUser.Items.Contains(user))
+                if (!clb_GroupingUser.Items.Contains(user.Value))
                 {
-                    clb_GroupingUser.Items.Add(user);
+                    clb_GroupingUser.Items.Add(user.Value);
                 }
             }
         }
@@ -883,18 +916,7 @@ namespace TestClient
                 LASTMSG = CONSTANTS.LASTMSG,
                 SEQ = 0
             };
-            Console.WriteLine((uint) reqMsg.Body.GetSize());
             MessageUtil.Send(stream, reqMsg);
-
-            // string sendMsg = user_ID + "&" + user_PW + "register";
-            /*
-            byte[] buffer = Encoding.Unicode.GetBytes(sendMsg + "$");
-            stream.Write(buffer, 0, buffer.Length);
-            stream.Flush();
-            */
-
-            txt_UserID.Clear();
-            txt_UserPW.Clear();
         }
 
         private void btn_PullUser_Click(object sender, EventArgs e)
@@ -939,14 +961,14 @@ namespace TestClient
         private void btn_PullGroup_Click()
         {
             PacketMessage reqMsg = new PacketMessage();
-            reqMsg.Body = new RequestGroupList()
+            reqMsg.Body = new RequestRoomList()
             {
                 userID = user_ID
             };
             reqMsg.Header = new Header()
             {
                 MSGID = msgid++,
-                MSGTYPE = CONSTANTS.REQ_GROUPLIST,
+                MSGTYPE = CONSTANTS.REQ_ROOMLIST,
                 BODYLEN = (uint)reqMsg.Body.GetSize(),
                 FRAGMENTED = CONSTANTS.NOT_FRAGMENTED,
                 LASTMSG = CONSTANTS.LASTMSG,
@@ -1001,7 +1023,7 @@ namespace TestClient
             // 상태 초기화
             user_ID = null;
             userList.Clear();
-            groupList.Clear();
+            roomList.Clear();
             chatGroupForms.Clear();
             lb_GroupList.Items.Clear();
             SettingControlLocationSignIn();
@@ -1009,50 +1031,54 @@ namespace TestClient
 
         private void btn_Create_Click(object sender, EventArgs e)
         {
+            int accessRight = 0;
+            string roomName = string.Empty;
+            string creator = user_ID;
             // 채팅방에 들어갈 회원들 수집
-            List<string> usersInGroup = new List<string>();
-            usersInGroup.Add(user_ID);
+            List<string> tempUsers = new List<string>();
+
             foreach (object checkeditem in clb_GroupingUser.CheckedItems)
             {
-                usersInGroup.Add(checkeditem.ToString());
+                tempUsers.Add(checkeditem.ToString());
             }
             // 정렬
-            usersInGroup.Sort();
+            tempUsers.Sort();
 
-            string group = string.Join(", ", usersInGroup);
-            string groupName = group + "Group";
+            string group = string.Join(", ", tempUsers);
+            string groupName = string.Empty;
             // 채팅방 이름이 20자가 넘어가면 20자로 자르기
-            if (groupName.Length > 20)
+            if (group.Length > 15)
             {
-                groupName = groupName.Substring(0, 20);
+                groupName = group.Substring(0, 15) + " Room";
+            }
+            else
+            {
+                groupName = group + " Room";
             }
 
-            string msg = groupName + "&" + group;
+            if (roomName.Equals(""))
+            {
+                roomName = groupName;
+            }
+
+            string msg = accessRight + "&" + roomName + "&" + creator + "&" + group;
 
             // send group info to server
             PacketMessage reqMsg = new PacketMessage();
-            reqMsg.Body = new RequestCreateGroup()
+            reqMsg.Body = new RequestCreateRoom()
             {
                 msg = msg
             };
             reqMsg.Header = new Header()
             {
                 MSGID = msgid++,
-                MSGTYPE = CONSTANTS.REQ_CREATE_GROUP,
+                MSGTYPE = CONSTANTS.REQ_CREATE_ROOM,
                 BODYLEN = (uint)reqMsg.Body.GetSize(),
                 FRAGMENTED = CONSTANTS.NOT_FRAGMENTED,
                 LASTMSG = CONSTANTS.LASTMSG,
                 SEQ = 0
             };
             MessageUtil.Send(stream, reqMsg);
-
-            /*
-            string sendMsg = groupName + "&" + group + "&createGroup";
-
-            byte[] buffer = Encoding.Unicode.GetBytes(sendMsg + "$");
-            stream.Write(buffer, 0, buffer.Length);
-            stream.Flush();
-            */
 
             // 초대 회원 선택 초기화
             for (int i = 0; i < clb_GroupingUser.Items.Count; i++)
@@ -1069,25 +1095,47 @@ namespace TestClient
 
             // lb_UserList
             lb_UserList.Items.Clear();
-            foreach (string item in userList)
+            foreach (KeyValuePair<int, string> item in userList)
             {
-                if (!lb_UserList.Items.Contains(item))
+                if (!lb_UserList.Items.Contains(item.Value))
                 {
-                    lb_UserList.Items.Add(item);
+                    lb_UserList.Items.Add(item.Value);
                 }
             }
 
             // lb_GroupList
 
             lb_GroupList.Items.Clear();
-            foreach (KeyValuePair<long, Tuple<string, string>> item in groupList)
+            foreach (KeyValuePair<int, Tuple<int, string>> item in roomList)
             {
-                //if (!lb_GroupList.Items.Contains(item.Key))
-                //{
-                    lb_GroupList.Items.Add(item.Key);
-                    lb_GroupList.Items.Add(item.Value.Item1);
-                    lb_GroupList.Items.Add("채팅방 인원 : " + item.Value.Item2);
-                //}
+                lb_GroupList.Items.Add(item.Key);
+                /*
+                if (item.Value.Item1 == 0)
+                {
+                    lb_GroupList.Items.Add("public");
+                }
+                else
+                {
+                    lb_GroupList.Items.Add("private");
+                }
+                */
+                lb_GroupList.Items.Add(item.Value.Item2);
+
+                string users = string.Empty;
+                foreach (KeyValuePair<int, Tuple<int, int, int>> temp in usersInRoom)
+                {
+                    if (temp.Value.Item1.Equals(item.Key))
+                    {
+                        foreach (KeyValuePair<int, string> user in userList)
+                        {
+                            if (user.Key.Equals(temp.Value.Item2))
+                            {
+                                users = users + ", " + user.Value;
+                            }
+                        }
+                    }
+                }
+                lb_GroupList.Items.Add("채팅방 인원 : " + users);
             }
             // window를 비활성화하여 WM_PAINT call
             // true 배경을 지우고 다시 그린다
@@ -1108,8 +1156,8 @@ namespace TestClient
             ListBox lb = sender as ListBox;
 
             int index = lb.SelectedIndex - (lb.SelectedIndex % 3);
-            long pid = long.Parse(lb.Items[index].ToString());
-            string roomName = lb.Items[index + 1].ToString();
+            int roomNo = int.Parse(lb.Items[index].ToString());
+            string roomName = roomList[roomNo].Item2;
 
             // 해당 윈도우가 이미 열려있을 때 처리
             foreach (Form openForm in Application.OpenForms)
@@ -1128,30 +1176,16 @@ namespace TestClient
             ChatGroupForm chatGroupForm = new ChatGroupForm();
             chatGroupForm.Location = new Point(this.Location.X + this.Width, this.Location.Y);
             chatGroupForm.stream = stream;
-            chatGroupForm.pid = pid;
+            chatGroupForm.roomNo = roomNo;
             chatGroupForm.roomName = roomName;
             chatGroupForm.user_ID = user_ID;
             chatGroupForm.Tag = index;
             chatGroupForm.Text = roomName;
             chatGroupForm.Name = "chatGroupForm" + index;
-
-            // List 변환
-            string[] delimiterChars = { ", " };
-            List<string> groupUserList = new List<string>(groupList[pid].Item2.Split(delimiterChars, StringSplitOptions.RemoveEmptyEntries));
-            /*
-            foreach(var tmp in groupUserList)
-            {
-                Console.WriteLine(tmp);
-            }
-            Console.WriteLine(groupList[pid].Item2);
-            */
-
-            chatGroupForm.groupUserList = groupUserList;
+            chatGroupForm.usersInRoom = usersInRoom;
             chatGroupForm.userList = userList;
 
-            // ChatGroupForm이 열렸을 때 TestClientUI에 Form 정보 저장
-            // Open_ChatGroupForm(chatGroupForm);
-
+            // ChatGroupForm이 열렸을 때 Form 정보 저장
             chatGroupForms.Add(chatGroupForm);
 
             chatGroupForm.Show();

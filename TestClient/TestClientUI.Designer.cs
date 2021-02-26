@@ -67,6 +67,7 @@ namespace TestClient
             this.txt_UserID.Font = new System.Drawing.Font("굴림", 14F);
             this.txt_UserID.ForeColor = System.Drawing.SystemColors.InactiveCaption;
             this.txt_UserID.Location = new System.Drawing.Point(430, 139);
+            this.txt_UserID.MaxLength = 20;
             this.txt_UserID.Name = "txt_UserID";
             this.txt_UserID.Size = new System.Drawing.Size(160, 29);
             this.txt_UserID.TabIndex = 1;
@@ -80,6 +81,7 @@ namespace TestClient
             this.txt_UserPW.Font = new System.Drawing.Font("굴림", 14F);
             this.txt_UserPW.ForeColor = System.Drawing.SystemColors.InactiveCaption;
             this.txt_UserPW.Location = new System.Drawing.Point(430, 206);
+            this.txt_UserPW.MaxLength = 20;
             this.txt_UserPW.Name = "txt_UserPW";
             this.txt_UserPW.Size = new System.Drawing.Size(160, 29);
             this.txt_UserPW.TabIndex = 2;
@@ -269,7 +271,7 @@ namespace TestClient
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(46)))), ((int)(((byte)(46)))));
-            this.ClientSize = new System.Drawing.Size(334, 561);
+            this.ClientSize = new System.Drawing.Size(1904, 1041);
             this.Controls.Add(this.lbl_SignIn);
             this.Controls.Add(this.lbl_Register);
             this.Controls.Add(this.lb_UserList);
