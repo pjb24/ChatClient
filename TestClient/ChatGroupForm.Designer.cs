@@ -38,6 +38,9 @@ namespace TestClient
             this.btn_Invitation = new System.Windows.Forms.Button();
             this.btn_SendFile = new System.Windows.Forms.Button();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.btn_banishUser = new System.Windows.Forms.Button();
+            this.btn_changeRoomConfig = new System.Windows.Forms.Button();
+            this.btn_managerConfig = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // lb_Result
@@ -49,7 +52,7 @@ namespace TestClient
             this.lb_Result.Location = new System.Drawing.Point(0, 204);
             this.lb_Result.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.lb_Result.Name = "lb_Result";
-            this.lb_Result.Size = new System.Drawing.Size(335, 268);
+            this.lb_Result.Size = new System.Drawing.Size(435, 268);
             this.lb_Result.TabIndex = 1;
             // 
             // txt_Send
@@ -128,12 +131,45 @@ namespace TestClient
             this.btn_SendFile.UseVisualStyleBackColor = true;
             this.btn_SendFile.Click += new System.EventHandler(this.btn_SendFile_Click);
             // 
+            // btn_banishUser
+            // 
+            this.btn_banishUser.Font = new System.Drawing.Font("굴림", 9F);
+            this.btn_banishUser.Location = new System.Drawing.Point(328, 35);
+            this.btn_banishUser.Name = "btn_banishUser";
+            this.btn_banishUser.Size = new System.Drawing.Size(100, 35);
+            this.btn_banishUser.TabIndex = 10;
+            this.btn_banishUser.Text = "회원 추방";
+            this.btn_banishUser.UseVisualStyleBackColor = true;
+            // 
+            // btn_changeRoomConfig
+            // 
+            this.btn_changeRoomConfig.Font = new System.Drawing.Font("굴림", 9F);
+            this.btn_changeRoomConfig.Location = new System.Drawing.Point(328, 97);
+            this.btn_changeRoomConfig.Name = "btn_changeRoomConfig";
+            this.btn_changeRoomConfig.Size = new System.Drawing.Size(100, 35);
+            this.btn_changeRoomConfig.TabIndex = 11;
+            this.btn_changeRoomConfig.Text = "채팅방\r\n설정 변경";
+            this.btn_changeRoomConfig.UseVisualStyleBackColor = true;
+            // 
+            // btn_managerConfig
+            // 
+            this.btn_managerConfig.Font = new System.Drawing.Font("굴림", 9F);
+            this.btn_managerConfig.Location = new System.Drawing.Point(328, 159);
+            this.btn_managerConfig.Name = "btn_managerConfig";
+            this.btn_managerConfig.Size = new System.Drawing.Size(100, 35);
+            this.btn_managerConfig.TabIndex = 12;
+            this.btn_managerConfig.Text = "관리자 설정";
+            this.btn_managerConfig.UseVisualStyleBackColor = true;
+            // 
             // ChatGroupForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(46)))), ((int)(((byte)(46)))));
-            this.ClientSize = new System.Drawing.Size(334, 561);
+            this.ClientSize = new System.Drawing.Size(434, 561);
+            this.Controls.Add(this.btn_managerConfig);
+            this.Controls.Add(this.btn_changeRoomConfig);
+            this.Controls.Add(this.btn_banishUser);
             this.Controls.Add(this.btn_SendFile);
             this.Controls.Add(this.btn_Invitation);
             this.Controls.Add(this.btn_Leave);
@@ -165,5 +201,8 @@ namespace TestClient
         private System.Windows.Forms.Button btn_Invitation;
         private System.Windows.Forms.Button btn_SendFile;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
+        private System.Windows.Forms.Button btn_banishUser;
+        private System.Windows.Forms.Button btn_changeRoomConfig;
+        private System.Windows.Forms.Button btn_managerConfig;
     }
 }

@@ -308,33 +308,41 @@ namespace TestClient
                                     ResponseLeaveRoomSuccess resBody = (ResponseLeaveRoomSuccess)message.Body;
 
                                     // 나간 사람일 때
-                                    if (user_ID.Equals(resBody.receivedID))
+                                    if (user_ID.Equals(resBody.userID))
                                     {
-                                        roomList.Remove(resBody.pid);
+                                        roomList.Remove(resBody.roomNo);
                                     }
                                     else
                                     {
-                                        string[] delimiterChars = { ", " };
-                                        List<string> users = new List<string>(roomList[resBody.pid].Item2.Split(delimiterChars, StringSplitOptions.RemoveEmptyEntries));
-
-                                        users.Remove(resBody.receivedID);
-                                        string usersInGroup = string.Join(", ", users);
-
-                                        // 채팅방 이름
-                                        string roomName = usersInGroup + " Group";
-                                        if (usersInGroup.Length > 20)
+                                        // 회원 번호 검색
+                                        int userNo = 0;
+                                        foreach (KeyValuePair<int, string> temp in userList)
                                         {
-                                            roomName = usersInGroup.Substring(0, 20);
+                                            if (temp.Value.Equals(resBody.userID))
+                                            {
+                                                userNo = temp.Key;
+                                                break;
+                                            }
                                         }
 
-                                        roomList[resBody.pid] = new Tuple<string, string>(roomName, usersInGroup);
+                                        // usersInRoom 제거
+                                        int usersInRoomNo = 0;
+                                        foreach (KeyValuePair<int, Tuple<int, int, int>> temp in usersInRoom)
+                                        {
+                                            if (temp.Value.Item1.Equals(resBody.roomNo) && temp.Value.Item2.Equals(userNo))
+                                            {
+                                                usersInRoomNo = temp.Key;
+                                                break;
+                                            }
+                                        }
+                                        usersInRoom.Remove(usersInRoomNo);
 
                                         foreach (ChatGroupForm chatGroupForm in chatGroupForms)
                                         {
-                                            if (chatGroupForm.pid == resBody.pid)
+                                            if (chatGroupForm.roomNo == resBody.roomNo)
                                             {
-                                                chatGroupForm.DisplayText(resBody.receivedID + "님이 채팅방에서 나가셨습니다.");
-                                                chatGroupForm.groupUserList.Remove(resBody.receivedID);
+                                                chatGroupForm.DisplayText(resBody.userID + "님이 채팅방에서 나가셨습니다.");
+                                                chatGroupForm.usersInRoom.Remove(usersInRoomNo);
                                                 chatGroupForm.RedrawUserList();
                                             }
                                         }
@@ -394,7 +402,7 @@ namespace TestClient
                                 {
                                     RequestSendFile reqBody = (RequestSendFile)message.Body;
 
-                                    string msg = message.Header.MSGID + "&" + reqBody.pid + "&" + reqBody.filePath + "&" + user_ID;
+                                    string msg = message.Header.MSGID + "&" + reqBody.roomNo + "&" + reqBody.filePath + "&" + user_ID;
 
                                     PacketMessage resMsg = new PacketMessage();
                                     resMsg.Body = new ResponseSendFile()
@@ -463,12 +471,12 @@ namespace TestClient
                                     long recvFileSize = file.Length;
                                     file.Close();
 
-                                    if (roomList.ContainsKey(reqBody.pid))
+                                    if (roomList.ContainsKey(reqBody.roomNo))
                                     {
                                         // 열려있는 ChatGroupForm 중에서 pid가 일치하는 window에 출력
                                         foreach (ChatGroupForm temp in chatGroupForms)
                                         {
-                                            if (temp.pid == reqBody.pid)
+                                            if (temp.roomNo == reqBody.roomNo)
                                             {
                                                 temp.DisplayText(reqBody.userID + " : " + fileName + " 파일을 전송했습니다.");
                                             }
@@ -516,7 +524,7 @@ namespace TestClient
 
                                     file.Write(reqBody.DATA, 0, reqBody.DATA.Length);
                                     file.Close();
-
+                                    /*
                                     if (message.Header.LASTMSG == CONSTANTS.LASTMSG)
                                     {
                                         if (roomList.ContainsKey(pid))
@@ -532,6 +540,7 @@ namespace TestClient
                                         }
                                         break;
                                     }
+                                    */
                                     break;
                                 }
                             default:
@@ -686,14 +695,6 @@ namespace TestClient
             // 로그인 메시지 발송
             MessageUtil.Send(stream, reqMsg);
 
-            /*
-            string sendMsg = user_ID + "&" + user_PW + "signin";
-
-            byte[] buffer = Encoding.Unicode.GetBytes(sendMsg + "$");
-            stream.Write(buffer, 0, buffer.Length);
-            stream.Flush();
-            */
-
             txt_UserID.Clear();
             txt_UserPW.Clear();
         }
@@ -721,9 +722,14 @@ namespace TestClient
             // btn_PullGroup.Location = new Point(987, 519);
 
             // CreateGroup Form
-            clb_GroupingUser.Location = new Point(1479, 12);
+            clb_GroupingUser.Location = new Point(1479, 112);
             btn_Create.Location = new Point(1479, 518);
             btn_CreateClose.Location = new Point(1704, 519);
+            rdo_publicRoom.Location = new Point(1645, 75);
+            rdo_privateRoom.Location = new Point(1711, 75);
+            lbl_roomName.Location = new Point(1485, 9);
+            txt_roomName.Location = new Point(1489, 37);
+            lbl_roomAccess.Location = new Point(1485, 77);
 
             // Log
             lb_Result.Location = new Point(430, 631);
@@ -836,9 +842,14 @@ namespace TestClient
                     SettingControlLocationReset();
 
                     this.Text = "채팅방 생성";
-                    clb_GroupingUser.Location = new Point(0, 0);
+                    clb_GroupingUser.Location = new Point(0, 112);
                     btn_Create.Location = new Point(12, 497);
                     btn_CreateClose.Location = new Point(210, 497);
+                    rdo_publicRoom.Location = new Point(167, 75);
+                    rdo_privateRoom.Location = new Point(238, 75);
+                    lbl_roomName.Location = new Point(12, 9);
+                    txt_roomName.Location = new Point(16, 37);
+                    lbl_roomAccess.Location = new Point(12, 77);
                 }));
             }
             else
@@ -846,9 +857,14 @@ namespace TestClient
                 SettingControlLocationReset();
 
                 this.Text = "채팅방 생성";
-                clb_GroupingUser.Location = new Point(0, 0);
+                clb_GroupingUser.Location = new Point(0, 112);
                 btn_Create.Location = new Point(12, 497);
                 btn_CreateClose.Location = new Point(210, 497);
+                rdo_publicRoom.Location = new Point(167, 75);
+                rdo_privateRoom.Location = new Point(238, 75);
+                lbl_roomName.Location = new Point(12, 9);
+                txt_roomName.Location = new Point(16, 37);
+                lbl_roomAccess.Location = new Point(12, 77);
             }
         }
 
@@ -1043,27 +1059,45 @@ namespace TestClient
             }
             // 정렬
             tempUsers.Sort();
-
             string group = string.Join(", ", tempUsers);
-            string groupName = string.Empty;
-            // 채팅방 이름이 20자가 넘어가면 20자로 자르기
-            if (group.Length > 15)
+
+            // 채팅방 이름 설정
+            if (txt_roomName.Text.Length == 0)
             {
-                groupName = group.Substring(0, 15) + " Room";
+                string groupName = string.Empty;
+                // 채팅방 이름이 20자가 넘어가면 20자로 자르기
+                if (group.Length > 15)
+                {
+                    groupName = group.Substring(0, 15) + " Room";
+                }
+                else
+                {
+                    groupName = group + " Room";
+                }
+
+                if (roomName.Equals(""))
+                {
+                    roomName = groupName;
+                }
             }
             else
             {
-                groupName = group + " Room";
+                roomName = txt_roomName.Text;
             }
 
-            if (roomName.Equals(""))
+            // 채팅방 접근 권한 설정
+            if (rdo_publicRoom.Checked)
             {
-                roomName = groupName;
+                accessRight = 1;
+            }
+            else
+            {
+                accessRight = 0;
             }
 
             string msg = accessRight + "&" + roomName + "&" + creator + "&" + group;
 
-            // send group info to server
+            // send room info to server
             PacketMessage reqMsg = new PacketMessage();
             reqMsg.Body = new RequestCreateRoom()
             {
@@ -1080,6 +1114,10 @@ namespace TestClient
             };
             MessageUtil.Send(stream, reqMsg);
 
+            // 설정 값 초기화
+            txt_roomName.Clear();
+            rdo_publicRoom.Checked = true;
+            rdo_privateRoom.Checked = false;
             // 초대 회원 선택 초기화
             for (int i = 0; i < clb_GroupingUser.Items.Count; i++)
             {
@@ -1108,34 +1146,58 @@ namespace TestClient
             lb_GroupList.Items.Clear();
             foreach (KeyValuePair<int, Tuple<int, string>> item in roomList)
             {
-                lb_GroupList.Items.Add(item.Key);
-                /*
-                if (item.Value.Item1 == 0)
+                // private 방 출력
+                if (item.Value.Item1.Equals(0))
                 {
-                    lb_GroupList.Items.Add("public");
-                }
-                else
-                {
-                    lb_GroupList.Items.Add("private");
-                }
-                */
-                lb_GroupList.Items.Add(item.Value.Item2);
-
-                string users = string.Empty;
-                foreach (KeyValuePair<int, Tuple<int, int, int>> temp in usersInRoom)
-                {
-                    if (temp.Value.Item1.Equals(item.Key))
+                    foreach(KeyValuePair<int, Tuple<int, int, int>> tmp in usersInRoom)
                     {
-                        foreach (KeyValuePair<int, string> user in userList)
+                        if (tmp.Value.Item1.Equals(item.Key) && tmp.Value.Item2.Equals(user_ID))
                         {
-                            if (user.Key.Equals(temp.Value.Item2))
+                            lb_GroupList.Items.Add(item.Key);
+                            lb_GroupList.Items.Add("비공개");
+                            lb_GroupList.Items.Add(item.Value.Item2);
+
+                            string users = string.Empty;
+                            foreach (KeyValuePair<int, Tuple<int, int, int>> temp in usersInRoom)
                             {
-                                users = users + ", " + user.Value;
+                                if (temp.Value.Item1.Equals(item.Key))
+                                {
+                                    foreach (KeyValuePair<int, string> user in userList)
+                                    {
+                                        if (user.Key.Equals(temp.Value.Item2))
+                                        {
+                                            users = users + ", " + user.Value;
+                                        }
+                                    }
+                                }
                             }
+                            lb_GroupList.Items.Add("채팅방 인원 : " + users);
                         }
                     }
                 }
-                lb_GroupList.Items.Add("채팅방 인원 : " + users);
+                // public 방 출력
+                else
+                {
+                    lb_GroupList.Items.Add(item.Key);
+                    lb_GroupList.Items.Add("공개");
+                    lb_GroupList.Items.Add(item.Value.Item2);
+
+                    string users = string.Empty;
+                    foreach (KeyValuePair<int, Tuple<int, int, int>> temp in usersInRoom)
+                    {
+                        if (temp.Value.Item1.Equals(item.Key))
+                        {
+                            foreach (KeyValuePair<int, string> user in userList)
+                            {
+                                if (user.Key.Equals(temp.Value.Item2))
+                                {
+                                    users = users + ", " + user.Value;
+                                }
+                            }
+                        }
+                    }
+                    lb_GroupList.Items.Add("채팅방 인원 : " + users);
+                }
             }
             // window를 비활성화하여 WM_PAINT call
             // true 배경을 지우고 다시 그린다
@@ -1155,7 +1217,7 @@ namespace TestClient
         {
             ListBox lb = sender as ListBox;
 
-            int index = lb.SelectedIndex - (lb.SelectedIndex % 3);
+            int index = lb.SelectedIndex - (lb.SelectedIndex % 4);
             int roomNo = int.Parse(lb.Items[index].ToString());
             string roomName = roomList[roomNo].Item2;
 
