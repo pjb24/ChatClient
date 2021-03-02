@@ -27,6 +27,8 @@ namespace TestClient
         public int roomNo = 0;
         // 열려있는 room의 roomName
         public string roomName = string.Empty;
+        // 열려있는 room의 accessRight
+        public int accessRight = 0;
         // 현재 클라이언트의 ID
         public string user_ID = string.Empty;
 
@@ -211,6 +213,116 @@ namespace TestClient
                 }
             }
             
+        }
+
+        private void btn_banishUser_Click(object sender, EventArgs e)
+        {
+            string banishedUser = string.Empty;
+            banishedUser = lb_UserList.SelectedItem.ToString();
+
+            if (MessageBox.Show(this, banishedUser + " 회원을 추방하시겠습니까?", "알림", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            {
+                PacketMessage reqMsg = new PacketMessage();
+                reqMsg.Body = new RequestBanishUser()
+                {
+                    msg = roomNo + "&" + banishedUser
+                };
+                reqMsg.Header = new Header()
+                {
+                    MSGID = TestClientUI.msgid++,
+                    MSGTYPE = CONSTANTS.REQ_BANISH_USER,
+                    BODYLEN = (uint)reqMsg.Body.GetSize(),
+                    FRAGMENTED = CONSTANTS.NOT_FRAGMENTED,
+                    LASTMSG = CONSTANTS.LASTMSG,
+                    SEQ = 0
+                };
+
+                MessageUtil.Send(stream, reqMsg);
+            }
+        }
+
+        private void btn_changeRoomConfig_Click(object sender, EventArgs e)
+        {
+            RoomConfig roomConfig = new RoomConfig();
+            roomConfig.roomName = roomName;
+            roomConfig.txt_RoomName.Text = roomName;
+            roomConfig.accessRight = accessRight;
+            if (accessRight == 0)
+            {
+                roomConfig.rdo_PrivateRoom.Checked = true;
+            }
+            else
+            {
+                roomConfig.rdo_PublicRoom.Checked = true;
+            }
+            roomConfig.OnChangeRoomConfig += new RoomConfig.ChangeRoomConfigHandler(ChangeRoomConfig);
+            roomConfig.ShowDialog();
+        }
+
+        private void ChangeRoomConfig(int accessRight, string roomName)
+        {
+            // 채팅방 설정 변경 메시지 전송
+            if (!accessRight.Equals(this.accessRight) || !roomName.Equals(this.roomName))
+            {
+                PacketMessage reqMsg = new PacketMessage();
+                reqMsg.Body = new RequestChangeRoomConfig()
+                {
+                    msg = roomNo + "&" + accessRight + "&" + roomName
+                };
+                reqMsg.Header = new Header()
+                {
+                    MSGID = TestClientUI.msgid++,
+                    MSGTYPE = CONSTANTS.REQ_CHANGE_ROOM_CONFIG,
+                    BODYLEN = (uint)reqMsg.Body.GetSize(),
+                    FRAGMENTED = CONSTANTS.NOT_FRAGMENTED,
+                    LASTMSG = CONSTANTS.LASTMSG,
+                    SEQ = 0
+                };
+
+                MessageUtil.Send(stream, reqMsg);
+            }
+        }
+
+        private void btn_managerConfig_Click(object sender, EventArgs e)
+        {
+            RoomManagerConfig roomManagerConfig = new RoomManagerConfig();
+            roomManagerConfig.roomNo = roomNo;
+            roomManagerConfig.usersInRoom = usersInRoom;
+            roomManagerConfig.userList = userList;
+
+            roomManagerConfig.OnChangeManagerConfig += new RoomManagerConfig.ChangeManagerConfigHandler(ChangeManagerConfig);
+
+            roomManagerConfig.ShowDialog();
+        }
+
+        private void ChangeManagerConfig(List<int> changedUser)
+        {
+            // 관리자 권한 변경 메시지 전송
+            PacketMessage reqMsg = new PacketMessage();
+
+            string msg = string.Empty;
+            msg = roomNo + "&";
+
+            foreach (int temp in changedUser)
+            {
+                msg = msg + temp + "^";
+            }
+
+            reqMsg.Body = new RequestChangeManagementRights()
+            {
+                msg = msg
+            };
+            reqMsg.Header = new Header()
+            {
+                MSGID = TestClientUI.msgid++,
+                MSGTYPE = CONSTANTS.REQ_CHANGE_MANAGEMENT_RIGHTS,
+                BODYLEN = (uint)reqMsg.Body.GetSize(),
+                FRAGMENTED = CONSTANTS.NOT_FRAGMENTED,
+                LASTMSG = CONSTANTS.LASTMSG,
+                SEQ = 0
+            };
+
+            MessageUtil.Send(stream, reqMsg);
         }
     }
 }

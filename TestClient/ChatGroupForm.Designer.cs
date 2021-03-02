@@ -33,14 +33,14 @@ namespace TestClient
             this.txt_Send = new System.Windows.Forms.TextBox();
             this.btn_Send = new System.Windows.Forms.Button();
             this.lb_UserList = new System.Windows.Forms.ListBox();
-            this.label1 = new System.Windows.Forms.Label();
+            this.lbl_UserList = new System.Windows.Forms.Label();
             this.btn_Leave = new System.Windows.Forms.Button();
             this.btn_Invitation = new System.Windows.Forms.Button();
             this.btn_SendFile = new System.Windows.Forms.Button();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            this.btn_banishUser = new System.Windows.Forms.Button();
-            this.btn_changeRoomConfig = new System.Windows.Forms.Button();
-            this.btn_managerConfig = new System.Windows.Forms.Button();
+            this.btn_BanishUser = new System.Windows.Forms.Button();
+            this.btn_ChangeRoomConfig = new System.Windows.Forms.Button();
+            this.btn_ManagerConfig = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // lb_Result
@@ -91,15 +91,16 @@ namespace TestClient
             this.lb_UserList.TabIndex = 5;
             this.lb_UserList.TabStop = false;
             // 
-            // label1
+            // lbl_UserList
             // 
-            this.label1.AutoSize = true;
-            this.label1.ForeColor = System.Drawing.Color.White;
-            this.label1.Location = new System.Drawing.Point(12, 9);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(93, 12);
-            this.label1.TabIndex = 6;
-            this.label1.Text = "채팅방 회원목록";
+            this.lbl_UserList.AutoSize = true;
+            this.lbl_UserList.Font = new System.Drawing.Font("굴림", 14F);
+            this.lbl_UserList.ForeColor = System.Drawing.Color.White;
+            this.lbl_UserList.Location = new System.Drawing.Point(12, 9);
+            this.lbl_UserList.Name = "lbl_UserList";
+            this.lbl_UserList.Size = new System.Drawing.Size(148, 19);
+            this.lbl_UserList.TabIndex = 6;
+            this.lbl_UserList.Text = "채팅방 회원목록";
             // 
             // btn_Leave
             // 
@@ -131,35 +132,38 @@ namespace TestClient
             this.btn_SendFile.UseVisualStyleBackColor = true;
             this.btn_SendFile.Click += new System.EventHandler(this.btn_SendFile_Click);
             // 
-            // btn_banishUser
+            // btn_BanishUser
             // 
-            this.btn_banishUser.Font = new System.Drawing.Font("굴림", 9F);
-            this.btn_banishUser.Location = new System.Drawing.Point(328, 35);
-            this.btn_banishUser.Name = "btn_banishUser";
-            this.btn_banishUser.Size = new System.Drawing.Size(100, 35);
-            this.btn_banishUser.TabIndex = 10;
-            this.btn_banishUser.Text = "회원 추방";
-            this.btn_banishUser.UseVisualStyleBackColor = true;
+            this.btn_BanishUser.Font = new System.Drawing.Font("굴림", 9F);
+            this.btn_BanishUser.Location = new System.Drawing.Point(328, 35);
+            this.btn_BanishUser.Name = "btn_BanishUser";
+            this.btn_BanishUser.Size = new System.Drawing.Size(100, 35);
+            this.btn_BanishUser.TabIndex = 10;
+            this.btn_BanishUser.Text = "회원 추방";
+            this.btn_BanishUser.UseVisualStyleBackColor = true;
+            this.btn_BanishUser.Click += new System.EventHandler(this.btn_banishUser_Click);
             // 
-            // btn_changeRoomConfig
+            // btn_ChangeRoomConfig
             // 
-            this.btn_changeRoomConfig.Font = new System.Drawing.Font("굴림", 9F);
-            this.btn_changeRoomConfig.Location = new System.Drawing.Point(328, 97);
-            this.btn_changeRoomConfig.Name = "btn_changeRoomConfig";
-            this.btn_changeRoomConfig.Size = new System.Drawing.Size(100, 35);
-            this.btn_changeRoomConfig.TabIndex = 11;
-            this.btn_changeRoomConfig.Text = "채팅방\r\n설정 변경";
-            this.btn_changeRoomConfig.UseVisualStyleBackColor = true;
+            this.btn_ChangeRoomConfig.Font = new System.Drawing.Font("굴림", 9F);
+            this.btn_ChangeRoomConfig.Location = new System.Drawing.Point(328, 97);
+            this.btn_ChangeRoomConfig.Name = "btn_ChangeRoomConfig";
+            this.btn_ChangeRoomConfig.Size = new System.Drawing.Size(100, 35);
+            this.btn_ChangeRoomConfig.TabIndex = 11;
+            this.btn_ChangeRoomConfig.Text = "채팅방 설정";
+            this.btn_ChangeRoomConfig.UseVisualStyleBackColor = true;
+            this.btn_ChangeRoomConfig.Click += new System.EventHandler(this.btn_changeRoomConfig_Click);
             // 
-            // btn_managerConfig
+            // btn_ManagerConfig
             // 
-            this.btn_managerConfig.Font = new System.Drawing.Font("굴림", 9F);
-            this.btn_managerConfig.Location = new System.Drawing.Point(328, 159);
-            this.btn_managerConfig.Name = "btn_managerConfig";
-            this.btn_managerConfig.Size = new System.Drawing.Size(100, 35);
-            this.btn_managerConfig.TabIndex = 12;
-            this.btn_managerConfig.Text = "관리자 설정";
-            this.btn_managerConfig.UseVisualStyleBackColor = true;
+            this.btn_ManagerConfig.Font = new System.Drawing.Font("굴림", 9F);
+            this.btn_ManagerConfig.Location = new System.Drawing.Point(328, 159);
+            this.btn_ManagerConfig.Name = "btn_ManagerConfig";
+            this.btn_ManagerConfig.Size = new System.Drawing.Size(100, 35);
+            this.btn_ManagerConfig.TabIndex = 12;
+            this.btn_ManagerConfig.Text = "관리자 설정";
+            this.btn_ManagerConfig.UseVisualStyleBackColor = true;
+            this.btn_ManagerConfig.Click += new System.EventHandler(this.btn_managerConfig_Click);
             // 
             // ChatGroupForm
             // 
@@ -167,13 +171,13 @@ namespace TestClient
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(46)))), ((int)(((byte)(46)))));
             this.ClientSize = new System.Drawing.Size(434, 561);
-            this.Controls.Add(this.btn_managerConfig);
-            this.Controls.Add(this.btn_changeRoomConfig);
-            this.Controls.Add(this.btn_banishUser);
+            this.Controls.Add(this.btn_ManagerConfig);
+            this.Controls.Add(this.btn_ChangeRoomConfig);
+            this.Controls.Add(this.btn_BanishUser);
             this.Controls.Add(this.btn_SendFile);
             this.Controls.Add(this.btn_Invitation);
             this.Controls.Add(this.btn_Leave);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.lbl_UserList);
             this.Controls.Add(this.lb_UserList);
             this.Controls.Add(this.btn_Send);
             this.Controls.Add(this.txt_Send);
@@ -196,13 +200,13 @@ namespace TestClient
         private System.Windows.Forms.TextBox txt_Send;
         private System.Windows.Forms.Button btn_Send;
         private System.Windows.Forms.ListBox lb_UserList;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label lbl_UserList;
         private System.Windows.Forms.Button btn_Leave;
         private System.Windows.Forms.Button btn_Invitation;
         private System.Windows.Forms.Button btn_SendFile;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
-        private System.Windows.Forms.Button btn_banishUser;
-        private System.Windows.Forms.Button btn_changeRoomConfig;
-        private System.Windows.Forms.Button btn_managerConfig;
+        public System.Windows.Forms.Button btn_BanishUser;
+        public System.Windows.Forms.Button btn_ChangeRoomConfig;
+        public System.Windows.Forms.Button btn_ManagerConfig;
     }
 }

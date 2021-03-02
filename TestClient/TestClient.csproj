@@ -103,6 +103,18 @@
     <Compile Include="RegisterForm.Designer.cs">
       <DependentUpon>RegisterForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="RoomConfig.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="RoomConfig.Designer.cs">
+      <DependentUpon>RoomConfig.cs</DependentUpon>
+    </Compile>
+    <Compile Include="RoomManagerConfig.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="RoomManagerConfig.Designer.cs">
+      <DependentUpon>RoomManagerConfig.cs</DependentUpon>
+    </Compile>
     <Compile Include="SignInForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -139,6 +151,12 @@
     </Compile>
     <EmbeddedResource Include="RegisterForm.resx">
       <DependentUpon>RegisterForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RoomConfig.resx">
+      <DependentUpon>RoomConfig.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RoomManagerConfig.resx">
+      <DependentUpon>RoomManagerConfig.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SignInForm.resx">
       <DependentUpon>SignInForm.cs</DependentUpon>

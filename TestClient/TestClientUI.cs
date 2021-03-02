@@ -203,14 +203,7 @@ namespace TestClient
 
                                         // 채팅방 생성자 추가
                                         int creatorNo = 0;
-                                        foreach (KeyValuePair<int, string> temp in userList)
-                                        {
-                                            if (temp.Value == resBody.creator)
-                                            {
-                                                creatorNo = temp.Key;
-                                                break;
-                                            }
-                                        }
+                                        creatorNo = SearchUserNoByUserID(resBody.creator);
                                         usersInRoom.Add(resBody.usersInRoomNoCreator, new Tuple<int, int, int>(resBody.roomNo, creatorNo, 2));
 
                                         // 채팅방 회원 추가
@@ -246,15 +239,7 @@ namespace TestClient
                                     ResponseInvitationSuccess resBody = (ResponseInvitationSuccess)message.Body;
 
                                     int userNo = 0;
-
-                                    foreach(KeyValuePair<int, string> temp in userList)
-                                    {
-                                        if (temp.Value.Equals(user_ID))
-                                        {
-                                            userNo = temp.Key;
-                                            break;
-                                        }
-                                    }
+                                    userNo = SearchUserNoByUserID(user_ID);
 
                                     bool invited = false;
                                     foreach(KeyValuePair<int, Tuple<int, int, int>> temp in resBody.usersInRoom)
@@ -306,27 +291,34 @@ namespace TestClient
                             case CONSTANTS.RES_LEAVE_ROOM_SUCCESS:
                                 {
                                     ResponseLeaveRoomSuccess resBody = (ResponseLeaveRoomSuccess)message.Body;
-
+                                    int userNo = 0;
+                                    int usersInRoomNo = 0;
                                     // 나간 사람일 때
                                     if (user_ID.Equals(resBody.userID))
                                     {
+                                        // roomList 제거
                                         roomList.Remove(resBody.roomNo);
+
+                                        // 회원 번호 검색
+                                        SearchUserNoByUserID(resBody.userID);
+
+                                        // usersInRoom 제거
+                                        foreach (KeyValuePair<int, Tuple<int, int, int>> temp in usersInRoom)
+                                        {
+                                            if (temp.Value.Item1.Equals(resBody.roomNo) && temp.Value.Item2.Equals(userNo))
+                                            {
+                                                usersInRoomNo = temp.Key;
+                                                break;
+                                            }
+                                        }
+                                        usersInRoom.Remove(usersInRoomNo);
                                     }
                                     else
                                     {
                                         // 회원 번호 검색
-                                        int userNo = 0;
-                                        foreach (KeyValuePair<int, string> temp in userList)
-                                        {
-                                            if (temp.Value.Equals(resBody.userID))
-                                            {
-                                                userNo = temp.Key;
-                                                break;
-                                            }
-                                        }
+                                        SearchUserNoByUserID(resBody.userID);
 
                                         // usersInRoom 제거
-                                        int usersInRoomNo = 0;
                                         foreach (KeyValuePair<int, Tuple<int, int, int>> temp in usersInRoom)
                                         {
                                             if (temp.Value.Item1.Equals(resBody.roomNo) && temp.Value.Item2.Equals(userNo))
@@ -348,6 +340,142 @@ namespace TestClient
                                         }
                                     }
                                     GroupRefresh();
+                                    break;
+                                }
+                            // 채팅방 추방
+                            case CONSTANTS.RES_BANISH_USER_SUCCESS:
+                                {
+                                    ResponseBanishUserSuccess resBody = (ResponseBanishUserSuccess)message.Body;
+                                    int userNo = 0;
+                                    int usersInRoomNo = 0;
+                                    // 추방된 사람일 때
+                                    if (user_ID.Equals(resBody.banishedUser))
+                                    {
+                                        // roomList 제거
+                                        roomList.Remove(resBody.roomNo);
+
+                                        // 회원 번호 검색
+                                        SearchUserNoByUserID(resBody.banishedUser);
+
+                                        // usersInRoom 제거
+                                        foreach (KeyValuePair<int, Tuple<int, int, int>> temp in usersInRoom)
+                                        {
+                                            if (temp.Value.Item1.Equals(resBody.roomNo) && temp.Value.Item2.Equals(userNo))
+                                            {
+                                                usersInRoomNo = temp.Key;
+                                                break;
+                                            }
+                                        }
+                                        usersInRoom.Remove(usersInRoomNo);
+                                    }
+                                    else
+                                    {
+                                        // 회원 번호 검색
+                                        SearchUserNoByUserID(resBody.banishedUser);
+
+                                        // usersInRoom 제거
+                                        foreach (KeyValuePair<int, Tuple<int, int, int>> temp in usersInRoom)
+                                        {
+                                            if (temp.Value.Item1.Equals(resBody.roomNo) && temp.Value.Item2.Equals(userNo))
+                                            {
+                                                usersInRoomNo = temp.Key;
+                                                break;
+                                            }
+                                        }
+                                        usersInRoom.Remove(usersInRoomNo);
+
+                                        foreach (ChatGroupForm chatGroupForm in chatGroupForms)
+                                        {
+                                            if (chatGroupForm.roomNo == resBody.roomNo)
+                                            {
+                                                chatGroupForm.DisplayText(resBody.banishedUser + "님이 채팅방에서 추방되었습니다.");
+                                                chatGroupForm.usersInRoom.Remove(usersInRoomNo);
+                                                chatGroupForm.RedrawUserList();
+                                            }
+                                        }
+                                    }
+                                    GroupRefresh();
+                                    break;
+                                }
+                            // 채팅방 설정 변경 완료
+                            case CONSTANTS.RES_CHANGE_ROOM_CONFIG_SUCCESS:
+                                {
+                                    ResponseChangeRoomConfigSuccess resBody = (ResponseChangeRoomConfigSuccess)message.Body;
+
+                                    string accessRightToString = string.Empty;
+                                    if (resBody.accessRight == 0)
+                                    {
+                                        accessRightToString = "비공개";
+                                    }
+                                    else
+                                    {
+                                        accessRightToString = "공개";
+                                    }
+
+                                    // 채팅방 열려있는지 확인
+                                    foreach (ChatGroupForm chatGroupForm in chatGroupForms)
+                                    {
+                                        if (chatGroupForm.roomNo == resBody.roomNo)
+                                        {
+                                            // 변경점 확인
+                                            // accessRight 와 roomName 변경
+                                            if (!resBody.accessRight.Equals(roomList[resBody.roomNo].Item1) && !resBody.roomName.Equals(roomList[resBody.roomNo].Item2))
+                                            {
+                                                chatGroupForm.DisplayText(string.Format("{0}번 채팅방의 공개 여부가 {1}로, 채팅방 이름이 {2}로 변경됨", resBody.roomNo, accessRightToString, resBody.roomName));
+                                            }
+                                            // accessRight 변경
+                                            else if (!resBody.roomName.Equals(roomList[resBody.roomNo].Item1))
+                                            {
+                                                chatGroupForm.DisplayText(string.Format("{0}번 채팅방의 공개 여부가 {1} 변경됨", resBody.roomNo, accessRightToString));
+                                            }
+                                            // roomName 변경
+                                            else if (!resBody.roomName.Equals(roomList[resBody.roomNo].Item2))
+                                            {
+                                                chatGroupForm.DisplayText(string.Format("{0}번 채팅방의 이름이 {1}로 변경됨", resBody.roomNo, resBody.roomName));
+                                            }
+                                        }
+                                    }
+                                    // roomList 변경
+                                    roomList[resBody.roomNo] = new Tuple<int, string>(resBody.accessRight, resBody.roomName);
+                                    GroupRefresh();
+
+                                    break;
+                                }
+                            // 채팅방 관리자 권한 변경 완료
+                            case CONSTANTS.RES_CHANGE_MANAGEMENT_RIGHTS_SUCCESS:
+                                {
+                                    ResponseChangeManagementRightsSuccess resBody = (ResponseChangeManagementRightsSuccess)message.Body;
+                                    // usersInRoom 변경
+                                    foreach (KeyValuePair<int, Tuple<int, int, int>> temp in usersInRoom)
+                                    {
+                                        foreach (int userNo in resBody.changedUsersNo)
+                                        {
+                                            if (temp.Value.Item1.Equals(resBody.roomNo) && temp.Value.Item2.Equals(userNo) && temp.Value.Item3.Equals(0))
+                                            {
+                                                usersInRoom[temp.Key] = new Tuple<int, int, int>(resBody.roomNo, userNo, 1);
+                                                // 열려있는 채팅방에 표시
+                                                foreach (ChatGroupForm chatGroupForm in chatGroupForms)
+                                                {
+                                                    if (chatGroupForm.roomNo == resBody.roomNo)
+                                                    {
+                                                        chatGroupForm.DisplayText(string.Format("{0}님에게 관리자 권한이 부여되었습니다.", userList[userNo]));
+                                                    }
+                                                }
+                                            }
+                                            else if (temp.Value.Item1.Equals(resBody.roomNo) && temp.Value.Item2.Equals(userNo) && temp.Value.Item3.Equals(1))
+                                            {
+                                                usersInRoom[temp.Key] = new Tuple<int, int, int>(resBody.roomNo, userNo, 0);
+                                                // 열려있는 채팅방에 표시
+                                                foreach (ChatGroupForm chatGroupForm in chatGroupForms)
+                                                {
+                                                    if (chatGroupForm.roomNo == resBody.roomNo)
+                                                    {
+                                                        chatGroupForm.DisplayText(string.Format("{0}님에게서 관리자 권한이 해제되었습니다.", userList[userNo]));
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
                                     break;
                                 }
                             // 파일 전송 준비 완료
@@ -725,11 +853,11 @@ namespace TestClient
             clb_GroupingUser.Location = new Point(1479, 112);
             btn_Create.Location = new Point(1479, 518);
             btn_CreateClose.Location = new Point(1704, 519);
-            rdo_publicRoom.Location = new Point(1645, 75);
-            rdo_privateRoom.Location = new Point(1711, 75);
-            lbl_roomName.Location = new Point(1485, 9);
-            txt_roomName.Location = new Point(1489, 37);
-            lbl_roomAccess.Location = new Point(1485, 77);
+            rdo_PublicRoom.Location = new Point(1645, 75);
+            rdo_PrivateRoom.Location = new Point(1711, 75);
+            lbl_RoomName.Location = new Point(1485, 9);
+            txt_RoomName.Location = new Point(1489, 37);
+            lbl_RoomAccess.Location = new Point(1485, 77);
 
             // Log
             lb_Result.Location = new Point(430, 631);
@@ -845,11 +973,11 @@ namespace TestClient
                     clb_GroupingUser.Location = new Point(0, 112);
                     btn_Create.Location = new Point(12, 497);
                     btn_CreateClose.Location = new Point(210, 497);
-                    rdo_publicRoom.Location = new Point(167, 75);
-                    rdo_privateRoom.Location = new Point(238, 75);
-                    lbl_roomName.Location = new Point(12, 9);
-                    txt_roomName.Location = new Point(16, 37);
-                    lbl_roomAccess.Location = new Point(12, 77);
+                    rdo_PublicRoom.Location = new Point(167, 75);
+                    rdo_PrivateRoom.Location = new Point(238, 75);
+                    lbl_RoomName.Location = new Point(12, 9);
+                    txt_RoomName.Location = new Point(16, 37);
+                    lbl_RoomAccess.Location = new Point(12, 77);
                 }));
             }
             else
@@ -860,11 +988,11 @@ namespace TestClient
                 clb_GroupingUser.Location = new Point(0, 112);
                 btn_Create.Location = new Point(12, 497);
                 btn_CreateClose.Location = new Point(210, 497);
-                rdo_publicRoom.Location = new Point(167, 75);
-                rdo_privateRoom.Location = new Point(238, 75);
-                lbl_roomName.Location = new Point(12, 9);
-                txt_roomName.Location = new Point(16, 37);
-                lbl_roomAccess.Location = new Point(12, 77);
+                rdo_PublicRoom.Location = new Point(167, 75);
+                rdo_PrivateRoom.Location = new Point(238, 75);
+                lbl_RoomName.Location = new Point(12, 9);
+                txt_RoomName.Location = new Point(16, 37);
+                lbl_RoomAccess.Location = new Point(12, 77);
             }
         }
 
@@ -1062,7 +1190,7 @@ namespace TestClient
             string group = string.Join(", ", tempUsers);
 
             // 채팅방 이름 설정
-            if (txt_roomName.Text.Length == 0)
+            if (txt_RoomName.Text.Length == 0)
             {
                 string groupName = string.Empty;
                 // 채팅방 이름이 20자가 넘어가면 20자로 자르기
@@ -1082,11 +1210,11 @@ namespace TestClient
             }
             else
             {
-                roomName = txt_roomName.Text;
+                roomName = txt_RoomName.Text;
             }
 
             // 채팅방 접근 권한 설정
-            if (rdo_publicRoom.Checked)
+            if (rdo_PublicRoom.Checked)
             {
                 accessRight = 1;
             }
@@ -1115,9 +1243,9 @@ namespace TestClient
             MessageUtil.Send(stream, reqMsg);
 
             // 설정 값 초기화
-            txt_roomName.Clear();
-            rdo_publicRoom.Checked = true;
-            rdo_privateRoom.Checked = false;
+            txt_RoomName.Clear();
+            rdo_PublicRoom.Checked = true;
+            rdo_PrivateRoom.Checked = false;
             // 초대 회원 선택 초기화
             for (int i = 0; i < clb_GroupingUser.Items.Count; i++)
             {
@@ -1207,12 +1335,51 @@ namespace TestClient
 
         private void lb_GroupList_DoubleClick(object sender, EventArgs e)
         {
+            ListBox lb = sender as ListBox;
+            int index = lb.SelectedIndex - (lb.SelectedIndex % 4);
+            int roomNo = int.Parse(lb.Items[index].ToString());
+            int userNo = 0;
+            int managerRight = 0;
+
+            foreach (var temp in userList)
+            {
+                if (temp.Value.Equals(user_ID))
+                {
+                    userNo = temp.Key;
+                    break;
+                }
+            }
+
+            // usersInRoom에서 회원의 권한 검색 where roomNo, userNo
+            foreach (KeyValuePair<int, Tuple<int, int, int>> temp in usersInRoom)
+            {
+                if (temp.Value.Item1.Equals(roomNo) && temp.Value.Item2.Equals(userNo))
+                {
+                    managerRight = temp.Value.Item3;
+                }
+            }
+
             if (lb_GroupList.SelectedItems.Count == 1)
             {
-                Open_ChatGroup(sender);
+                // 일반 회원
+                if (managerRight == 0)
+                {
+                    Open_ChatGroup(sender);
+                }
+                // 관리자
+                else if (managerRight == 1)
+                {
+                    Open_ChatGroup_Manager(sender);
+                }
+                // 생성자
+                else
+                {
+                    Open_ChatGroup_Creator(sender);
+                }
             }
         }
 
+        // 일반 회원용
         private void Open_ChatGroup(object sender)
         {
             ListBox lb = sender as ListBox;
@@ -1246,6 +1413,13 @@ namespace TestClient
             chatGroupForm.Name = "chatGroupForm" + index;
             chatGroupForm.usersInRoom = usersInRoom;
             chatGroupForm.userList = userList;
+            chatGroupForm.accessRight = roomList[roomNo].Item1;
+            // 사이즈 변경
+            chatGroupForm.Size = new Size(350, 600);
+            // 버튼 visible 변경
+            chatGroupForm.btn_BanishUser.Visible = false;
+            chatGroupForm.btn_ChangeRoomConfig.Visible = false;
+            chatGroupForm.btn_ManagerConfig.Visible = false;
 
             // ChatGroupForm이 열렸을 때 Form 정보 저장
             chatGroupForms.Add(chatGroupForm);
@@ -1253,9 +1427,113 @@ namespace TestClient
             chatGroupForm.Show();
         }
 
-        private void clb_GroupingUser_SelectedIndexChanged(object sender, EventArgs e)
+        // 관리자용
+        private void Open_ChatGroup_Manager(object sender)
         {
+            ListBox lb = sender as ListBox;
 
+            int index = lb.SelectedIndex - (lb.SelectedIndex % 4);
+            int roomNo = int.Parse(lb.Items[index].ToString());
+            string roomName = roomList[roomNo].Item2;
+
+            // 해당 윈도우가 이미 열려있을 때 처리
+            foreach (Form openForm in Application.OpenForms)
+            {
+                if (openForm.Name.Equals("chatGroupForm" + index))
+                {
+                    if (openForm.WindowState == FormWindowState.Minimized)
+                    {
+                        openForm.WindowState = FormWindowState.Normal;
+                        openForm.Location = new Point(this.Location.X + this.Width, this.Location.Y);
+                    }
+                    openForm.Activate();
+                    return;
+                }
+            }
+            ChatGroupForm chatGroupForm = new ChatGroupForm();
+            chatGroupForm.Location = new Point(this.Location.X + this.Width, this.Location.Y);
+            chatGroupForm.stream = stream;
+            chatGroupForm.roomNo = roomNo;
+            chatGroupForm.roomName = roomName;
+            chatGroupForm.user_ID = user_ID;
+            chatGroupForm.Tag = index;
+            chatGroupForm.Text = roomName;
+            chatGroupForm.Name = "chatGroupForm" + index;
+            chatGroupForm.usersInRoom = usersInRoom;
+            chatGroupForm.userList = userList;
+
+            // 사이즈 변경
+            chatGroupForm.Size = new Size(450, 600);
+            // 버튼 visible 변경
+            chatGroupForm.btn_BanishUser.Visible = true;
+            chatGroupForm.btn_ChangeRoomConfig.Visible = true;
+            chatGroupForm.btn_ManagerConfig.Visible = false;
+
+            // ChatGroupForm이 열렸을 때 Form 정보 저장
+            chatGroupForms.Add(chatGroupForm);
+
+            chatGroupForm.Show();
+        }
+
+        private void Open_ChatGroup_Creator(object sender)
+        {
+            ListBox lb = sender as ListBox;
+
+            int index = lb.SelectedIndex - (lb.SelectedIndex % 4);
+            int roomNo = int.Parse(lb.Items[index].ToString());
+            string roomName = roomList[roomNo].Item2;
+
+            // 해당 윈도우가 이미 열려있을 때 처리
+            foreach (Form openForm in Application.OpenForms)
+            {
+                if (openForm.Name.Equals("chatGroupForm" + index))
+                {
+                    if (openForm.WindowState == FormWindowState.Minimized)
+                    {
+                        openForm.WindowState = FormWindowState.Normal;
+                        openForm.Location = new Point(this.Location.X + this.Width, this.Location.Y);
+                    }
+                    openForm.Activate();
+                    return;
+                }
+            }
+            ChatGroupForm chatGroupForm = new ChatGroupForm();
+            chatGroupForm.Location = new Point(this.Location.X + this.Width, this.Location.Y);
+            chatGroupForm.stream = stream;
+            chatGroupForm.roomNo = roomNo;
+            chatGroupForm.roomName = roomName;
+            chatGroupForm.user_ID = user_ID;
+            chatGroupForm.Tag = index;
+            chatGroupForm.Text = roomName;
+            chatGroupForm.Name = "chatGroupForm" + index;
+            chatGroupForm.usersInRoom = usersInRoom;
+            chatGroupForm.userList = userList;
+
+            // 사이즈 변경
+            chatGroupForm.Size = new Size(450, 600);
+            // 버튼 visible 변경
+            chatGroupForm.btn_BanishUser.Visible = true;
+            chatGroupForm.btn_ChangeRoomConfig.Visible = true;
+            chatGroupForm.btn_ManagerConfig.Visible = true;
+
+            // ChatGroupForm이 열렸을 때 Form 정보 저장
+            chatGroupForms.Add(chatGroupForm);
+
+            chatGroupForm.Show();
+        }
+
+        private int SearchUserNoByUserID(string userID)
+        {
+            int userNo = 0;
+            foreach (KeyValuePair<int, string> temp in userList)
+            {
+                if (temp.Value.Equals(userID))
+                {
+                    userNo = temp.Key;
+                    break;
+                }
+            }
+            return userNo;
         }
 
         private string AESEncrypt256(string input, string key)

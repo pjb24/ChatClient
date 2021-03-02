@@ -47,11 +47,11 @@ namespace TestClient
             this.lb_UserList = new System.Windows.Forms.ListBox();
             this.lbl_Register = new System.Windows.Forms.Label();
             this.lbl_SignIn = new System.Windows.Forms.Label();
-            this.rdo_publicRoom = new System.Windows.Forms.RadioButton();
-            this.rdo_privateRoom = new System.Windows.Forms.RadioButton();
-            this.txt_roomName = new System.Windows.Forms.TextBox();
-            this.lbl_roomName = new System.Windows.Forms.Label();
-            this.lbl_roomAccess = new System.Windows.Forms.Label();
+            this.rdo_PublicRoom = new System.Windows.Forms.RadioButton();
+            this.rdo_PrivateRoom = new System.Windows.Forms.RadioButton();
+            this.txt_RoomName = new System.Windows.Forms.TextBox();
+            this.lbl_RoomName = new System.Windows.Forms.Label();
+            this.lbl_RoomAccess = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // lb_Result
@@ -212,7 +212,6 @@ namespace TestClient
             this.clb_GroupingUser.Size = new System.Drawing.Size(335, 386);
             this.clb_GroupingUser.TabIndex = 11;
             this.clb_GroupingUser.TabStop = false;
-            this.clb_GroupingUser.SelectedIndexChanged += new System.EventHandler(this.clb_GroupingUser_SelectedIndexChanged);
             // 
             // btn_Create
             // 
@@ -271,74 +270,74 @@ namespace TestClient
             this.lbl_SignIn.TabIndex = 15;
             this.lbl_SignIn.Text = "로그인";
             // 
-            // rdo_publicRoom
+            // rdo_PublicRoom
             // 
-            this.rdo_publicRoom.AutoSize = true;
-            this.rdo_publicRoom.Checked = true;
-            this.rdo_publicRoom.Font = new System.Drawing.Font("굴림", 14F);
-            this.rdo_publicRoom.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.rdo_publicRoom.Location = new System.Drawing.Point(1645, 75);
-            this.rdo_publicRoom.Name = "rdo_publicRoom";
-            this.rdo_publicRoom.Size = new System.Drawing.Size(65, 23);
-            this.rdo_publicRoom.TabIndex = 16;
-            this.rdo_publicRoom.TabStop = true;
-            this.rdo_publicRoom.Text = "공개";
-            this.rdo_publicRoom.UseVisualStyleBackColor = true;
+            this.rdo_PublicRoom.AutoSize = true;
+            this.rdo_PublicRoom.Checked = true;
+            this.rdo_PublicRoom.Font = new System.Drawing.Font("굴림", 14F);
+            this.rdo_PublicRoom.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.rdo_PublicRoom.Location = new System.Drawing.Point(1645, 75);
+            this.rdo_PublicRoom.Name = "rdo_PublicRoom";
+            this.rdo_PublicRoom.Size = new System.Drawing.Size(65, 23);
+            this.rdo_PublicRoom.TabIndex = 16;
+            this.rdo_PublicRoom.TabStop = true;
+            this.rdo_PublicRoom.Text = "공개";
+            this.rdo_PublicRoom.UseVisualStyleBackColor = true;
             // 
-            // rdo_privateRoom
+            // rdo_PrivateRoom
             // 
-            this.rdo_privateRoom.AutoSize = true;
-            this.rdo_privateRoom.Font = new System.Drawing.Font("굴림", 14F);
-            this.rdo_privateRoom.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.rdo_privateRoom.Location = new System.Drawing.Point(1711, 75);
-            this.rdo_privateRoom.Name = "rdo_privateRoom";
-            this.rdo_privateRoom.Size = new System.Drawing.Size(84, 23);
-            this.rdo_privateRoom.TabIndex = 17;
-            this.rdo_privateRoom.Text = "비공개";
-            this.rdo_privateRoom.UseVisualStyleBackColor = true;
+            this.rdo_PrivateRoom.AutoSize = true;
+            this.rdo_PrivateRoom.Font = new System.Drawing.Font("굴림", 14F);
+            this.rdo_PrivateRoom.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.rdo_PrivateRoom.Location = new System.Drawing.Point(1711, 75);
+            this.rdo_PrivateRoom.Name = "rdo_PrivateRoom";
+            this.rdo_PrivateRoom.Size = new System.Drawing.Size(84, 23);
+            this.rdo_PrivateRoom.TabIndex = 17;
+            this.rdo_PrivateRoom.Text = "비공개";
+            this.rdo_PrivateRoom.UseVisualStyleBackColor = true;
             // 
-            // txt_roomName
+            // txt_RoomName
             // 
-            this.txt_roomName.Font = new System.Drawing.Font("굴림", 14F);
-            this.txt_roomName.Location = new System.Drawing.Point(1489, 37);
-            this.txt_roomName.MaxLength = 20;
-            this.txt_roomName.Name = "txt_roomName";
-            this.txt_roomName.Size = new System.Drawing.Size(306, 29);
-            this.txt_roomName.TabIndex = 18;
+            this.txt_RoomName.Font = new System.Drawing.Font("굴림", 14F);
+            this.txt_RoomName.Location = new System.Drawing.Point(1489, 37);
+            this.txt_RoomName.MaxLength = 20;
+            this.txt_RoomName.Name = "txt_RoomName";
+            this.txt_RoomName.Size = new System.Drawing.Size(306, 29);
+            this.txt_RoomName.TabIndex = 18;
             // 
-            // lbl_roomName
+            // lbl_RoomName
             // 
-            this.lbl_roomName.AutoSize = true;
-            this.lbl_roomName.Font = new System.Drawing.Font("굴림", 14F);
-            this.lbl_roomName.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.lbl_roomName.Location = new System.Drawing.Point(1485, 9);
-            this.lbl_roomName.Name = "lbl_roomName";
-            this.lbl_roomName.Size = new System.Drawing.Size(110, 19);
-            this.lbl_roomName.TabIndex = 19;
-            this.lbl_roomName.Text = "채팅방 이름";
+            this.lbl_RoomName.AutoSize = true;
+            this.lbl_RoomName.Font = new System.Drawing.Font("굴림", 14F);
+            this.lbl_RoomName.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.lbl_RoomName.Location = new System.Drawing.Point(1485, 9);
+            this.lbl_RoomName.Name = "lbl_RoomName";
+            this.lbl_RoomName.Size = new System.Drawing.Size(110, 19);
+            this.lbl_RoomName.TabIndex = 19;
+            this.lbl_RoomName.Text = "채팅방 이름";
             // 
-            // lbl_roomAccess
+            // lbl_RoomAccess
             // 
-            this.lbl_roomAccess.AutoSize = true;
-            this.lbl_roomAccess.Font = new System.Drawing.Font("굴림", 14F);
-            this.lbl_roomAccess.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.lbl_roomAccess.Location = new System.Drawing.Point(1485, 77);
-            this.lbl_roomAccess.Name = "lbl_roomAccess";
-            this.lbl_roomAccess.Size = new System.Drawing.Size(154, 19);
-            this.lbl_roomAccess.TabIndex = 20;
-            this.lbl_roomAccess.Text = "채팅방 공개 설정";
+            this.lbl_RoomAccess.AutoSize = true;
+            this.lbl_RoomAccess.Font = new System.Drawing.Font("굴림", 14F);
+            this.lbl_RoomAccess.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.lbl_RoomAccess.Location = new System.Drawing.Point(1485, 77);
+            this.lbl_RoomAccess.Name = "lbl_RoomAccess";
+            this.lbl_RoomAccess.Size = new System.Drawing.Size(154, 19);
+            this.lbl_RoomAccess.TabIndex = 20;
+            this.lbl_RoomAccess.Text = "채팅방 공개 설정";
             // 
             // TestClientUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(46)))), ((int)(((byte)(46)))));
-            this.ClientSize = new System.Drawing.Size(1904, 1041);
-            this.Controls.Add(this.lbl_roomAccess);
-            this.Controls.Add(this.lbl_roomName);
-            this.Controls.Add(this.txt_roomName);
-            this.Controls.Add(this.rdo_privateRoom);
-            this.Controls.Add(this.rdo_publicRoom);
+            this.ClientSize = new System.Drawing.Size(334, 561);
+            this.Controls.Add(this.lbl_RoomAccess);
+            this.Controls.Add(this.lbl_RoomName);
+            this.Controls.Add(this.txt_RoomName);
+            this.Controls.Add(this.rdo_PrivateRoom);
+            this.Controls.Add(this.rdo_PublicRoom);
             this.Controls.Add(this.lbl_SignIn);
             this.Controls.Add(this.lbl_Register);
             this.Controls.Add(this.lb_UserList);
@@ -388,11 +387,11 @@ namespace TestClient
         private System.Windows.Forms.ListBox lb_UserList;
         private System.Windows.Forms.Label lbl_Register;
         private System.Windows.Forms.Label lbl_SignIn;
-        private System.Windows.Forms.RadioButton rdo_publicRoom;
-        private System.Windows.Forms.RadioButton rdo_privateRoom;
-        private System.Windows.Forms.TextBox txt_roomName;
-        private System.Windows.Forms.Label lbl_roomName;
-        private System.Windows.Forms.Label lbl_roomAccess;
+        private System.Windows.Forms.RadioButton rdo_PublicRoom;
+        private System.Windows.Forms.RadioButton rdo_PrivateRoom;
+        private System.Windows.Forms.TextBox txt_RoomName;
+        private System.Windows.Forms.Label lbl_RoomName;
+        private System.Windows.Forms.Label lbl_RoomAccess;
     }
 }
 
