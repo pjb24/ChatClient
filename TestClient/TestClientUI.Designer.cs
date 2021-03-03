@@ -52,6 +52,8 @@ namespace TestClient
             this.txt_RoomName = new System.Windows.Forms.TextBox();
             this.lbl_RoomName = new System.Windows.Forms.Label();
             this.lbl_RoomAccess = new System.Windows.Forms.Label();
+            this.lbl_UserID = new System.Windows.Forms.Label();
+            this.lbl_UserPW = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // lb_Result
@@ -70,29 +72,24 @@ namespace TestClient
             // 
             this.txt_UserID.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.txt_UserID.Font = new System.Drawing.Font("굴림", 14F);
-            this.txt_UserID.ForeColor = System.Drawing.SystemColors.InactiveCaption;
+            this.txt_UserID.ForeColor = System.Drawing.SystemColors.ControlText;
             this.txt_UserID.Location = new System.Drawing.Point(430, 139);
             this.txt_UserID.MaxLength = 20;
             this.txt_UserID.Name = "txt_UserID";
             this.txt_UserID.Size = new System.Drawing.Size(160, 29);
             this.txt_UserID.TabIndex = 1;
-            this.txt_UserID.Text = "ID";
-            this.txt_UserID.Enter += new System.EventHandler(this.txt_UserID_Enter);
-            this.txt_UserID.Leave += new System.EventHandler(this.txt_UserID_Leave);
             // 
             // txt_UserPW
             // 
             this.txt_UserPW.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.txt_UserPW.Font = new System.Drawing.Font("굴림", 14F);
-            this.txt_UserPW.ForeColor = System.Drawing.SystemColors.InactiveCaption;
+            this.txt_UserPW.ForeColor = System.Drawing.SystemColors.ControlText;
             this.txt_UserPW.Location = new System.Drawing.Point(430, 206);
             this.txt_UserPW.MaxLength = 20;
             this.txt_UserPW.Name = "txt_UserPW";
+            this.txt_UserPW.PasswordChar = '*';
             this.txt_UserPW.Size = new System.Drawing.Size(160, 29);
             this.txt_UserPW.TabIndex = 2;
-            this.txt_UserPW.Text = "PW";
-            this.txt_UserPW.Enter += new System.EventHandler(this.txt_UserPW_Enter);
-            this.txt_UserPW.Leave += new System.EventHandler(this.txt_UserPW_Leave);
             // 
             // btn_SignInSubmit
             // 
@@ -327,12 +324,36 @@ namespace TestClient
             this.lbl_RoomAccess.TabIndex = 20;
             this.lbl_RoomAccess.Text = "채팅방 공개 설정";
             // 
+            // lbl_UserID
+            // 
+            this.lbl_UserID.AutoSize = true;
+            this.lbl_UserID.Font = new System.Drawing.Font("굴림", 14F);
+            this.lbl_UserID.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.lbl_UserID.Location = new System.Drawing.Point(401, 141);
+            this.lbl_UserID.Name = "lbl_UserID";
+            this.lbl_UserID.Size = new System.Drawing.Size(23, 19);
+            this.lbl_UserID.TabIndex = 21;
+            this.lbl_UserID.Text = "ID";
+            // 
+            // lbl_UserPW
+            // 
+            this.lbl_UserPW.AutoSize = true;
+            this.lbl_UserPW.Font = new System.Drawing.Font("굴림", 14F);
+            this.lbl_UserPW.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.lbl_UserPW.Location = new System.Drawing.Point(389, 208);
+            this.lbl_UserPW.Name = "lbl_UserPW";
+            this.lbl_UserPW.Size = new System.Drawing.Size(35, 19);
+            this.lbl_UserPW.TabIndex = 22;
+            this.lbl_UserPW.Text = "PW";
+            // 
             // TestClientUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(46)))), ((int)(((byte)(46)))));
             this.ClientSize = new System.Drawing.Size(334, 561);
+            this.Controls.Add(this.lbl_UserPW);
+            this.Controls.Add(this.lbl_UserID);
             this.Controls.Add(this.lbl_RoomAccess);
             this.Controls.Add(this.lbl_RoomName);
             this.Controls.Add(this.txt_RoomName);
@@ -392,6 +413,8 @@ namespace TestClient
         private System.Windows.Forms.TextBox txt_RoomName;
         private System.Windows.Forms.Label lbl_RoomName;
         private System.Windows.Forms.Label lbl_RoomAccess;
+        private System.Windows.Forms.Label lbl_UserID;
+        private System.Windows.Forms.Label lbl_UserPW;
     }
 }
 

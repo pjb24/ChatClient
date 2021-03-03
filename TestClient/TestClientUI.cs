@@ -101,8 +101,6 @@ namespace TestClient
                                     if (user_ID.Equals(resBody.userID))
                                     {
                                         MessageBox.Show("회원가입 되었습니다.", "회원가입 성공");
-                                        txt_UserID.Clear();
-                                        txt_UserPW.Clear();
                                         SettingControlLocationSignIn();
                                     }
                                     // 회원가입한 사람이 아닐 때
@@ -123,8 +121,6 @@ namespace TestClient
                             case CONSTANTS.RES_SIGNIN_SUCCESS:
                                 {
                                     // 폼 컨트롤 위치 조정
-                                    txt_UserID.Clear();
-                                    txt_UserPW.Clear();
                                     SettingControlLocationGroup();
                                     break;
                                 }
@@ -737,6 +733,7 @@ namespace TestClient
             chatGroupForms.Add(chatGroupForm);
         }*/
 
+        /*
         private void txt_UserID_Enter(object sender, EventArgs e)
         {
             if (txt_UserID.Text == "ID")
@@ -780,6 +777,7 @@ namespace TestClient
                 txt_UserPW.PasswordChar = '\0';
             }
         }
+        */
 
         private void btn_SignInSubmit_Click(object sender, EventArgs e)
         {
@@ -822,9 +820,6 @@ namespace TestClient
             };
             // 로그인 메시지 발송
             MessageUtil.Send(stream, reqMsg);
-
-            txt_UserID.Clear();
-            txt_UserPW.Clear();
         }
 
         private void SettingControlLocationReset()
@@ -835,6 +830,8 @@ namespace TestClient
             txt_UserPW.Location = new Point(430, 206);
             btn_SignInSubmit.Location = new Point(430, 266);
             btn_OpenRegister.Location = new Point(430, 339);
+            lbl_UserID.Location = new Point(401, 141);
+            lbl_UserPW.Location = new Point(389, 208);
 
             // Register Form
             lbl_Register.Location = new Point(761, 63);
@@ -877,6 +874,10 @@ namespace TestClient
                     txt_UserPW.Location = new Point(87, 295);
                     btn_SignInSubmit.Location = new Point(87, 354);
                     btn_OpenRegister.Location = new Point(87, 404);
+                    lbl_UserID.Location = new Point(58, 258);
+                    lbl_UserPW.Location = new Point(46, 297);
+                    txt_UserID.Clear();
+                    txt_UserPW.Clear();
                 }));
             }
             else
@@ -889,6 +890,10 @@ namespace TestClient
                 txt_UserPW.Location = new Point(87, 295);
                 btn_SignInSubmit.Location = new Point(87, 354);
                 btn_OpenRegister.Location = new Point(87, 404);
+                lbl_UserID.Location = new Point(58, 258);
+                lbl_UserPW.Location = new Point(46, 297);
+                txt_UserID.Clear();
+                txt_UserPW.Clear();
             }
             
         }
@@ -907,6 +912,10 @@ namespace TestClient
                     txt_UserPW.Location = new Point(87, 295);
                     btn_RegisterSubmit.Location = new Point(87, 354);
                     btn_RegisterClose.Location = new Point(87, 404);
+                    lbl_UserID.Location = new Point(58, 258);
+                    lbl_UserPW.Location = new Point(46, 297);
+                    txt_UserID.Clear();
+                    txt_UserPW.Clear();
                 }));
             }
             else
@@ -919,6 +928,10 @@ namespace TestClient
                 txt_UserPW.Location = new Point(87, 295);
                 btn_RegisterSubmit.Location = new Point(87, 354);
                 btn_RegisterClose.Location = new Point(87, 404);
+                lbl_UserID.Location = new Point(58, 258);
+                lbl_UserPW.Location = new Point(46, 297);
+                txt_UserID.Clear();
+                txt_UserPW.Clear();
             }
         }
 
