@@ -199,7 +199,6 @@ namespace TestClient
         private System.Windows.Forms.ListBox lb_Result;
         private System.Windows.Forms.TextBox txt_Send;
         private System.Windows.Forms.Button btn_Send;
-        private System.Windows.Forms.ListBox lb_UserList;
         private System.Windows.Forms.Label lbl_UserList;
         private System.Windows.Forms.Button btn_Leave;
         private System.Windows.Forms.Button btn_Invitation;
@@ -208,5 +207,6 @@ namespace TestClient
         public System.Windows.Forms.Button btn_BanishUser;
         public System.Windows.Forms.Button btn_ChangeRoomConfig;
         public System.Windows.Forms.Button btn_ManagerConfig;
+        public System.Windows.Forms.ListBox lb_UserList;
     }
 }

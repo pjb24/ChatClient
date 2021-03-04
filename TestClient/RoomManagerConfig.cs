@@ -30,25 +30,34 @@ namespace TestClient
         // 아래 clb로 내림
         private void btn_TurnOffManagementRight_Click(object sender, EventArgs e)
         {
+            List<object> temp = new List<object>();
             foreach (object checkeditem in clb_Manager.CheckedItems)
             {
                 // 체크된 회원 아래로 내림
                 clb_CommonUser.Items.Add(checkeditem);
-                // 체크된 회원 위에서 지움
-                clb_Manager.Items.Remove(checkeditem);
+                temp.Add(checkeditem);
             }
-            
+            // 체크된 회원 위에서 지움
+            for (int i = 0; i < temp.Count; i++)
+            {
+                clb_Manager.Items.Remove(temp[i]);
+            }
         }
 
         // 위의 clb로 올림
         private void btn_GrantManagementRight_Click(object sender, EventArgs e)
         {
+            List<object> temp = new List<object>();
             foreach (object checkeditem in clb_CommonUser.CheckedItems)
             {
                 // 체크된 회원 위로 올림
                 clb_Manager.Items.Add(checkeditem);
-                // 체크된 회원 아래에서 지움
-                clb_CommonUser.Items.Remove(checkeditem);
+                temp.Add(checkeditem);
+            }
+            // 체크된 회원 아래에서 지움
+            for (int i = 0; i < temp.Count; i++)
+            {
+                clb_CommonUser.Items.Remove(temp[i]);
             }
         }
 

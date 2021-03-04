@@ -105,6 +105,20 @@ namespace TestClient
             }
         }
 
+        private int SearchUserNoByUserID(string userID)
+        {
+            int userNo = 0;
+            foreach (KeyValuePair<int, string> temp in userList)
+            {
+                if (temp.Value.Equals(userID))
+                {
+                    userNo = temp.Key;
+                    break;
+                }
+            }
+            return userNo;
+        }
+
         private void ChatGroupForm_Load(object sender, EventArgs e)
         {
             RedrawUserList();
@@ -217,27 +231,43 @@ namespace TestClient
 
         private void btn_banishUser_Click(object sender, EventArgs e)
         {
+            bool isCommonUser = false;
             string banishedUser = string.Empty;
             banishedUser = lb_UserList.SelectedItem.ToString();
 
-            if (MessageBox.Show(this, banishedUser + " 회원을 추방하시겠습니까?", "알림", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            foreach(KeyValuePair<int, Tuple<int, int, int>> temp in usersInRoom)
             {
-                PacketMessage reqMsg = new PacketMessage();
-                reqMsg.Body = new RequestBanishUser()
+                if (temp.Value.Item1.Equals(roomNo) && temp.Value.Item2.Equals(SearchUserNoByUserID(banishedUser)) && temp.Value.Item3.Equals(0))
                 {
-                    msg = roomNo + "&" + banishedUser
-                };
-                reqMsg.Header = new Header()
-                {
-                    MSGID = TestClientUI.msgid++,
-                    MSGTYPE = CONSTANTS.REQ_BANISH_USER,
-                    BODYLEN = (uint)reqMsg.Body.GetSize(),
-                    FRAGMENTED = CONSTANTS.NOT_FRAGMENTED,
-                    LASTMSG = CONSTANTS.LASTMSG,
-                    SEQ = 0
-                };
+                    isCommonUser = true;
+                }
+            }
 
-                MessageUtil.Send(stream, reqMsg);
+            if (isCommonUser)
+            {
+                if (MessageBox.Show(this, banishedUser + " 회원을 추방하시겠습니까?", "알림", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                {
+                    PacketMessage reqMsg = new PacketMessage();
+                    reqMsg.Body = new RequestBanishUser()
+                    {
+                        msg = roomNo + "&" + banishedUser
+                    };
+                    reqMsg.Header = new Header()
+                    {
+                        MSGID = TestClientUI.msgid++,
+                        MSGTYPE = CONSTANTS.REQ_BANISH_USER,
+                        BODYLEN = (uint)reqMsg.Body.GetSize(),
+                        FRAGMENTED = CONSTANTS.NOT_FRAGMENTED,
+                        LASTMSG = CONSTANTS.LASTMSG,
+                        SEQ = 0
+                    };
+
+                    MessageUtil.Send(stream, reqMsg);
+                } 
+            }
+            else
+            {
+                MessageBox.Show(this, "일반 회원만 추방할 수 있습니다.", "알림");
             }
         }
 
