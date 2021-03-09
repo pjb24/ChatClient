@@ -46,5 +46,20 @@ namespace TestClient
         {
             this.Close();
         }
+
+        private void txt_RoomName_TextChanged(object sender, EventArgs e)
+        {
+            const int TEXT_MAX_LENGTH = 20;
+
+            TextBox textBox = sender as TextBox;
+
+            if (txt_RoomName.Text.Length > TEXT_MAX_LENGTH)
+            {
+                textBox.TextChanged -= txt_RoomName_TextChanged;
+                textBox.Text = textBox.Text.Substring(0, TEXT_MAX_LENGTH);
+                textBox.TextChanged += txt_RoomName_TextChanged;
+                MessageBox.Show(this, "채팅방 이름은 20자까지만 허용됩니다.", "알림");
+            }
+        }
     }
 }

@@ -20,7 +20,7 @@ namespace TestClient
 
         public static TestClientUI testClientUI = new TestClientUI();
         public static SignInForm signInForm = new SignInForm();
-        public static GroupForm groupForm = new GroupForm();
-        public static List<ChatGroupForm> chatGroupForms = new List<ChatGroupForm>();
+        public static LobbyForm groupForm = new LobbyForm();
+        public static List<ChatRoomForm> chatGroupForms = new List<ChatRoomForm>();
     }
 }

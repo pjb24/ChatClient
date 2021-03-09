@@ -1,7 +1,7 @@
 ﻿
 namespace TestClient
 {
-    partial class ChatGroupForm
+    partial class ChatRoomForm
     {
         /// <summary>
         /// Required designer variable.
@@ -58,6 +58,7 @@ namespace TestClient
             // txt_Send
             // 
             this.txt_Send.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txt_Send.Font = new System.Drawing.Font("굴림", 14F);
             this.txt_Send.Location = new System.Drawing.Point(12, 501);
             this.txt_Send.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.txt_Send.Multiline = true;
@@ -68,6 +69,7 @@ namespace TestClient
             // 
             // btn_Send
             // 
+            this.btn_Send.Font = new System.Drawing.Font("굴림", 9F);
             this.btn_Send.Location = new System.Drawing.Point(222, 501);
             this.btn_Send.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btn_Send.Name = "btn_Send";
@@ -165,7 +167,7 @@ namespace TestClient
             this.btn_ManagerConfig.UseVisualStyleBackColor = true;
             this.btn_ManagerConfig.Click += new System.EventHandler(this.btn_managerConfig_Click);
             // 
-            // ChatGroupForm
+            // ChatRoomForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -185,7 +187,7 @@ namespace TestClient
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.MaximizeBox = false;
-            this.Name = "ChatGroupForm";
+            this.Name = "ChatRoomForm";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "채팅방";

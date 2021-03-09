@@ -36,7 +36,7 @@ namespace TestClient
         Dictionary<int, Tuple<int, string>> roomList = new Dictionary<int, Tuple<int, string>>();
         Dictionary<int, Tuple<int, int, int>> usersInRoom = new Dictionary<int, Tuple<int, int, int>>();
 
-        List<ChatGroupForm> chatGroupForms = new List<ChatGroupForm>();
+        List<ChatRoomForm> chatGroupForms = new List<ChatRoomForm>();
 
         public static uint msgid = 0;
 
@@ -214,7 +214,7 @@ namespace TestClient
                                     if (roomList.ContainsKey(resBody.roomNo))
                                     {
                                         // 열려있는 ChatGroupForm 중에서 roomNo가 일치하는 window에 출력
-                                        foreach (ChatGroupForm temp in chatGroupForms)
+                                        foreach (ChatRoomForm temp in chatGroupForms)
                                         {
                                             if (temp.roomNo == resBody.roomNo)
                                             {
@@ -256,7 +256,7 @@ namespace TestClient
                                         {
                                             usersInRoom.Add(temp.Key, new Tuple<int, int, int>(temp.Value.Item1, temp.Value.Item2, temp.Value.Item3));
                                             // 열려있는 채팅방 중 변경된 채팅방이 있다면
-                                            foreach (ChatGroupForm chatGroupForm in chatGroupForms)
+                                            foreach (ChatRoomForm chatGroupForm in chatGroupForms)
                                             {
                                                 if (chatGroupForm.roomNo == resBody.roomNo)
                                                 {
@@ -319,7 +319,7 @@ namespace TestClient
                                         }
                                         usersInRoom.Remove(usersInRoomNo);
 
-                                        foreach (ChatGroupForm chatGroupForm in chatGroupForms)
+                                        foreach (ChatRoomForm chatGroupForm in chatGroupForms)
                                         {
                                             if (chatGroupForm.roomNo == resBody.roomNo)
                                             {
@@ -374,7 +374,7 @@ namespace TestClient
                                         }
                                         usersInRoom.Remove(usersInRoomNo);
 
-                                        foreach (ChatGroupForm chatGroupForm in chatGroupForms)
+                                        foreach (ChatRoomForm chatGroupForm in chatGroupForms)
                                         {
                                             if (chatGroupForm.roomNo == resBody.roomNo)
                                             {
@@ -402,7 +402,7 @@ namespace TestClient
                                     }
 
                                     // 채팅방 열려있는지 확인
-                                    foreach (ChatGroupForm chatGroupForm in chatGroupForms)
+                                    foreach (ChatRoomForm chatGroupForm in chatGroupForms)
                                     {
                                         if (chatGroupForm.roomNo == resBody.roomNo)
                                         {
@@ -453,7 +453,7 @@ namespace TestClient
                                                 tempUserNo.Add(userNo);
                                                 tempRight.Add(1);
                                                 // 열려있는 채팅방에 표시
-                                                foreach (ChatGroupForm chatGroupForm in chatGroupForms)
+                                                foreach (ChatRoomForm chatGroupForm in chatGroupForms)
                                                 {
                                                     if (chatGroupForm.roomNo == resBody.roomNo)
                                                     {
@@ -469,7 +469,7 @@ namespace TestClient
                                                 tempUserNo.Add(userNo);
                                                 tempRight.Add(0);
                                                 // 열려있는 채팅방에 표시
-                                                foreach (ChatGroupForm chatGroupForm in chatGroupForms)
+                                                foreach (ChatRoomForm chatGroupForm in chatGroupForms)
                                                 {
                                                     if (chatGroupForm.roomNo == resBody.roomNo)
                                                     {
@@ -610,7 +610,7 @@ namespace TestClient
                                     if (roomList.ContainsKey(reqBody.roomNo))
                                     {
                                         // 열려있는 ChatGroupForm 중에서 pid가 일치하는 window에 출력
-                                        foreach (ChatGroupForm temp in chatGroupForms)
+                                        foreach (ChatRoomForm temp in chatGroupForms)
                                         {
                                             if (temp.roomNo == reqBody.roomNo)
                                             {
@@ -1158,7 +1158,7 @@ namespace TestClient
         {
             if (chatGroupForms.Count != 0)
             {
-                foreach (ChatGroupForm room in chatGroupForms)
+                foreach (ChatRoomForm room in chatGroupForms)
                 {
                     room.Close();
                 }
@@ -1415,7 +1415,7 @@ namespace TestClient
                     return;
                 }
             }
-            ChatGroupForm chatGroupForm = new ChatGroupForm();
+            ChatRoomForm chatGroupForm = new ChatRoomForm();
             chatGroupForm.Location = new Point(this.Location.X + this.Width, this.Location.Y);
             chatGroupForm.stream = stream;
             chatGroupForm.roomNo = roomNo;
@@ -1463,7 +1463,7 @@ namespace TestClient
                     return;
                 }
             }
-            ChatGroupForm chatGroupForm = new ChatGroupForm();
+            ChatRoomForm chatGroupForm = new ChatRoomForm();
             chatGroupForm.Location = new Point(this.Location.X + this.Width, this.Location.Y);
             chatGroupForm.stream = stream;
             chatGroupForm.roomNo = roomNo;
@@ -1515,7 +1515,7 @@ namespace TestClient
                     return;
                 }
             }
-            ChatGroupForm chatGroupForm = new ChatGroupForm();
+            ChatRoomForm chatGroupForm = new ChatRoomForm();
             chatGroupForm.Location = new Point(this.Location.X + this.Width, this.Location.Y);
             chatGroupForm.stream = stream;
             chatGroupForm.roomNo = roomNo;

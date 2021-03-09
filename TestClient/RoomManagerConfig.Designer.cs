@@ -43,6 +43,7 @@ namespace TestClient
             // 
             this.clb_Manager.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.clb_Manager.CheckOnClick = true;
+            this.clb_Manager.Font = new System.Drawing.Font("굴림", 14F);
             this.clb_Manager.FormattingEnabled = true;
             this.clb_Manager.Location = new System.Drawing.Point(16, 42);
             this.clb_Manager.Name = "clb_Manager";
@@ -53,6 +54,7 @@ namespace TestClient
             // 
             this.clb_CommonUser.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.clb_CommonUser.CheckOnClick = true;
+            this.clb_CommonUser.Font = new System.Drawing.Font("굴림", 14F);
             this.clb_CommonUser.FormattingEnabled = true;
             this.clb_CommonUser.Location = new System.Drawing.Point(16, 283);
             this.clb_CommonUser.Name = "clb_CommonUser";

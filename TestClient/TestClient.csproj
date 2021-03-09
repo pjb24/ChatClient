@@ -71,23 +71,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ChatGroupForm.cs">
+    <Compile Include="ChatRoomForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ChatGroupForm.Designer.cs">
-      <DependentUpon>ChatGroupForm.cs</DependentUpon>
+    <Compile Include="ChatRoomForm.Designer.cs">
+      <DependentUpon>ChatRoomForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="CreateGroupForm.cs">
+    <Compile Include="CreateRoomForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="CreateGroupForm.Designer.cs">
-      <DependentUpon>CreateGroupForm.cs</DependentUpon>
+    <Compile Include="CreateRoomForm.Designer.cs">
+      <DependentUpon>CreateRoomForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="GroupForm.cs">
+    <Compile Include="LobbyForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="GroupForm.Designer.cs">
-      <DependentUpon>GroupForm.cs</DependentUpon>
+    <Compile Include="LobbyForm.Designer.cs">
+      <DependentUpon>LobbyForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Initializer.cs" />
     <Compile Include="InvitationForm.cs">
@@ -121,6 +121,7 @@
     <Compile Include="SignInForm.Designer.cs">
       <DependentUpon>SignInForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="TestClient.cs" />
     <Compile Include="TestClientUI.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -128,14 +129,14 @@
       <DependentUpon>TestClientUI.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="ChatGroupForm.resx">
-      <DependentUpon>ChatGroupForm.cs</DependentUpon>
+    <EmbeddedResource Include="ChatRoomForm.resx">
+      <DependentUpon>ChatRoomForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="CreateGroupForm.resx">
-      <DependentUpon>CreateGroupForm.cs</DependentUpon>
+    <EmbeddedResource Include="CreateRoomForm.resx">
+      <DependentUpon>CreateRoomForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="GroupForm.resx">
-      <DependentUpon>GroupForm.cs</DependentUpon>
+    <EmbeddedResource Include="LobbyForm.resx">
+      <DependentUpon>LobbyForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="InvitationForm.resx">
       <DependentUpon>InvitationForm.cs</DependentUpon>

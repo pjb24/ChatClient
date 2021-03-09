@@ -16,9 +16,9 @@ using MyMessageProtocol;
 
 namespace TestClient
 {
-    public partial class ChatGroupForm : Form
+    public partial class ChatRoomForm : Form
     {
-        private static readonly ILog log = LogManager.GetLogger(typeof(ChatGroupForm));
+        private static readonly ILog log = LogManager.GetLogger(typeof(ChatRoomForm));
 
         const int CHUNK_SIZE = 4096;
 
@@ -37,7 +37,7 @@ namespace TestClient
         // 전체 회원목록
         public Dictionary<int, string> userList = new Dictionary<int, string>();
 
-        public ChatGroupForm()
+        public ChatRoomForm()
         {
             InitializeComponent();
         }

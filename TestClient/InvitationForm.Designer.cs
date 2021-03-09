@@ -36,9 +36,10 @@ namespace TestClient
             // 
             // btn_InvitationClose
             // 
-            this.btn_InvitationClose.Location = new System.Drawing.Point(225, 511);
+            this.btn_InvitationClose.Font = new System.Drawing.Font("굴림", 14F);
+            this.btn_InvitationClose.Location = new System.Drawing.Point(202, 514);
             this.btn_InvitationClose.Name = "btn_InvitationClose";
-            this.btn_InvitationClose.Size = new System.Drawing.Size(110, 45);
+            this.btn_InvitationClose.Size = new System.Drawing.Size(120, 35);
             this.btn_InvitationClose.TabIndex = 16;
             this.btn_InvitationClose.TabStop = false;
             this.btn_InvitationClose.Text = "취소";
@@ -47,9 +48,10 @@ namespace TestClient
             // 
             // btn_Invitation
             // 
-            this.btn_Invitation.Location = new System.Drawing.Point(0, 510);
+            this.btn_Invitation.Font = new System.Drawing.Font("굴림", 14F);
+            this.btn_Invitation.Location = new System.Drawing.Point(12, 514);
             this.btn_Invitation.Name = "btn_Invitation";
-            this.btn_Invitation.Size = new System.Drawing.Size(110, 45);
+            this.btn_Invitation.Size = new System.Drawing.Size(120, 35);
             this.btn_Invitation.TabIndex = 15;
             this.btn_Invitation.TabStop = false;
             this.btn_Invitation.Text = "초대";
