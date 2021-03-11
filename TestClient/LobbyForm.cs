@@ -30,6 +30,7 @@ namespace TestClient
         Dictionary<int, Tuple<int, int, int>> usersInRoom = new Dictionary<int, Tuple<int, int, int>>();
 
         List<ChatRoomForm> chatGroupForms = new List<ChatRoomForm>();
+        List<string> onlineUserList = new List<string>();
 
         bool loop = true;
 
@@ -50,6 +51,7 @@ namespace TestClient
 
             Pull_UserList();
             Pull_RoomList();
+            Pull_OnlineUserList();
         }
 
         private int Pull_UserList()
@@ -81,6 +83,23 @@ namespace TestClient
                 MSGID = msgid++,
                 MSGTYPE = CONSTANTS.REQ_ROOMLIST,
                 BODYLEN = (uint)reqMsg.Body.GetSize(),
+                FRAGMENTED = CONSTANTS.NOT_FRAGMENTED,
+                LASTMSG = CONSTANTS.LASTMSG,
+                SEQ = 0
+            };
+
+            MessageUtil.Send(stream, reqMsg);
+            return 0;
+        }
+
+        private int Pull_OnlineUserList()
+        {
+            PacketMessage reqMsg = new PacketMessage();
+            reqMsg.Header = new Header()
+            {
+                MSGID = msgid++,
+                MSGTYPE = CONSTANTS.REQ_ONLINE_USERLIST,
+                BODYLEN = 0,
                 FRAGMENTED = CONSTANTS.NOT_FRAGMENTED,
                 LASTMSG = CONSTANTS.LASTMSG,
                 SEQ = 0
@@ -165,17 +184,20 @@ namespace TestClient
             // change design
 
             // lb_UserList
+            
             lb_UserList.Items.Clear();
-            foreach (KeyValuePair<int, string> item in userList)
+            if (onlineUserList.Count != 0)
             {
-                if (!lb_UserList.Items.Contains(item.Value) && !user_ID.Equals(item.Value))
+                foreach (string item in onlineUserList)
                 {
-                    lb_UserList.Items.Add(item.Value);
+                    if (!lb_UserList.Items.Contains(item) && !user_ID.Equals(item))
+                    {
+                        lb_UserList.Items.Add(item);
+                    }
                 }
             }
 
-            // lb_GroupList
-
+            // lb_RoomList
             lb_RoomList.Items.Clear();
             foreach (KeyValuePair<int, Tuple<int, string>> item in roomList)
             {
@@ -264,6 +286,22 @@ namespace TestClient
                     {
                         switch (message.Header.MSGTYPE)
                         {
+                            // 타 회원 로그인 성공
+                            case CONSTANTS.RES_SIGNIN_SUCCESS:
+                                {
+                                    ResponseSignInSuccess resBody = (ResponseSignInSuccess)message.Body;
+                                    onlineUserList.Add(resBody.userID);
+                                    GroupRefresh();
+                                    break;
+                                }
+                            // 타 회원 로그아웃 성공
+                            case CONSTANTS.RES_SIGNOUT_SUCCESS:
+                                {
+                                    ResponseSignOutSuccess resBody = (ResponseSignOutSuccess)message.Body;
+                                    onlineUserList.Remove(resBody.userID);
+                                    GroupRefresh();
+                                    break;
+                                }
                             // 회원가입 성공
                             case CONSTANTS.RES_REGISTER_SUCCESS:
                                 {
@@ -317,6 +355,20 @@ namespace TestClient
                                     {
                                         MessageBox.Show("만들어진 채팅방이 없습니다.\n새로운 채팅방을 만들어보세요.", "알림");
                                     }
+                                    break;
+                                }
+                            // 온라인 회원 목록 반환
+                            case CONSTANTS.RES_ONLINE_USERLIST:
+                                {
+                                    ResponseOnlineUserList resBody = (ResponseOnlineUserList)message.Body;
+                                    foreach (string temp in resBody.onlineUserList)
+                                    {
+                                        if (!onlineUserList.Contains(temp))
+                                        {
+                                            onlineUserList.Add(temp);
+                                        }
+                                    }
+                                    GroupRefresh();
                                     break;
                                 }
                             // 채팅방 생성 완료
@@ -1011,6 +1063,7 @@ namespace TestClient
 
             Pull_UserList();
             Pull_RoomList();
+            Pull_OnlineUserList();
         }
 
         // 공개 채팅방 외부 회원용

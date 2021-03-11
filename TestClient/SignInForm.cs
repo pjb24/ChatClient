@@ -145,6 +145,7 @@ namespace TestClient
                         {
                             case CONSTANTS.RES_SIGNIN_SUCCESS:
                                 {
+                                    ResponseSignInSuccess resBody = (ResponseSignInSuccess)message.Body;
                                     this.Hide();
                                     GlobalClass.lobbyForm.Location = this.Location;
                                     GlobalClass.lobbyForm.user_ID = txt_UserID.Text;
