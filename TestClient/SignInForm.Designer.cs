@@ -70,7 +70,7 @@ namespace TestClient
             this.btn_SignIn.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btn_SignIn.Name = "btn_SignIn";
             this.btn_SignIn.Size = new System.Drawing.Size(160, 30);
-            this.btn_SignIn.TabIndex = 0;
+            this.btn_SignIn.TabIndex = 3;
             this.btn_SignIn.Text = "로그인";
             this.btn_SignIn.UseVisualStyleBackColor = true;
             this.btn_SignIn.Click += new System.EventHandler(this.btn_SignIn_Click);
@@ -82,7 +82,7 @@ namespace TestClient
             this.btn_Register.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btn_Register.Name = "btn_Register";
             this.btn_Register.Size = new System.Drawing.Size(160, 30);
-            this.btn_Register.TabIndex = 3;
+            this.btn_Register.TabIndex = 4;
             this.btn_Register.Text = "회원가입";
             this.btn_Register.UseVisualStyleBackColor = true;
             this.btn_Register.Click += new System.EventHandler(this.btn_Register_Click);
@@ -139,6 +139,7 @@ namespace TestClient
             this.Name = "SignInForm";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.Text = "로그인";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.SignInForm_FormClosing);
             this.ResumeLayout(false);
             this.PerformLayout();
 

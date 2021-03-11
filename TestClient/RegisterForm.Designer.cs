@@ -138,7 +138,9 @@ namespace TestClient
             this.MaximizeBox = false;
             this.Name = "RegisterForm";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "회원가입";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.RegisterForm_FormClosing);
             this.ResumeLayout(false);
             this.PerformLayout();
 

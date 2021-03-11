@@ -89,7 +89,7 @@
     <Compile Include="LobbyForm.Designer.cs">
       <DependentUpon>LobbyForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Initializer.cs" />
+    <Compile Include="GlobalClass.cs" />
     <Compile Include="InvitationForm.cs">
       <SubType>Form</SubType>
     </Compile>

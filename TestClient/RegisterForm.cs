@@ -21,9 +21,6 @@ namespace TestClient
     {
         const int TEXT_MAX_LENGTH = 20;
 
-        TcpClient clientSocket = new TcpClient();
-        NetworkStream stream = default(NetworkStream);
-
         public static uint msgid = 0;
 
         public RegisterForm()
@@ -33,15 +30,17 @@ namespace TestClient
 
         private void btn_Close_Click(object sender, EventArgs e)
         {
+            txt_UserID.Clear();
+            txt_UserPW.Clear();
             this.Hide();
-            SignInForm signInForm = new SignInForm();
-            signInForm.ShowDialog();
-            this.Close();
+            GlobalClass.signInForm.Location = this.Location;
+            GlobalClass.signInForm.Show();
         }
 
         private void btn_Submit_Click(object sender, EventArgs e)
         {
-            string user_ID = txt_UserID.Text;
+            string user_ID = string.Empty;
+            user_ID = txt_UserID.Text;
 
             if (user_ID.Length == 0)
             {
@@ -56,14 +55,19 @@ namespace TestClient
                 return;
             }
 
-            string IP = ConfigurationManager.AppSettings["IP"];
-            int port = int.Parse(ConfigurationManager.AppSettings["Port"]);
+            TcpClient clientSocket = new TcpClient();
+            NetworkStream stream = default(NetworkStream);
+
+            string IP = string.Empty;
+            int port = 0;
+            IP = ConfigurationManager.AppSettings["IP"];
+            port = int.Parse(ConfigurationManager.AppSettings["Port"]);
 
             try
             {
-                // (serverIP, port) 연결 시도, 현재는 Loopback 사용중, Exception 처리 필요
+                // (serverIP, port) 연결 시도, 현재는 Loopback 사용중
                 clientSocket.Connect(IP, port);
-                // NetworkStream 정보 저장, NetworkStream?
+                // NetworkStream 정보 저장
                 stream = clientSocket.GetStream();
             }
             catch (SocketException se)
@@ -73,8 +77,10 @@ namespace TestClient
             }
 
             SHA256Managed sHA256Managed = new SHA256Managed();
-            byte[] temp = sHA256Managed.ComputeHash(Encoding.Unicode.GetBytes(txt_UserPW.Text));
-            string user_PW = string.Join(string.Empty, Array.ConvertAll(temp, b => b.ToString("X2")));
+            byte[] temp = { };
+            temp = sHA256Managed.ComputeHash(Encoding.Unicode.GetBytes(txt_UserPW.Text));
+            string user_PW = string.Empty;
+            user_PW = string.Join(string.Empty, Array.ConvertAll(temp, b => b.ToString("X2")));
 
             PacketMessage reqMsg = new PacketMessage();
             reqMsg.Body = new RequestRegister()
@@ -91,11 +97,14 @@ namespace TestClient
                 SEQ = 0
             };
             MessageUtil.Send(stream, reqMsg);
+
+            GetMessage(stream, clientSocket);
         }
 
         private void txt_UserID_TextChanged(object sender, EventArgs e)
         {
-            TextBox textBox = sender as TextBox;
+            TextBox textBox = new TextBox();
+            textBox = sender as TextBox;
 
             if (txt_UserID.Text.Length > TEXT_MAX_LENGTH)
             {
@@ -108,7 +117,8 @@ namespace TestClient
 
         private void txt_UserPW_TextChanged(object sender, EventArgs e)
         {
-            TextBox textBox = sender as TextBox;
+            TextBox textBox = new TextBox();
+            textBox = sender as TextBox;
 
             if (txt_UserPW.Text.Length > TEXT_MAX_LENGTH)
             {
@@ -117,6 +127,58 @@ namespace TestClient
                 textBox.TextChanged += txt_UserPW_TextChanged;
                 MessageBox.Show(this, "비밀번호는 20자까지만 허용됩니다.", "알림");
             }
+        }
+
+        private int GetMessage(NetworkStream stream, TcpClient clientSocket)
+        {
+            while (true)
+            {
+                try
+                {
+                    PacketMessage message = MessageUtil.Receive(stream);
+                    if (message != null)
+                    {
+                        switch (message.Header.MSGTYPE)
+                        {
+                            // 회원가입한 사람일 때
+                            case CONSTANTS.RES_REGISTER_SUCCESS:
+                                {
+                                    stream.Close();
+                                    clientSocket.Close();
+                                    txt_UserID.Clear();
+                                    txt_UserPW.Clear();
+                                    MessageBox.Show(this, "회원가입 되었습니다.", "회원가입 성공");
+                                    this.Hide();
+                                    GlobalClass.signInForm.Location = this.Location;
+                                    GlobalClass.signInForm.Show();
+                                    return 0;
+                                }
+                            case CONSTANTS.RES_REGISTER_FAIL_EXIST:
+                                {
+                                    stream.Close();
+                                    clientSocket.Close();
+                                    txt_UserID.Clear();
+                                    txt_UserPW.Clear();
+                                    MessageBox.Show(this, "이미 등록된 회원입니다.", "회원가입 실패");
+                                    return 0;
+                                }
+                            default:
+                                {
+                                    break;
+                                }
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    MessageBox.Show(e.StackTrace);
+                }
+            }
+        }
+
+        private void RegisterForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            Application.Exit();
         }
     }
 }

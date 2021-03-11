@@ -202,13 +202,13 @@ namespace TestClient
         private System.Windows.Forms.TextBox txt_Send;
         private System.Windows.Forms.Button btn_Send;
         private System.Windows.Forms.Label lbl_UserList;
-        private System.Windows.Forms.Button btn_Leave;
-        private System.Windows.Forms.Button btn_Invitation;
-        private System.Windows.Forms.Button btn_SendFile;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         public System.Windows.Forms.Button btn_BanishUser;
         public System.Windows.Forms.Button btn_ChangeRoomConfig;
         public System.Windows.Forms.Button btn_ManagerConfig;
         public System.Windows.Forms.ListBox lb_UserList;
+        public System.Windows.Forms.Button btn_Leave;
+        public System.Windows.Forms.Button btn_Invitation;
+        public System.Windows.Forms.Button btn_SendFile;
     }
 }

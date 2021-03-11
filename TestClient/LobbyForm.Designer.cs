@@ -57,7 +57,6 @@ namespace TestClient
             this.btn_SignOut.TabIndex = 1;
             this.btn_SignOut.Text = "로그아웃";
             this.btn_SignOut.UseVisualStyleBackColor = true;
-            this.btn_SignOut.Visible = false;
             this.btn_SignOut.Click += new System.EventHandler(this.btn_SignOut_Click);
             // 
             // lb_RoomList
@@ -71,6 +70,7 @@ namespace TestClient
             this.lb_RoomList.Name = "lb_RoomList";
             this.lb_RoomList.Size = new System.Drawing.Size(335, 306);
             this.lb_RoomList.TabIndex = 5;
+            this.lb_RoomList.DoubleClick += new System.EventHandler(this.lb_RoomList_DoubleClick);
             // 
             // lb_UserList
             // 
@@ -93,9 +93,14 @@ namespace TestClient
             this.Controls.Add(this.btn_SignOut);
             this.Controls.Add(this.btn_CreateRoom);
             this.Controls.Add(this.lb_RoomList);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.MaximizeBox = false;
             this.Name = "LobbyForm";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "로비";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.LobbyForm_FormClosing);
+            this.Load += new System.EventHandler(this.LobbyForm_Load);
             this.ResumeLayout(false);
 
         }
