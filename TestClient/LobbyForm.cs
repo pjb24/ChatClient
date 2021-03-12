@@ -884,32 +884,28 @@ namespace TestClient
                 // 일반 회원
                 if (managerRight == 0)
                 {
-                    Open_ChatGroup(sender);
+                    Open_ChatGroup(sender, index, roomNo);
                 }
                 // 관리자
                 else if (managerRight == 1)
                 {
-                    Open_ChatGroup_Manager(sender);
+                    Open_ChatGroup_Manager(sender, index, roomNo);
                 }
                 // 생성자
                 else if (managerRight == 2)
                 {
-                    Open_ChatGroup_Creator(sender);
+                    Open_ChatGroup_Creator(sender, index, roomNo);
                 }
                 else if (roomList[roomNo].Item1 == 1)
                 {
-                    Open_ChatGroup_NonMember(sender);
+                    Open_ChatGroup_NonMember(sender, index, roomNo);
                 }
             }
         }
 
         // 일반 회원용
-        private void Open_ChatGroup(object sender)
+        private void Open_ChatGroup(object sender, int index, int roomNo)
         {
-            ListBox lb = sender as ListBox;
-
-            int index = lb.SelectedIndex - (lb.SelectedIndex % 4);
-            int roomNo = int.Parse(lb.Items[index].ToString());
             string roomName = roomList[roomNo].Item2;
 
             // 해당 윈도우가 이미 열려있을 때 처리
@@ -952,12 +948,8 @@ namespace TestClient
         }
 
         // 관리자용
-        private void Open_ChatGroup_Manager(object sender)
+        private void Open_ChatGroup_Manager(object sender, int index, int roomNo)
         {
-            ListBox lb = sender as ListBox;
-
-            int index = lb.SelectedIndex - (lb.SelectedIndex % 4);
-            int roomNo = int.Parse(lb.Items[index].ToString());
             string roomName = roomList[roomNo].Item2;
 
             // 해당 윈도우가 이미 열려있을 때 처리
@@ -1004,12 +996,8 @@ namespace TestClient
         }
 
         // 생성자용
-        private void Open_ChatGroup_Creator(object sender)
+        private void Open_ChatGroup_Creator(object sender, int index, int roomNo)
         {
-            ListBox lb = sender as ListBox;
-
-            int index = lb.SelectedIndex - (lb.SelectedIndex % 4);
-            int roomNo = int.Parse(lb.Items[index].ToString());
             string roomName = roomList[roomNo].Item2;
 
             // 해당 윈도우가 이미 열려있을 때 처리
@@ -1067,12 +1055,8 @@ namespace TestClient
         }
 
         // 공개 채팅방 외부 회원용
-        private void Open_ChatGroup_NonMember(object sender)
+        private void Open_ChatGroup_NonMember(object sender, int index, int roomNo)
         {
-            ListBox lb = sender as ListBox;
-
-            int index = lb.SelectedIndex - (lb.SelectedIndex % 4);
-            int roomNo = int.Parse(lb.Items[index].ToString());
             string roomName = roomList[roomNo].Item2;
 
             // 해당 윈도우가 이미 열려있을 때 처리
