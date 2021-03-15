@@ -10,6 +10,7 @@ using System.Windows.Forms;
 
 using System.Net.Sockets;
 using System.IO;
+using System.Security.Cryptography;
 
 using log4net;
 using MyMessageProtocol;
@@ -46,7 +47,15 @@ namespace TestClient
         {
             if (txt_Send.Text != "")
             {
-                string msg = roomNo + "&" + user_ID + "&" + this.txt_Send.Text;
+                SHA256Managed sHA256Managed = new SHA256Managed();
+                byte[] Key = new byte[32];
+                byte[] IV = new byte[16];
+                Key = sHA256Managed.ComputeHash(Encoding.Unicode.GetBytes(roomNo + roomName + accessRight));
+                Array.Copy(sHA256Managed.ComputeHash(Encoding.Unicode.GetBytes(roomNo + roomName)), IV, 16);
+
+                string encrypted = EncryptString_Aes(user_ID + "&" + this.txt_Send.Text, Key, IV);
+
+                string msg = roomNo + "&" + encrypted;
                 PacketMessage reqMsg = new PacketMessage();
                 reqMsg.Body = new RequestChat() {
                     msg = msg
@@ -353,6 +362,46 @@ namespace TestClient
             };
 
             MessageUtil.Send(stream, reqMsg);
+        }
+
+        private string EncryptString_Aes(string plaintext, byte[] Key, byte[] IV)
+        {
+            // Check arguments.
+            if (plaintext == null || plaintext.Length <= 0)
+                throw new ArgumentNullException("plainText");
+            if (Key == null || Key.Length <= 0)
+                throw new ArgumentNullException("Key");
+            if (IV == null || IV.Length <= 0)
+                throw new ArgumentNullException("IV");
+            byte[] encrypted = { };
+
+            // Create an Aes object
+            // with the specified key and IV.
+            using (Aes aesAlg = Aes.Create())
+            {
+                aesAlg.Key = Key;
+                aesAlg.IV = IV;
+
+                // Create an encryptor to perform the stream transform.
+                ICryptoTransform encryptor = aesAlg.CreateEncryptor(aesAlg.Key, aesAlg.IV);
+
+                // Create the streams used for encryption.
+                using (MemoryStream msEncrypt = new MemoryStream())
+                {
+                    using (CryptoStream csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write))
+                    {
+                        using (StreamWriter swEncrypt = new StreamWriter(csEncrypt))
+                        {
+                            //Write all data to the stream.
+                            swEncrypt.Write(plaintext);
+                        }
+                        encrypted = msEncrypt.ToArray();
+                    }
+                }
+            }
+
+            // Return the encrypted bytes from the memory stream.
+            return Convert.ToBase64String(encrypted);
         }
     }
 }

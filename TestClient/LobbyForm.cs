@@ -11,7 +11,7 @@ using System.Windows.Forms;
 using System.Net.Sockets;
 using System.Threading;
 using System.Configuration;
-
+using System.Security.Cryptography;
 using System.IO;
 
 using MyMessageProtocol;
@@ -394,14 +394,32 @@ namespace TestClient
                                 {
                                     ResponseChat resBody = (ResponseChat)message.Body;
 
+                                    int roomNo = resBody.roomNo;
+                                    string roomName = roomList[roomNo].Item2;
+                                    int accessRight = roomList[roomNo].Item1;
+
+                                    SHA256Managed sHA256Managed = new SHA256Managed();
+                                    byte[] Key = new byte[32];
+                                    byte[] IV = new byte[16];
+                                    Key = sHA256Managed.ComputeHash(Encoding.Unicode.GetBytes(roomNo + roomName + accessRight));
+                                    Array.Copy(sHA256Managed.ComputeHash(Encoding.Unicode.GetBytes(roomNo + roomName)), IV, 16);
+
+                                    string plainText = DecryptString_Aes(resBody.encrypted, Key, IV);
+                                    string[] delimiterChars = { "&" };
+                                    string[] split = plainText.Split(delimiterChars, StringSplitOptions.RemoveEmptyEntries);
+                                    string userID = split[0];
+                                    string chatMsg = split[1];
+
+
                                     if (roomList.ContainsKey(resBody.roomNo))
                                     {
                                         // 열려있는 ChatGroupForm 중에서 roomNo가 일치하는 window에 출력
                                         foreach (ChatRoomForm temp in chatGroupForms)
                                         {
-                                            if (temp.roomNo == resBody.roomNo)
+                                            if (temp.roomNo == roomNo)
                                             {
-                                                temp.DisplayText(resBody.userID + " : " + resBody.chatMsg);
+                                                temp.DisplayText(userID + " : " + chatMsg);
+                                                temp.DisplayText(resBody.msg);
                                             }
                                         }
                                     }
@@ -1099,6 +1117,49 @@ namespace TestClient
             chatGroupForms.Add(chatGroupForm);
 
             chatGroupForm.Show();
+        }
+
+        private string DecryptString_Aes(string cipherText, byte[] Key, byte[] IV)
+        {
+            // Check arguments.
+            if (cipherText == null || cipherText.Length <= 0)
+                throw new ArgumentNullException("cipherText");
+            if (Key == null || Key.Length <= 0)
+                throw new ArgumentNullException("Key");
+            if (IV == null || IV.Length <= 0)
+                throw new ArgumentNullException("IV");
+
+            // Declare the string used to hold
+            // the decrypted text.
+            string plaintext = null;
+
+            // Create an Aes object
+            // with the specified key and IV.
+            using (Aes aesAlg = Aes.Create())
+            {
+                aesAlg.Key = Key;
+                aesAlg.IV = IV;
+
+                // Create a decryptor to perform the stream transform.
+                ICryptoTransform decryptor = aesAlg.CreateDecryptor(aesAlg.Key, aesAlg.IV);
+
+                // Create the streams used for decryption.
+                using (MemoryStream msDecrypt = new MemoryStream(Convert.FromBase64String(cipherText)))
+                {
+                    using (CryptoStream csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read))
+                    {
+                        using (StreamReader srDecrypt = new StreamReader(csDecrypt))
+                        {
+
+                            // Read the decrypted bytes from the decrypting stream
+                            // and place them in a string.
+                            plaintext = srDecrypt.ReadToEnd();
+                        }
+                    }
+                }
+            }
+
+            return plaintext;
         }
     }
 }

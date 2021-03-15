@@ -209,6 +209,7 @@ namespace TestClient
                             // 채팅 메시지 수신
                             case CONSTANTS.RES_CHAT:
                                 {
+                                    /*
                                     ResponseChat resBody = (ResponseChat)message.Body;
 
                                     if (roomList.ContainsKey(resBody.roomNo))
@@ -222,6 +223,7 @@ namespace TestClient
                                             }
                                         }
                                     }
+                                    */
                                     break;
                                 }
                             // 채팅방 초대 완료
