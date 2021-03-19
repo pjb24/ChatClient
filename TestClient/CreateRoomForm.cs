@@ -10,6 +10,8 @@ using System.Windows.Forms;
 
 using System.Net.Sockets;
 
+using Newtonsoft.Json;
+
 using MyMessageProtocol;
 
 namespace TestClient
@@ -38,11 +40,14 @@ namespace TestClient
             int accessRight = 0;
             string roomName = string.Empty;
             string creator = user_ID;
+            int creatorNo = SearchUserNoByUserID(user_ID);
             // 채팅방에 들어갈 회원들 수집
             List<string> tempUsers = new List<string>();
+            List<int> tempUsersNo = new List<int>();
 
             foreach (object checkeditem in clb_RoomUser.CheckedItems)
             {
+                tempUsersNo.Add(SearchUserNoByUserID(checkeditem.ToString()));
                 tempUsers.Add(checkeditem.ToString());
             }
             // 정렬
@@ -81,7 +86,29 @@ namespace TestClient
                 accessRight = 0;
             }
 
-            string msg = accessRight + "&" + roomName + "&" + creator + "&" + group;
+            Relation relation1 = new Relation()
+            {
+                UserNo = creatorNo
+            };
+
+            Room room = new Room()
+            {
+                AccessRight = accessRight,
+                Name = roomName
+            };
+            List<Relation> relations = new List<Relation>();
+            relations.Add(relation1);
+            foreach (int temp in tempUsersNo)
+            {
+                Relation relation = new Relation()
+                {
+                    UserNo = temp
+                };
+                relations.Add(relation);
+            }
+            room.Relation = relations;
+
+            string msg = JsonConvert.SerializeObject(room);
             if (OnSubmitCreateRoom != null)
             {
                 OnSubmitCreateRoom(msg);
@@ -115,6 +142,20 @@ namespace TestClient
         {
             GlobalClass.lobbyForm.Location = this.Location;
             GlobalClass.lobbyForm.Show();
+        }
+
+        private int SearchUserNoByUserID(string userID)
+        {
+            int userNo = 0;
+            foreach (KeyValuePair<int, string> temp in userList)
+            {
+                if (temp.Value.Equals(userID))
+                {
+                    userNo = temp.Key;
+                    break;
+                }
+            }
+            return userNo;
         }
     }
 }

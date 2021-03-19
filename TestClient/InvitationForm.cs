@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 using System.Net.Sockets;
+using Newtonsoft.Json;
 
 using log4net;
 using MyMessageProtocol;
@@ -39,22 +40,27 @@ namespace TestClient
 
         private void btn_Invitation_Click(object sender, EventArgs e)
         {
-            List<string> usersInGroup = new List<string>();
+            Room room = new Room()
+            {
+                No = roomNo
+            };
+            List<Relation> relations = new List<Relation>();
+
             // 채팅방에 들어갈 회원 수집
             foreach (object checkeditem in clb_InviteUser.CheckedItems)
             {
-                usersInGroup.Add(checkeditem.ToString());
+                Relation relation = new Relation()
+                {
+                    UserNo = SearchUserNoByUserID(checkeditem.ToString())
+                };
+                relations.Add(relation);
             }
-
-            string group = string.Join(", ", usersInGroup);
-
-            // send group info to server
-            string msg = roomNo + "&" + group;
+            room.Relation = relations;
 
             PacketMessage reqMsg = new PacketMessage();
             reqMsg.Body = new RequestInvitation()
             {
-                msg = msg
+                msg = JsonConvert.SerializeObject(room)
             };
             reqMsg.Header = new Header()
             {
@@ -89,6 +95,20 @@ namespace TestClient
                     }
                 }
             }
+        }
+
+        private int SearchUserNoByUserID(string userID)
+        {
+            int userNo = 0;
+            foreach (KeyValuePair<int, string> temp in userList)
+            {
+                if (temp.Value.Equals(userID))
+                {
+                    userNo = temp.Key;
+                    break;
+                }
+            }
+            return userNo;
         }
     }
 }

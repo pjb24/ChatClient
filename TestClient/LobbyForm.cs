@@ -14,6 +14,8 @@ using System.Configuration;
 using System.Security.Cryptography;
 using System.IO;
 
+using Newtonsoft.Json;
+
 using MyMessageProtocol;
 
 namespace TestClient
@@ -44,6 +46,7 @@ namespace TestClient
 
         private void SignInForm_OnSignInSuccess()
         {
+            GlobalClass.signInForm.OnSignInSuccess -= SignInForm_OnSignInSuccess;
             loop = true;
             Thread t_handler = new Thread(() => GetMessage(stream, clientSocket));
             t_handler.IsBackground = true;
@@ -243,7 +246,7 @@ namespace TestClient
                     users = users.Substring(0, users.LastIndexOf(","));
                     lb_RoomList.Items.Add("채팅방 인원 : " + users);
                 }
-            }
+            } 
             // window를 비활성화하여 WM_PAINT call
             // true 배경을 지우고 다시 그린다
             // false 현 배경 위에 다시 그린다
@@ -485,13 +488,13 @@ namespace TestClient
                                     int userNo = 0;
                                     int usersInRoomNo = 0;
                                     // 나간 사람일 때
-                                    if (user_ID.Equals(resBody.userID))
+                                    if (user_ID.Equals(userList[resBody.userNo]))
                                     {
                                         // roomList 제거
                                         roomList.Remove(resBody.roomNo);
 
                                         // 회원 번호 검색
-                                        SearchUserNoByUserID(resBody.userID);
+                                        userNo = resBody.userNo;
 
                                         // usersInRoom 제거
                                         foreach (KeyValuePair<int, Tuple<int, int, int>> temp in usersInRoom)
@@ -507,7 +510,7 @@ namespace TestClient
                                     else
                                     {
                                         // 회원 번호 검색
-                                        SearchUserNoByUserID(resBody.userID);
+                                        userNo = resBody.userNo;
 
                                         // usersInRoom 제거
                                         foreach (KeyValuePair<int, Tuple<int, int, int>> temp in usersInRoom)
@@ -524,7 +527,7 @@ namespace TestClient
                                         {
                                             if (chatGroupForm.roomNo == resBody.roomNo)
                                             {
-                                                chatGroupForm.DisplayText(resBody.userID + "님이 채팅방에서 나가셨습니다.");
+                                                chatGroupForm.DisplayText(userList[resBody.userNo] + "님이 채팅방에서 나가셨습니다.");
                                                 chatGroupForm.usersInRoom.Remove(usersInRoomNo);
                                                 chatGroupForm.RedrawUserList();
                                             }
@@ -540,13 +543,13 @@ namespace TestClient
                                     int userNo = 0;
                                     int usersInRoomNo = 0;
                                     // 추방된 사람일 때
-                                    if (user_ID.Equals(resBody.banishedUser))
+                                    if (user_ID.Equals(userList[resBody.banishedUserNo]))
                                     {
                                         // roomList 제거
                                         roomList.Remove(resBody.roomNo);
 
                                         // 회원 번호 검색
-                                        userNo = SearchUserNoByUserID(resBody.banishedUser);
+                                        userNo = resBody.banishedUserNo;
 
                                         // usersInRoom 제거
                                         foreach (KeyValuePair<int, Tuple<int, int, int>> temp in usersInRoom)
@@ -562,7 +565,7 @@ namespace TestClient
                                     else
                                     {
                                         // 회원 번호 검색
-                                        userNo = SearchUserNoByUserID(resBody.banishedUser);
+                                        userNo = resBody.banishedUserNo;
 
                                         // usersInRoom 제거
                                         foreach (KeyValuePair<int, Tuple<int, int, int>> temp in usersInRoom)
@@ -579,7 +582,7 @@ namespace TestClient
                                         {
                                             if (chatGroupForm.roomNo == resBody.roomNo)
                                             {
-                                                chatGroupForm.DisplayText(resBody.banishedUser + "님이 채팅방에서 추방되었습니다.");
+                                                chatGroupForm.DisplayText(userList[resBody.banishedUserNo] + "님이 채팅방에서 추방되었습니다.");
                                                 chatGroupForm.RedrawUserList();
                                             }
                                         }
@@ -607,6 +610,8 @@ namespace TestClient
                                     {
                                         if (chatGroupForm.roomNo == resBody.roomNo)
                                         {
+                                            chatGroupForm.accessRight = resBody.accessRight;
+                                            chatGroupForm.roomName = resBody.roomName;
                                             // 변경점 확인
                                             // accessRight 와 roomName 변경
                                             if (!resBody.accessRight.Equals(roomList[resBody.roomNo].Item1) && !resBody.roomName.Equals(roomList[resBody.roomNo].Item2))
@@ -614,9 +619,9 @@ namespace TestClient
                                                 chatGroupForm.DisplayText(string.Format("{0}번 채팅방의 공개 여부가 {1}로, 채팅방 이름이 {2}로 변경됨", resBody.roomNo, accessRightToString, resBody.roomName));
                                             }
                                             // accessRight 변경
-                                            else if (!resBody.roomName.Equals(roomList[resBody.roomNo].Item1))
+                                            else if (!resBody.accessRight.Equals(roomList[resBody.roomNo].Item1))
                                             {
-                                                chatGroupForm.DisplayText(string.Format("{0}번 채팅방의 공개 여부가 {1} 변경됨", resBody.roomNo, accessRightToString));
+                                                chatGroupForm.DisplayText(string.Format("{0}번 채팅방의 공개 여부가 {1}로 변경됨", resBody.roomNo, accessRightToString));
                                             }
                                             // roomName 변경
                                             else if (!resBody.roomName.Equals(roomList[resBody.roomNo].Item2))
@@ -624,9 +629,11 @@ namespace TestClient
                                                 chatGroupForm.DisplayText(string.Format("{0}번 채팅방의 이름이 {1}로 변경됨", resBody.roomNo, resBody.roomName));
                                             }
                                         }
+                                        chatGroupForm.RedrawUserList();
                                     }
                                     // roomList 변경
                                     roomList[resBody.roomNo] = new Tuple<int, string>(resBody.accessRight, resBody.roomName);
+
                                     GroupRefresh();
 
                                     break;
@@ -732,12 +739,24 @@ namespace TestClient
                                 {
                                     RequestSendFile reqBody = (RequestSendFile)message.Body;
 
-                                    string msg = message.Header.MSGID + "&" + reqBody.roomNo + "&" + reqBody.filePath + "&" + user_ID;
+                                    Relation relation = new Relation()
+                                    {
+                                        RoomNo = reqBody.roomNo,
+                                        UserNo = SearchUserNoByUserID(user_ID)
+                                    };
+                                    MyMessageProtocol.File file1 = new MyMessageProtocol.File()
+                                    {
+                                        No = message.Header.MSGID,
+                                        Path = reqBody.filePath,
+                                        Relation = relation
+                                    };
+
+                                    // string msg = message.Header.MSGID + "&" + reqBody.roomNo + "&" + reqBody.filePath + "&" + user_ID;
 
                                     PacketMessage resMsg = new PacketMessage();
                                     resMsg.Body = new ResponseSendFile()
                                     {
-                                        msg = msg
+                                        msg = JsonConvert.SerializeObject(file1)
                                         // MSGID = message.Header.MSGID,
                                         // RESPONSE = CONSTANTS.ACCEPTED,
                                         // pid = reqBody.pid
@@ -808,7 +827,7 @@ namespace TestClient
                                         {
                                             if (temp.roomNo == reqBody.roomNo)
                                             {
-                                                temp.DisplayText(reqBody.userID + " : " + fileName + " 파일을 전송했습니다.");
+                                                temp.DisplayText(userList[reqBody.userNo] + " : " + fileName + " 파일을 전송했습니다.");
                                             }
                                         }
                                     }
@@ -842,7 +861,7 @@ namespace TestClient
                     Console.WriteLine(IOe.StackTrace);
                     loop = false;
                     MessageBox.Show("서버에서 연결을 종료했습니다.\n 프로그램을 다시 실행해주십시오.", "알림");
-                    this.Close();
+                    ProgramClose();
                 }
                 catch (Exception e)
                 {
@@ -1160,6 +1179,21 @@ namespace TestClient
             }
 
             return plaintext;
+        }
+
+        private void ProgramClose()
+        {
+            if (this.InvokeRequired)
+            {
+                this.BeginInvoke(new MethodInvoker(delegate
+                {
+                    this.Close();
+                }));
+            }
+            else
+            {
+                this.Close();
+            }
         }
     }
 }

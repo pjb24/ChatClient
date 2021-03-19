@@ -13,7 +13,7 @@ namespace TestClient
     public partial class RoomConfig : Form
     {
         public string roomName = string.Empty;
-        public int accessRight = 0;
+        public int accessRight = 2;
 
         public delegate void ChangeRoomConfigHandler(int accessRight, string roomName);
         public event ChangeRoomConfigHandler OnChangeRoomConfig;
