@@ -12,6 +12,8 @@ using System.Net.Sockets;
 using System.Configuration;
 using System.Security.Cryptography;
 
+using Newtonsoft.Json;
+
 using MyMessageProtocol;
 
 namespace TestClient
@@ -76,10 +78,16 @@ namespace TestClient
             string user_PW = string.Empty;
             user_PW = string.Join(string.Empty, Array.ConvertAll(temp, b => b.ToString("X2")));
 
+            User user = new User()
+            {
+                UserID = user_ID,
+                UserPW = user_PW
+            };
+
             PacketMessage reqMsg = new PacketMessage();
             reqMsg.Body = new RequestRegister()
             {
-                msg = user_ID + "&" + user_PW
+                msg = JsonConvert.SerializeObject(user)
             };
             reqMsg.Header = new Header()
             {

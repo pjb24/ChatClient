@@ -12,6 +12,8 @@ using System.Net.Sockets;
 using System.IO;
 using System.Security.Cryptography;
 
+using Newtonsoft.Json;
+
 using log4net;
 using MyMessageProtocol;
 
@@ -135,10 +137,16 @@ namespace TestClient
 
         private void btn_Leave_Click(object sender, EventArgs e)
         {
+            Relation relation = new Relation()
+            {
+                RoomNo = roomNo,
+                UserNo = SearchUserNoByUserID(user_ID)
+            };
+
             PacketMessage reqMsg = new PacketMessage();
             reqMsg.Body = new RequestLeaveRoom()
             {
-                msg = roomNo + "&" + user_ID
+                msg = JsonConvert.SerializeObject(relation)
             };
             reqMsg.Header = new Header()
             {
@@ -189,10 +197,23 @@ namespace TestClient
                 long fileSize = new FileInfo(filePath).Length;
                 string fileName = p[p.Count() - 1];
 
+                Relation relation = new Relation()
+                {
+                    RoomNo = roomNo,
+                    UserNo = SearchUserNoByUserID(user_ID)
+                };
+                MyMessageProtocol.File file = new MyMessageProtocol.File()
+                {
+                    Size = fileSize,
+                    Name = fileName,
+                    Path = filePath,
+                    Relation = relation
+                };
+
                 PacketMessage reqMsg = new PacketMessage();
                 reqMsg.Body = new RequestSendFile()
                 {
-                    msg = roomNo + "&" + user_ID + "&" + fileSize + "&" + fileName + "&" + filePath
+                    msg = JsonConvert.SerializeObject(file)
                 };
                 reqMsg.Header = new Header()
                 {
@@ -222,6 +243,7 @@ namespace TestClient
                             lb_UserList.Items.Add(userList[user.Value.Item2]);
                         }
                     }
+                    this.Text = roomName;
                 }));
             }
             else
@@ -234,6 +256,7 @@ namespace TestClient
                         lb_UserList.Items.Add(userList[user.Value.Item2]);
                     }
                 }
+                this.Text = roomName;
             }
             
         }
@@ -256,10 +279,16 @@ namespace TestClient
             {
                 if (MessageBox.Show(this, banishedUser + " 회원을 추방하시겠습니까?", "알림", MessageBoxButtons.YesNo) == DialogResult.Yes)
                 {
+                    Relation relation = new Relation()
+                    {
+                        RoomNo = roomNo,
+                        UserNo = SearchUserNoByUserID(banishedUser)
+                    };
+
                     PacketMessage reqMsg = new PacketMessage();
                     reqMsg.Body = new RequestBanishUser()
                     {
-                        msg = roomNo + "&" + banishedUser
+                        msg = JsonConvert.SerializeObject(relation)
                     };
                     reqMsg.Header = new Header()
                     {
@@ -303,10 +332,17 @@ namespace TestClient
             // 채팅방 설정 변경 메시지 전송
             if (!accessRight.Equals(this.accessRight) || !roomName.Equals(this.roomName))
             {
+                Room room = new Room()
+                {
+                    No = roomNo,
+                    AccessRight = accessRight,
+                    Name = roomName
+                };
+
                 PacketMessage reqMsg = new PacketMessage();
                 reqMsg.Body = new RequestChangeRoomConfig()
                 {
-                    msg = roomNo + "&" + accessRight + "&" + roomName
+                    msg = JsonConvert.SerializeObject(room)
                 };
                 reqMsg.Header = new Header()
                 {
@@ -339,17 +375,24 @@ namespace TestClient
             // 관리자 권한 변경 메시지 전송
             PacketMessage reqMsg = new PacketMessage();
 
-            string msg = string.Empty;
-            msg = roomNo + "&";
-
+            Room room = new Room()
+            {
+                No = roomNo
+            };
+            List<Relation> relations = new List<Relation>();
             foreach (int temp in changedUser)
             {
-                msg = msg + temp + "^";
+                Relation relation = new Relation()
+                {
+                    UserNo = temp
+                };
+                relations.Add(relation);
             }
+            room.Relation = relations;
 
             reqMsg.Body = new RequestChangeManagementRights()
             {
-                msg = msg
+                msg = JsonConvert.SerializeObject(room)
             };
             reqMsg.Header = new Header()
             {

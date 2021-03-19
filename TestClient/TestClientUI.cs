@@ -286,13 +286,13 @@ namespace TestClient
                                     int userNo = 0;
                                     int usersInRoomNo = 0;
                                     // 나간 사람일 때
-                                    if (user_ID.Equals(resBody.userID))
+                                    if (user_ID.Equals(userList[resBody.userNo]))
                                     {
                                         // roomList 제거
                                         roomList.Remove(resBody.roomNo);
 
                                         // 회원 번호 검색
-                                        SearchUserNoByUserID(resBody.userID);
+                                        userNo = resBody.userNo;
 
                                         // usersInRoom 제거
                                         foreach (KeyValuePair<int, Tuple<int, int, int>> temp in usersInRoom)
@@ -308,7 +308,7 @@ namespace TestClient
                                     else
                                     {
                                         // 회원 번호 검색
-                                        SearchUserNoByUserID(resBody.userID);
+                                        userNo = resBody.userNo;
 
                                         // usersInRoom 제거
                                         foreach (KeyValuePair<int, Tuple<int, int, int>> temp in usersInRoom)
@@ -325,7 +325,7 @@ namespace TestClient
                                         {
                                             if (chatGroupForm.roomNo == resBody.roomNo)
                                             {
-                                                chatGroupForm.DisplayText(resBody.userID + "님이 채팅방에서 나가셨습니다.");
+                                                chatGroupForm.DisplayText(userList[resBody.userNo] + "님이 채팅방에서 나가셨습니다.");
                                                 chatGroupForm.usersInRoom.Remove(usersInRoomNo);
                                                 chatGroupForm.RedrawUserList();
                                             }
@@ -341,13 +341,13 @@ namespace TestClient
                                     int userNo = 0;
                                     int usersInRoomNo = 0;
                                     // 추방된 사람일 때
-                                    if (user_ID.Equals(resBody.banishedUser))
+                                    if (user_ID.Equals(userList[resBody.banishedUserNo]))
                                     {
                                         // roomList 제거
                                         roomList.Remove(resBody.roomNo);
 
                                         // 회원 번호 검색
-                                        userNo = SearchUserNoByUserID(resBody.banishedUser);
+                                        userNo = resBody.banishedUserNo;
 
                                         // usersInRoom 제거
                                         foreach (KeyValuePair<int, Tuple<int, int, int>> temp in usersInRoom)
@@ -363,7 +363,7 @@ namespace TestClient
                                     else
                                     {
                                         // 회원 번호 검색
-                                        userNo = SearchUserNoByUserID(resBody.banishedUser);
+                                        userNo = resBody.banishedUserNo;
 
                                         // usersInRoom 제거
                                         foreach (KeyValuePair<int, Tuple<int, int, int>> temp in usersInRoom)
@@ -380,7 +380,7 @@ namespace TestClient
                                         {
                                             if (chatGroupForm.roomNo == resBody.roomNo)
                                             {
-                                                chatGroupForm.DisplayText(resBody.banishedUser + "님이 채팅방에서 추방되었습니다.");
+                                                chatGroupForm.DisplayText(userList[resBody.banishedUserNo] + "님이 채팅방에서 추방되었습니다.");
                                                 chatGroupForm.RedrawUserList();
                                             }
                                         }
@@ -616,7 +616,7 @@ namespace TestClient
                                         {
                                             if (temp.roomNo == reqBody.roomNo)
                                             {
-                                                temp.DisplayText(reqBody.userID + " : " + fileName + " 파일을 전송했습니다.");
+                                                temp.DisplayText(userList[reqBody.userNo] + " : " + fileName + " 파일을 전송했습니다.");
                                             }
                                         }
                                     }
