@@ -76,10 +76,16 @@ namespace TestClient
 
         private int Pull_RoomList()
         {
+            byte[] Key = Cryption.KeyGenerator(msgid.ToString());
+            byte[] IV = Cryption.IVGenerator(CONSTANTS.REQ_ROOMLIST.ToString());
+
+            string encrypted = string.Empty;
+            encrypted = Cryption.EncryptString_Aes(user_ID, Key, IV);
+
             PacketMessage reqMsg = new PacketMessage();
             reqMsg.Body = new RequestRoomList()
             {
-                userID = user_ID
+                userID = encrypted
             };
             reqMsg.Header = new Header()
             {
@@ -125,11 +131,17 @@ namespace TestClient
 
         private void CreateRoomForm_OnSubmitCreateRoom(string msg)
         {
+            byte[] Key = Cryption.KeyGenerator(msgid.ToString());
+            byte[] IV = Cryption.IVGenerator(CONSTANTS.REQ_CREATE_ROOM.ToString());
+
+            string encrypted = string.Empty;
+            encrypted = Cryption.EncryptString_Aes(msg, Key, IV);
+
             // send room info to server
             PacketMessage reqMsg = new PacketMessage();
             reqMsg.Body = new RequestCreateRoom()
             {
-                msg = msg
+                msg = encrypted
             };
             reqMsg.Header = new Header()
             {
@@ -153,11 +165,17 @@ namespace TestClient
                 }
             }
 
+            byte[] Key = Cryption.KeyGenerator(msgid.ToString());
+            byte[] IV = Cryption.IVGenerator(CONSTANTS.REQ_SIGNOUT.ToString());
+
+            string encrypted = string.Empty;
+            encrypted = Cryption.EncryptString_Aes(user_ID, Key, IV);
+
             // 로그아웃 메시지 작성 및 발송
             PacketMessage reqMsg = new PacketMessage();
             reqMsg.Body = new RequestSignOut()
             {
-                userID = user_ID
+                userID = encrypted
             };
             reqMsg.Header = new Header()
             {
@@ -397,22 +415,31 @@ namespace TestClient
                                 {
                                     ResponseChat resBody = (ResponseChat)message.Body;
 
-                                    int roomNo = resBody.roomNo;
-                                    string roomName = roomList[roomNo].Item2;
-                                    int accessRight = roomList[roomNo].Item1;
+                                    int roomNo = 0;
+                                    int lineLength = 14;
+                                    int tempChatLength = 0;
+                                    int count = 0;
+                                    int index = 0;
+                                    string userID = string.Empty;
+                                    List<string> chatContents = new List<string>();
+                                    roomNo = resBody.roomNo;
+                                    userID = resBody.userID;
 
-                                    SHA256Managed sHA256Managed = new SHA256Managed();
-                                    byte[] Key = new byte[32];
-                                    byte[] IV = new byte[16];
-                                    Key = sHA256Managed.ComputeHash(Encoding.Unicode.GetBytes(roomNo + roomName + accessRight));
-                                    Array.Copy(sHA256Managed.ComputeHash(Encoding.Unicode.GetBytes(roomNo + roomName)), IV, 16);
-
-                                    string plainText = DecryptString_Aes(resBody.encrypted, Key, IV);
-                                    string[] delimiterChars = { "&" };
-                                    string[] split = plainText.Split(delimiterChars, StringSplitOptions.RemoveEmptyEntries);
-                                    string userID = split[0];
-                                    string chatMsg = split[1];
-
+                                    tempChatLength = resBody.chatMsg.Length;
+                                    count = tempChatLength / lineLength;
+                                    if (tempChatLength % lineLength == 0) count -= 1;
+                                    for (; count >= index; tempChatLength -= lineLength, index++)
+                                    {
+                                        if (tempChatLength <= lineLength)
+                                        {
+                                            chatContents.Add(resBody.chatMsg.Substring(index * lineLength));
+                                        }
+                                        else
+                                        {
+                                            chatContents.Add(resBody.chatMsg.Substring(index * lineLength, lineLength));
+                                        }
+                                    }
+                                    // chatContents.Add(chatMsg.Substring(index * lineLength));
 
                                     if (roomList.ContainsKey(resBody.roomNo))
                                     {
@@ -421,8 +448,11 @@ namespace TestClient
                                         {
                                             if (temp.roomNo == roomNo)
                                             {
-                                                temp.DisplayText(userID + " : " + chatMsg);
-                                                temp.DisplayText(resBody.msg);
+                                                foreach (string tmp in chatContents)
+                                                {
+                                                    temp.DisplayText(userID + " : " + tmp);
+                                                }
+                                                // temp.DisplayText(resBody.msg);
                                             }
                                         }
                                     }
@@ -434,7 +464,13 @@ namespace TestClient
                                     ResponseInvitationSuccess resBody = (ResponseInvitationSuccess)message.Body;
 
                                     int userNo = 0;
+                                    int lineLength = 20;
+                                    int tempLength = 0;
+                                    int count = 0;
+                                    int index = 0;
+                                    List<string> contentList = new List<string>();
                                     userNo = SearchUserNoByUserID(user_ID);
+                                    string content = string.Empty;
 
                                     bool invited = false;
                                     foreach (KeyValuePair<int, Tuple<int, int, int>> temp in resBody.usersInRoom)
@@ -472,7 +508,25 @@ namespace TestClient
                                                             break;
                                                         }
                                                     }
-                                                    chatGroupForm.DisplayText(userName + "님이 채팅방에 초대되셨습니다.");
+                                                    content = userName + "님이 채팅방에 초대되셨습니다.";
+                                                    tempLength = content.Length;
+                                                    count = tempLength / lineLength;
+                                                    if (tempLength % lineLength == 0) count -= 1;
+                                                    for (; count >= index; tempLength -= lineLength, index++)
+                                                    {
+                                                        if (tempLength <= lineLength)
+                                                        {
+                                                            contentList.Add(content.Substring(index * lineLength));
+                                                        }
+                                                        else
+                                                        {
+                                                            contentList.Add(content.Substring(index * lineLength, lineLength));
+                                                        }
+                                                    }
+                                                    foreach (string tempContent in contentList)
+                                                    {
+                                                        chatGroupForm.DisplayText(tempContent);
+                                                    }
                                                     chatGroupForm.RedrawUserList();
                                                 }
                                             }
@@ -484,6 +538,13 @@ namespace TestClient
                             // 채팅방 나가기 완료
                             case CONSTANTS.RES_LEAVE_ROOM_SUCCESS:
                                 {
+                                    int lineLength = 20;
+                                    int tempLength = 0;
+                                    int count = 0;
+                                    int index = 0;
+                                    List<string> contentList = new List<string>();
+                                    string content = string.Empty;
+
                                     ResponseLeaveRoomSuccess resBody = (ResponseLeaveRoomSuccess)message.Body;
                                     int userNo = 0;
                                     int usersInRoomNo = 0;
@@ -527,7 +588,25 @@ namespace TestClient
                                         {
                                             if (chatGroupForm.roomNo == resBody.roomNo)
                                             {
-                                                chatGroupForm.DisplayText(userList[resBody.userNo] + "님이 채팅방에서 나가셨습니다.");
+                                                content = userList[resBody.userNo] + "님이 채팅방에서 나가셨습니다.";
+                                                tempLength = content.Length;
+                                                count = tempLength / lineLength;
+                                                if (tempLength % lineLength == 0) count -= 1;
+                                                for (; count >= index; tempLength -= lineLength, index++)
+                                                {
+                                                    if (tempLength <= lineLength)
+                                                    {
+                                                        contentList.Add(content.Substring(index * lineLength));
+                                                    }
+                                                    else
+                                                    {
+                                                        contentList.Add(content.Substring(index * lineLength, lineLength));
+                                                    }
+                                                }
+                                                foreach (string tempContent in contentList)
+                                                {
+                                                    chatGroupForm.DisplayText(tempContent);
+                                                }
                                                 chatGroupForm.usersInRoom.Remove(usersInRoomNo);
                                                 chatGroupForm.RedrawUserList();
                                             }
@@ -539,6 +618,13 @@ namespace TestClient
                             // 채팅방 추방
                             case CONSTANTS.RES_BANISH_USER_SUCCESS:
                                 {
+                                    int lineLength = 20;
+                                    int tempLength = 0;
+                                    int count = 0;
+                                    int index = 0;
+                                    List<string> contentList = new List<string>();
+                                    string content = string.Empty;
+
                                     ResponseBanishUserSuccess resBody = (ResponseBanishUserSuccess)message.Body;
                                     int userNo = 0;
                                     int usersInRoomNo = 0;
@@ -582,7 +668,25 @@ namespace TestClient
                                         {
                                             if (chatGroupForm.roomNo == resBody.roomNo)
                                             {
-                                                chatGroupForm.DisplayText(userList[resBody.banishedUserNo] + "님이 채팅방에서 추방되었습니다.");
+                                                content = userList[resBody.banishedUserNo] + "님이 채팅방에서 추방되었습니다.";
+                                                tempLength = content.Length;
+                                                count = tempLength / lineLength;
+                                                if (tempLength % lineLength == 0) count -= 1;
+                                                for (; count >= index; tempLength -= lineLength, index++)
+                                                {
+                                                    if (tempLength <= lineLength)
+                                                    {
+                                                        contentList.Add(content.Substring(index * lineLength));
+                                                    }
+                                                    else
+                                                    {
+                                                        contentList.Add(content.Substring(index * lineLength, lineLength));
+                                                    }
+                                                }
+                                                foreach (string tempContent in contentList)
+                                                {
+                                                    chatGroupForm.DisplayText(tempContent);
+                                                }
                                                 chatGroupForm.RedrawUserList();
                                             }
                                         }
@@ -593,6 +697,13 @@ namespace TestClient
                             // 채팅방 설정 변경 완료
                             case CONSTANTS.RES_CHANGE_ROOM_CONFIG_SUCCESS:
                                 {
+                                    int lineLength = 20;
+                                    int tempLength = 0;
+                                    int count = 0;
+                                    int index = 0;
+                                    List<string> contentList = new List<string>();
+                                    string content = string.Empty;
+
                                     ResponseChangeRoomConfigSuccess resBody = (ResponseChangeRoomConfigSuccess)message.Body;
 
                                     string accessRightToString = string.Empty;
@@ -616,17 +727,71 @@ namespace TestClient
                                             // accessRight 와 roomName 변경
                                             if (!resBody.accessRight.Equals(roomList[resBody.roomNo].Item1) && !resBody.roomName.Equals(roomList[resBody.roomNo].Item2))
                                             {
-                                                chatGroupForm.DisplayText(string.Format("{0}번 채팅방의 공개 여부가 {1}로, 채팅방 이름이 {2}로 변경됨", resBody.roomNo, accessRightToString, resBody.roomName));
+                                                content = string.Format("{0}번 채팅방의 공개 여부가 {1}로, 채팅방 이름이 {2}로 변경됨", resBody.roomNo, accessRightToString, resBody.roomName);
+                                                tempLength = content.Length;
+                                                count = tempLength / lineLength;
+                                                if (tempLength % lineLength == 0) count -= 1;
+                                                for (; count >= index; tempLength -= lineLength, index++)
+                                                {
+                                                    if (tempLength <= lineLength)
+                                                    {
+                                                        contentList.Add(content.Substring(index * lineLength));
+                                                    }
+                                                    else
+                                                    {
+                                                        contentList.Add(content.Substring(index * lineLength, lineLength));
+                                                    }
+                                                }
+                                                foreach (string tempContent in contentList)
+                                                {
+                                                    chatGroupForm.DisplayText(tempContent);
+                                                }
                                             }
                                             // accessRight 변경
                                             else if (!resBody.accessRight.Equals(roomList[resBody.roomNo].Item1))
                                             {
-                                                chatGroupForm.DisplayText(string.Format("{0}번 채팅방의 공개 여부가 {1}로 변경됨", resBody.roomNo, accessRightToString));
+                                                content = string.Format("{0}번 채팅방의 공개 여부가 {1}로 변경됨", resBody.roomNo, accessRightToString);
+                                                tempLength = content.Length;
+                                                count = tempLength / lineLength;
+                                                if (tempLength % lineLength == 0) count -= 1;
+                                                for (; count >= index; tempLength -= lineLength, index++)
+                                                {
+                                                    if (tempLength <= lineLength)
+                                                    {
+                                                        contentList.Add(content.Substring(index * lineLength));
+                                                    }
+                                                    else
+                                                    {
+                                                        contentList.Add(content.Substring(index * lineLength, lineLength));
+                                                    }
+                                                }
+                                                foreach (string tempContent in contentList)
+                                                {
+                                                    chatGroupForm.DisplayText(tempContent);
+                                                }
                                             }
                                             // roomName 변경
                                             else if (!resBody.roomName.Equals(roomList[resBody.roomNo].Item2))
                                             {
-                                                chatGroupForm.DisplayText(string.Format("{0}번 채팅방의 이름이 {1}로 변경됨", resBody.roomNo, resBody.roomName));
+                                                content = string.Format("{0}번 채팅방의 이름이 {1}로 변경됨", resBody.roomNo, resBody.roomName);
+                                                tempLength = content.Length;
+                                                count = tempLength / lineLength;
+                                                if (tempLength % lineLength == 0) count -= 1;
+                                                for (; count >= index; tempLength -= lineLength, index++)
+                                                {
+                                                    if (tempLength <= lineLength)
+                                                    {
+                                                        contentList.Add(content.Substring(index * lineLength));
+                                                    }
+                                                    else
+                                                    {
+                                                        contentList.Add(content.Substring(index * lineLength, lineLength));
+                                                    }
+                                                }
+                                                foreach (string tempContent in contentList)
+                                                {
+                                                    chatGroupForm.DisplayText(tempContent);
+                                                }
                                             }
                                         }
                                         chatGroupForm.RedrawUserList();
@@ -641,6 +806,13 @@ namespace TestClient
                             // 채팅방 관리자 권한 변경 완료
                             case CONSTANTS.RES_CHANGE_MANAGEMENT_RIGHTS_SUCCESS:
                                 {
+                                    int lineLength = 20;
+                                    int tempLength = 0;
+                                    int count = 0;
+                                    int index = 0;
+                                    List<string> contentList = new List<string>();
+                                    string content = string.Empty;
+
                                     ResponseChangeManagementRightsSuccess resBody = (ResponseChangeManagementRightsSuccess)message.Body;
 
                                     List<int> tempKey = new List<int>();
@@ -665,7 +837,25 @@ namespace TestClient
                                                 {
                                                     if (chatGroupForm.roomNo == resBody.roomNo)
                                                     {
-                                                        chatGroupForm.DisplayText(string.Format("{0}님에게 관리자 권한이 부여되었습니다.", userList[userNo]));
+                                                        content = string.Format("{0}님에게 관리자 권한이 부여되었습니다.", userList[userNo]);
+                                                        tempLength = content.Length;
+                                                        count = tempLength / lineLength;
+                                                        if (tempLength % lineLength == 0) count -= 1;
+                                                        for (; count >= index; tempLength -= lineLength, index++)
+                                                        {
+                                                            if (tempLength <= lineLength)
+                                                            {
+                                                                contentList.Add(content.Substring(index * lineLength));
+                                                            }
+                                                            else
+                                                            {
+                                                                contentList.Add(content.Substring(index * lineLength, lineLength));
+                                                            }
+                                                        }
+                                                        foreach (string tempContent in contentList)
+                                                        {
+                                                            chatGroupForm.DisplayText(tempContent);
+                                                        }
                                                     }
                                                 }
                                             }
@@ -681,7 +871,25 @@ namespace TestClient
                                                 {
                                                     if (chatGroupForm.roomNo == resBody.roomNo)
                                                     {
-                                                        chatGroupForm.DisplayText(string.Format("{0}님에게서 관리자 권한이 해제되었습니다.", userList[userNo]));
+                                                        content = string.Format("{0}님에게서 관리자 권한이 해제되었습니다.", userList[userNo]);
+                                                        tempLength = content.Length;
+                                                        count = tempLength / lineLength;
+                                                        if (tempLength % lineLength == 0) count -= 1;
+                                                        for (; count >= index; tempLength -= lineLength, index++)
+                                                        {
+                                                            if (tempLength <= lineLength)
+                                                            {
+                                                                contentList.Add(content.Substring(index * lineLength));
+                                                            }
+                                                            else
+                                                            {
+                                                                contentList.Add(content.Substring(index * lineLength, lineLength));
+                                                            }
+                                                        }
+                                                        foreach (string tempContent in contentList)
+                                                        {
+                                                            chatGroupForm.DisplayText(tempContent);
+                                                        }
                                                     }
                                                 }
                                             }
@@ -737,6 +945,13 @@ namespace TestClient
                                 }
                             case CONSTANTS.REQ_SEND_FILE:
                                 {
+                                    int lineLength = 20;
+                                    int tempLength = 0;
+                                    int count = 0;
+                                    int index = 0;
+                                    List<string> contentList = new List<string>();
+                                    string content = string.Empty;
+
                                     RequestSendFile reqBody = (RequestSendFile)message.Body;
 
                                     Relation relation = new Relation()
@@ -753,10 +968,19 @@ namespace TestClient
 
                                     // string msg = message.Header.MSGID + "&" + reqBody.roomNo + "&" + reqBody.filePath + "&" + user_ID;
 
+                                    string serialized = string.Empty;
+                                    serialized = JsonConvert.SerializeObject(file1);
+
+                                    byte[] Key = Cryption.KeyGenerator(msgid.ToString());
+                                    byte[] IV = Cryption.IVGenerator(CONSTANTS.RES_SEND_FILE.ToString());
+
+                                    string encrypted = string.Empty;
+                                    encrypted = Cryption.EncryptString_Aes(serialized, Key, IV);
+
                                     PacketMessage resMsg = new PacketMessage();
                                     resMsg.Body = new ResponseSendFile()
                                     {
-                                        msg = JsonConvert.SerializeObject(file1)
+                                        msg = encrypted
                                         // MSGID = message.Header.MSGID,
                                         // RESPONSE = CONSTANTS.ACCEPTED,
                                         // pid = reqBody.pid
@@ -827,7 +1051,25 @@ namespace TestClient
                                         {
                                             if (temp.roomNo == reqBody.roomNo)
                                             {
-                                                temp.DisplayText(userList[reqBody.userNo] + " : " + fileName + " 파일을 전송했습니다.");
+                                                content = userList[reqBody.userNo] + " : " + fileName + " 파일을 전송했습니다.";
+                                                tempLength = content.Length;
+                                                count = tempLength / lineLength;
+                                                if (tempLength % lineLength == 0) count -= 1;
+                                                for (; count >= index; tempLength -= lineLength, index++)
+                                                {
+                                                    if (tempLength <= lineLength)
+                                                    {
+                                                        contentList.Add(content.Substring(index * lineLength));
+                                                    }
+                                                    else
+                                                    {
+                                                        contentList.Add(content.Substring(index * lineLength, lineLength));
+                                                    }
+                                                }
+                                                foreach (string tempContent in contentList)
+                                                {
+                                                    temp.DisplayText(tempContent);
+                                                }
                                             }
                                         }
                                     }
@@ -1136,49 +1378,6 @@ namespace TestClient
             chatGroupForms.Add(chatGroupForm);
 
             chatGroupForm.Show();
-        }
-
-        private string DecryptString_Aes(string cipherText, byte[] Key, byte[] IV)
-        {
-            // Check arguments.
-            if (cipherText == null || cipherText.Length <= 0)
-                throw new ArgumentNullException("cipherText");
-            if (Key == null || Key.Length <= 0)
-                throw new ArgumentNullException("Key");
-            if (IV == null || IV.Length <= 0)
-                throw new ArgumentNullException("IV");
-
-            // Declare the string used to hold
-            // the decrypted text.
-            string plaintext = null;
-
-            // Create an Aes object
-            // with the specified key and IV.
-            using (Aes aesAlg = Aes.Create())
-            {
-                aesAlg.Key = Key;
-                aesAlg.IV = IV;
-
-                // Create a decryptor to perform the stream transform.
-                ICryptoTransform decryptor = aesAlg.CreateDecryptor(aesAlg.Key, aesAlg.IV);
-
-                // Create the streams used for decryption.
-                using (MemoryStream msDecrypt = new MemoryStream(Convert.FromBase64String(cipherText)))
-                {
-                    using (CryptoStream csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read))
-                    {
-                        using (StreamReader srDecrypt = new StreamReader(csDecrypt))
-                        {
-
-                            // Read the decrypted bytes from the decrypting stream
-                            // and place them in a string.
-                            plaintext = srDecrypt.ReadToEnd();
-                        }
-                    }
-                }
-            }
-
-            return plaintext;
         }
 
         private void ProgramClose()

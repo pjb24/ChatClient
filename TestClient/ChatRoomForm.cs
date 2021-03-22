@@ -49,18 +49,25 @@ namespace TestClient
         {
             if (txt_Send.Text != "")
             {
-                SHA256Managed sHA256Managed = new SHA256Managed();
-                byte[] Key = new byte[32];
-                byte[] IV = new byte[16];
-                Key = sHA256Managed.ComputeHash(Encoding.Unicode.GetBytes(roomNo + roomName + accessRight));
-                Array.Copy(sHA256Managed.ComputeHash(Encoding.Unicode.GetBytes(roomNo + roomName)), IV, 16);
+                Chat chat = new Chat()
+                {
+                    RoomNo = roomNo,
+                    UserID = user_ID,
+                    ChatMsg = this.txt_Send.Text
+                };
 
-                string encrypted = EncryptString_Aes(user_ID + "&" + this.txt_Send.Text, Key, IV);
+                string serialized = string.Empty;
+                serialized = JsonConvert.SerializeObject(chat);
 
-                string msg = roomNo + "&" + encrypted;
+                byte[] Key = Cryption.KeyGenerator(TestClientUI.msgid.ToString());
+                byte[] IV = Cryption.IVGenerator(CONSTANTS.REQ_CHAT.ToString());
+
+                string encrypted = string.Empty;
+                encrypted = Cryption.EncryptString_Aes(serialized, Key, IV);
+
                 PacketMessage reqMsg = new PacketMessage();
                 reqMsg.Body = new RequestChat() {
-                    msg = msg
+                    msg = encrypted
                 };
                 
                 reqMsg.Header = new Header()
@@ -143,10 +150,19 @@ namespace TestClient
                 UserNo = SearchUserNoByUserID(user_ID)
             };
 
+            string serialized = string.Empty;
+            serialized = JsonConvert.SerializeObject(relation);
+
+            byte[] Key = Cryption.KeyGenerator(TestClientUI.msgid.ToString());
+            byte[] IV = Cryption.IVGenerator(CONSTANTS.REQ_LEAVE_ROOM.ToString());
+
+            string encrypted = string.Empty;
+            encrypted = Cryption.EncryptString_Aes(serialized, Key, IV);
+
             PacketMessage reqMsg = new PacketMessage();
             reqMsg.Body = new RequestLeaveRoom()
             {
-                msg = JsonConvert.SerializeObject(relation)
+                msg = encrypted
             };
             reqMsg.Header = new Header()
             {
@@ -210,10 +226,19 @@ namespace TestClient
                     Relation = relation
                 };
 
+                string serialized = string.Empty;
+                serialized = JsonConvert.SerializeObject(file);
+
+                byte[] Key = Cryption.KeyGenerator(TestClientUI.msgid.ToString());
+                byte[] IV = Cryption.IVGenerator(CONSTANTS.REQ_SEND_FILE.ToString());
+
+                string encrypted = string.Empty;
+                encrypted = Cryption.EncryptString_Aes(serialized, Key, IV);
+
                 PacketMessage reqMsg = new PacketMessage();
                 reqMsg.Body = new RequestSendFile()
                 {
-                    msg = JsonConvert.SerializeObject(file)
+                    msg = encrypted
                 };
                 reqMsg.Header = new Header()
                 {
@@ -285,10 +310,19 @@ namespace TestClient
                         UserNo = SearchUserNoByUserID(banishedUser)
                     };
 
+                    string serialized = string.Empty;
+                    serialized = JsonConvert.SerializeObject(relation);
+
+                    byte[] Key = Cryption.KeyGenerator(TestClientUI.msgid.ToString());
+                    byte[] IV = Cryption.IVGenerator(CONSTANTS.REQ_BANISH_USER.ToString());
+
+                    string encrypted = string.Empty;
+                    encrypted = Cryption.EncryptString_Aes(serialized, Key, IV);
+
                     PacketMessage reqMsg = new PacketMessage();
                     reqMsg.Body = new RequestBanishUser()
                     {
-                        msg = JsonConvert.SerializeObject(relation)
+                        msg = encrypted
                     };
                     reqMsg.Header = new Header()
                     {
@@ -339,10 +373,19 @@ namespace TestClient
                     Name = roomName
                 };
 
+                string serialized = string.Empty;
+                serialized = JsonConvert.SerializeObject(room);
+
+                byte[] Key = Cryption.KeyGenerator(TestClientUI.msgid.ToString());
+                byte[] IV = Cryption.IVGenerator(CONSTANTS.REQ_CHANGE_ROOM_CONFIG.ToString());
+
+                string encrypted = string.Empty;
+                encrypted = Cryption.EncryptString_Aes(serialized, Key, IV);
+
                 PacketMessage reqMsg = new PacketMessage();
                 reqMsg.Body = new RequestChangeRoomConfig()
                 {
-                    msg = JsonConvert.SerializeObject(room)
+                    msg = encrypted
                 };
                 reqMsg.Header = new Header()
                 {
@@ -390,9 +433,18 @@ namespace TestClient
             }
             room.Relation = relations;
 
+            string serialized = string.Empty;
+            serialized = JsonConvert.SerializeObject(room);
+
+            byte[] Key = Cryption.KeyGenerator(TestClientUI.msgid.ToString());
+            byte[] IV = Cryption.IVGenerator(CONSTANTS.REQ_CHANGE_MANAGEMENT_RIGHTS.ToString());
+
+            string encrypted = string.Empty;
+            encrypted = Cryption.EncryptString_Aes(serialized, Key, IV);
+
             reqMsg.Body = new RequestChangeManagementRights()
             {
-                msg = JsonConvert.SerializeObject(room)
+                msg = encrypted
             };
             reqMsg.Header = new Header()
             {
@@ -405,46 +457,6 @@ namespace TestClient
             };
 
             MessageUtil.Send(stream, reqMsg);
-        }
-
-        private string EncryptString_Aes(string plaintext, byte[] Key, byte[] IV)
-        {
-            // Check arguments.
-            if (plaintext == null || plaintext.Length <= 0)
-                throw new ArgumentNullException("plainText");
-            if (Key == null || Key.Length <= 0)
-                throw new ArgumentNullException("Key");
-            if (IV == null || IV.Length <= 0)
-                throw new ArgumentNullException("IV");
-            byte[] encrypted = { };
-
-            // Create an Aes object
-            // with the specified key and IV.
-            using (Aes aesAlg = Aes.Create())
-            {
-                aesAlg.Key = Key;
-                aesAlg.IV = IV;
-
-                // Create an encryptor to perform the stream transform.
-                ICryptoTransform encryptor = aesAlg.CreateEncryptor(aesAlg.Key, aesAlg.IV);
-
-                // Create the streams used for encryption.
-                using (MemoryStream msEncrypt = new MemoryStream())
-                {
-                    using (CryptoStream csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write))
-                    {
-                        using (StreamWriter swEncrypt = new StreamWriter(csEncrypt))
-                        {
-                            //Write all data to the stream.
-                            swEncrypt.Write(plaintext);
-                        }
-                        encrypted = msEncrypt.ToArray();
-                    }
-                }
-            }
-
-            // Return the encrypted bytes from the memory stream.
-            return Convert.ToBase64String(encrypted);
         }
     }
 }
