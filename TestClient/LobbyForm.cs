@@ -1394,20 +1394,5 @@ namespace TestClient
                 this.Close();
             }
         }
-
-        private void ProgramClose()
-        {
-            if (this.InvokeRequired)
-            {
-                this.BeginInvoke(new MethodInvoker(delegate
-                {
-                    this.Close();
-                }));
-            }
-            else
-            {
-                this.Close();
-            }
-        }
     }
 }
