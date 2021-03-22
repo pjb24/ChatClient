@@ -57,10 +57,19 @@ namespace TestClient
             }
             room.Relation = relations;
 
+            string serialized = string.Empty;
+            serialized = JsonConvert.SerializeObject(room);
+
+            byte[] Key = Cryption.KeyGenerator(TestClientUI.msgid.ToString());
+            byte[] IV = Cryption.IVGenerator(CONSTANTS.REQ_INVITATION.ToString());
+
+            string encrypted = string.Empty;
+            encrypted = Cryption.EncryptString_Aes(serialized, Key, IV);
+
             PacketMessage reqMsg = new PacketMessage();
             reqMsg.Body = new RequestInvitation()
             {
-                msg = JsonConvert.SerializeObject(room)
+                msg = encrypted
             };
             reqMsg.Header = new Header()
             {

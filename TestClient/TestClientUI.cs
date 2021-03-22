@@ -638,49 +638,6 @@ namespace TestClient
                                     MessageUtil.Send(stream, resMsg);
                                     break;
                                 }
-                            case CONSTANTS.SEND_FILE:
-                                {
-                                    SendFile reqBody = (SendFile)message.Body;
-
-                                    long fileSize = reqBody.FILESIZE;
-                                    string fileName = reqBody.FILENAME;
-
-                                    long pid = reqBody.pid;
-                                    string userID = reqBody.userID;
-                                    byte[] DATA = reqBody.DATA;
-
-                                    string dir = System.Windows.Forms.Application.StartupPath + "\\file";
-                                    if (Directory.Exists(dir) == false)
-                                    {
-                                        Directory.CreateDirectory(dir);
-                                    }
-
-                                    // 파일 스트림 생성
-                                    FileStream file = new FileStream(dir + "\\" + fileName, FileMode.Append);
-
-                                    Console.Write("#");
-
-                                    file.Write(reqBody.DATA, 0, reqBody.DATA.Length);
-                                    file.Close();
-                                    /*
-                                    if (message.Header.LASTMSG == CONSTANTS.LASTMSG)
-                                    {
-                                        if (roomList.ContainsKey(pid))
-                                        {
-                                            // 열려있는 ChatGroupForm 중에서 pid가 일치하는 window에 출력
-                                            foreach (ChatGroupForm temp in chatGroupForms)
-                                            {
-                                                if (temp.pid == pid)
-                                                {
-                                                    temp.DisplayText(userID + " : " + fileName + " 파일을 전송했습니다.");
-                                                }
-                                            }
-                                        }
-                                        break;
-                                    }
-                                    */
-                                    break;
-                                }
                             default:
                                 {
                                     break;

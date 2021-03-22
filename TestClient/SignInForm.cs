@@ -84,10 +84,19 @@ namespace TestClient
                 UserPW = user_PW
             };
 
+            string serialized = string.Empty;
+            serialized = JsonConvert.SerializeObject(user);
+
+            byte[] Key = Cryption.KeyGenerator(msgid.ToString());
+            byte[] IV = Cryption.IVGenerator(CONSTANTS.REQ_SIGNIN.ToString());
+
+            string encrypted = string.Empty;
+            encrypted = Cryption.EncryptString_Aes(serialized, Key, IV);
+
             PacketMessage reqMsg = new PacketMessage();
             reqMsg.Body = new RequestRegister()
             {
-                msg = JsonConvert.SerializeObject(user)
+                msg = encrypted
             };
             reqMsg.Header = new Header()
             {
