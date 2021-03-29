@@ -10,7 +10,8 @@ using System.Windows.Forms;
 
 using System.Net.Sockets;
 using Newtonsoft.Json;
-
+using YamlDotNet.Serialization;
+using YamlDotNet.Serialization.NamingConventions;
 using log4net;
 using MyMessageProtocol;
 
@@ -32,6 +33,8 @@ namespace TestClient
         public List<string> roomUserList = new List<string>();
         // 전체 회원 목록
         public Dictionary<int, string> userList = new Dictionary<int, string>();
+
+        public int dataFormat = 0;
 
         public InvitationForm()
         {
@@ -58,7 +61,17 @@ namespace TestClient
             room.Relation = relations;
 
             string serialized = string.Empty;
-            serialized = JsonConvert.SerializeObject(room);
+            if (dataFormat == 1)
+            {
+                serialized = JsonConvert.SerializeObject(room);
+            }
+            else if (dataFormat == 2)
+            {
+                ISerializer serializer = new SerializerBuilder()
+                    .WithNamingConvention(CamelCaseNamingConvention.Instance)
+                    .Build();
+                serialized = serializer.Serialize(room);
+            }
 
             byte[] Key = Cryption.KeyGenerator(TestClientUI.msgid.ToString());
             byte[] IV = Cryption.IVGenerator(CONSTANTS.REQ_INVITATION.ToString());

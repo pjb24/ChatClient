@@ -13,7 +13,8 @@ using System.Configuration;
 using System.Security.Cryptography;
 
 using Newtonsoft.Json;
-
+using YamlDotNet.Serialization;
+using YamlDotNet.Serialization.NamingConventions;
 using MyMessageProtocol;
 
 namespace TestClient
@@ -26,6 +27,8 @@ namespace TestClient
 
         public delegate void SignInSuccessHandler();
         public event SignInSuccessHandler OnSignInSuccess;
+
+        private int dataFormat = 0;
 
         public SignInForm()
         {
@@ -58,6 +61,7 @@ namespace TestClient
             int port = 0;
             IP = ConfigurationManager.AppSettings["IP"];
             port = int.Parse(ConfigurationManager.AppSettings["Port"]);
+            dataFormat = int.Parse(ConfigurationManager.AppSettings["dataFormat"]);
 
             try
             {
@@ -85,7 +89,17 @@ namespace TestClient
             };
 
             string serialized = string.Empty;
-            serialized = JsonConvert.SerializeObject(user);
+            if (dataFormat == 1)
+            {
+                serialized = JsonConvert.SerializeObject(user);
+            }
+            else if (dataFormat == 2)
+            {
+                ISerializer serializer = new SerializerBuilder()
+                    .WithNamingConvention(CamelCaseNamingConvention.Instance)
+                    .Build();
+                serialized = serializer.Serialize(user);
+            }
 
             byte[] Key = Cryption.KeyGenerator(msgid.ToString());
             byte[] IV = Cryption.IVGenerator(CONSTANTS.REQ_SIGNIN.ToString());
@@ -168,6 +182,7 @@ namespace TestClient
                                     GlobalClass.lobbyForm.user_ID = txt_UserID.Text;
                                     GlobalClass.lobbyForm.clientSocket = clientSocket;
                                     GlobalClass.lobbyForm.stream = stream;
+                                    GlobalClass.lobbyForm.dataFormat = dataFormat;
                                     txt_UserID.Clear();
                                     txt_UserPW.Clear();
                                     GlobalClass.lobbyForm.Show();

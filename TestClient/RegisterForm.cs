@@ -14,6 +14,8 @@ using System.Configuration;
 using System.Security.Cryptography;
 
 using Newtonsoft.Json;
+using YamlDotNet.Serialization;
+using YamlDotNet.Serialization.NamingConventions;
 using MyMessageProtocol;
 
 namespace TestClient
@@ -23,6 +25,7 @@ namespace TestClient
         const int TEXT_MAX_LENGTH = 20;
 
         public static uint msgid = 0;
+        private int dataFormat = 0;
 
         public RegisterForm()
         {
@@ -63,6 +66,7 @@ namespace TestClient
             int port = 0;
             IP = ConfigurationManager.AppSettings["IP"];
             port = int.Parse(ConfigurationManager.AppSettings["Port"]);
+            dataFormat = int.Parse(ConfigurationManager.AppSettings["dataFormat"]);
 
             try
             {
@@ -88,7 +92,17 @@ namespace TestClient
             user.UserPW = user_PW;
 
             string serialized = string.Empty;
-            serialized = JsonConvert.SerializeObject(user);
+            if (dataFormat == 1)
+            {
+                serialized = JsonConvert.SerializeObject(user);
+            }
+            else if (dataFormat == 2)
+            {
+                ISerializer serializer = new SerializerBuilder()
+                    .WithNamingConvention(CamelCaseNamingConvention.Instance)
+                    .Build();
+                serialized = serializer.Serialize(user);
+            }
 
             byte[] Key = Cryption.KeyGenerator(msgid.ToString());
             byte[] IV = Cryption.IVGenerator(CONSTANTS.REQ_REGISTER.ToString());

@@ -13,7 +13,8 @@ using System.IO;
 using System.Security.Cryptography;
 
 using Newtonsoft.Json;
-
+using YamlDotNet.Serialization;
+using YamlDotNet.Serialization.NamingConventions;
 using log4net;
 using MyMessageProtocol;
 
@@ -39,6 +40,7 @@ namespace TestClient
         public Dictionary<int, Tuple<int, int, int>> usersInRoom = new Dictionary<int, Tuple<int, int, int>>();
         // 전체 회원목록
         public Dictionary<int, string> userList = new Dictionary<int, string>();
+        public int dataFormat = 0;
 
         public ChatRoomForm()
         {
@@ -57,7 +59,17 @@ namespace TestClient
                 };
 
                 string serialized = string.Empty;
-                serialized = JsonConvert.SerializeObject(chat);
+                if (dataFormat == 1)
+                {
+                    serialized = JsonConvert.SerializeObject(chat);
+                }
+                else if (dataFormat == 2)
+                {
+                    ISerializer serializer = new SerializerBuilder()
+                        .WithNamingConvention(CamelCaseNamingConvention.Instance)
+                        .Build();
+                    serialized = serializer.Serialize(chat);
+                }
 
                 byte[] Key = Cryption.KeyGenerator(TestClientUI.msgid.ToString());
                 byte[] IV = Cryption.IVGenerator(CONSTANTS.REQ_CHAT.ToString());
@@ -151,7 +163,17 @@ namespace TestClient
             };
 
             string serialized = string.Empty;
-            serialized = JsonConvert.SerializeObject(relation);
+            if (dataFormat == 1)
+            {
+                serialized = JsonConvert.SerializeObject(relation);
+            }
+            else if (dataFormat == 2)
+            {
+                ISerializer serializer = new SerializerBuilder()
+                    .WithNamingConvention(CamelCaseNamingConvention.Instance)
+                    .Build();
+                serialized = serializer.Serialize(relation);
+            }
 
             byte[] Key = Cryption.KeyGenerator(TestClientUI.msgid.ToString());
             byte[] IV = Cryption.IVGenerator(CONSTANTS.REQ_LEAVE_ROOM.ToString());
@@ -196,7 +218,8 @@ namespace TestClient
                 roomName = roomName,
                 user_ID = user_ID,
                 userList = userList,
-                roomUserList = roomUserList
+                roomUserList = roomUserList,
+                dataFormat = dataFormat
             };
             invitationForm.ShowDialog();
         }
@@ -227,7 +250,17 @@ namespace TestClient
                 };
 
                 string serialized = string.Empty;
-                serialized = JsonConvert.SerializeObject(file);
+                if (dataFormat == 1)
+                {
+                    serialized = JsonConvert.SerializeObject(file);
+                }
+                else if (dataFormat == 2)
+                {
+                    ISerializer serializer = new SerializerBuilder()
+                        .WithNamingConvention(CamelCaseNamingConvention.Instance)
+                        .Build();
+                    serialized = serializer.Serialize(file);
+                }
 
                 byte[] Key = Cryption.KeyGenerator(TestClientUI.msgid.ToString());
                 byte[] IV = Cryption.IVGenerator(CONSTANTS.REQ_SEND_FILE.ToString());
@@ -311,7 +344,17 @@ namespace TestClient
                     };
 
                     string serialized = string.Empty;
-                    serialized = JsonConvert.SerializeObject(relation);
+                    if (dataFormat == 1)
+                    {
+                        serialized = JsonConvert.SerializeObject(relation);
+                    }
+                    else if (dataFormat == 2)
+                    {
+                        ISerializer serializer = new SerializerBuilder()
+                            .WithNamingConvention(CamelCaseNamingConvention.Instance)
+                            .Build();
+                        serialized = serializer.Serialize(relation);
+                    }
 
                     byte[] Key = Cryption.KeyGenerator(TestClientUI.msgid.ToString());
                     byte[] IV = Cryption.IVGenerator(CONSTANTS.REQ_BANISH_USER.ToString());
@@ -374,7 +417,17 @@ namespace TestClient
                 };
 
                 string serialized = string.Empty;
-                serialized = JsonConvert.SerializeObject(room);
+                if (dataFormat == 1)
+                {
+                    serialized = JsonConvert.SerializeObject(room);
+                }
+                else if (dataFormat == 2)
+                {
+                    ISerializer serializer = new SerializerBuilder()
+                        .WithNamingConvention(CamelCaseNamingConvention.Instance)
+                        .Build();
+                    serialized = serializer.Serialize(room);
+                }
 
                 byte[] Key = Cryption.KeyGenerator(TestClientUI.msgid.ToString());
                 byte[] IV = Cryption.IVGenerator(CONSTANTS.REQ_CHANGE_ROOM_CONFIG.ToString());
@@ -434,7 +487,17 @@ namespace TestClient
             room.Relation = relations;
 
             string serialized = string.Empty;
-            serialized = JsonConvert.SerializeObject(room);
+            if (dataFormat == 1)
+            {
+                serialized = JsonConvert.SerializeObject(room);
+            }
+            else if (dataFormat == 2)
+            {
+                ISerializer serializer = new SerializerBuilder()
+                    .WithNamingConvention(CamelCaseNamingConvention.Instance)
+                    .Build();
+                serialized = serializer.Serialize(room);
+            }
 
             byte[] Key = Cryption.KeyGenerator(TestClientUI.msgid.ToString());
             byte[] IV = Cryption.IVGenerator(CONSTANTS.REQ_CHANGE_MANAGEMENT_RIGHTS.ToString());

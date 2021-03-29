@@ -11,7 +11,8 @@ using System.Windows.Forms;
 using System.Net.Sockets;
 
 using Newtonsoft.Json;
-
+using YamlDotNet.Serialization;
+using YamlDotNet.Serialization.NamingConventions;
 using MyMessageProtocol;
 
 namespace TestClient
@@ -24,6 +25,8 @@ namespace TestClient
 
         public delegate void SubmitCreateRoomHandler(string msg);
         public event SubmitCreateRoomHandler OnSubmitCreateRoom;
+
+        public int dataFormat = 0;
 
         public CreateRoomForm()
         {
@@ -108,7 +111,19 @@ namespace TestClient
             }
             room.Relation = relations;
 
-            string msg = JsonConvert.SerializeObject(room);
+            string msg = string.Empty;
+            if (dataFormat == 1)
+            {
+                msg = JsonConvert.SerializeObject(room);
+            }
+            else if (dataFormat == 2)
+            {
+                ISerializer serializer = new SerializerBuilder()
+                    .WithNamingConvention(CamelCaseNamingConvention.Instance)
+                    .Build();
+                msg = serializer.Serialize(room);
+            }
+
             if (OnSubmitCreateRoom != null)
             {
                 OnSubmitCreateRoom(msg);

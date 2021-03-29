@@ -15,7 +15,8 @@ using System.Security.Cryptography;
 using System.IO;
 
 using Newtonsoft.Json;
-
+using YamlDotNet.Serialization;
+using YamlDotNet.Serialization.NamingConventions;
 using MyMessageProtocol;
 
 namespace TestClient
@@ -38,6 +39,8 @@ namespace TestClient
 
         public string user_ID = string.Empty;
         public uint msgid = 0;
+
+        public int dataFormat = 0;
 
         public LobbyForm()
         {
@@ -124,6 +127,7 @@ namespace TestClient
             CreateRoomForm createRoomForm = new CreateRoomForm();
             createRoomForm.user_ID = user_ID;
             createRoomForm.userList = userList;
+            createRoomForm.dataFormat = dataFormat;
             createRoomForm.OnSubmitCreateRoom += CreateRoomForm_OnSubmitCreateRoom;
             createRoomForm.Location = this.Location;
             createRoomForm.Show();
@@ -969,7 +973,17 @@ namespace TestClient
                                     // string msg = message.Header.MSGID + "&" + reqBody.roomNo + "&" + reqBody.filePath + "&" + user_ID;
 
                                     string serialized = string.Empty;
-                                    serialized = JsonConvert.SerializeObject(file1);
+                                    if (dataFormat == 1)
+                                    {
+                                        serialized = JsonConvert.SerializeObject(file1);
+                                    }
+                                    else if (dataFormat == 2)
+                                    {
+                                        ISerializer serializer = new SerializerBuilder()
+                                            .WithNamingConvention(CamelCaseNamingConvention.Instance)
+                                            .Build();
+                                        serialized = serializer.Serialize(file1);
+                                    }
 
                                     byte[] Key = Cryption.KeyGenerator(msgid.ToString());
                                     byte[] IV = Cryption.IVGenerator(CONSTANTS.RES_SEND_FILE.ToString());
@@ -1219,7 +1233,8 @@ namespace TestClient
             chatGroupForm.btn_BanishUser.Visible = false;
             chatGroupForm.btn_ChangeRoomConfig.Visible = false;
             chatGroupForm.btn_ManagerConfig.Visible = false;
-
+            // JSON / YAML 구분
+            chatGroupForm.dataFormat = dataFormat;
             // ChatGroupForm이 열렸을 때 Form 정보 저장
             chatGroupForms.Add(chatGroupForm);
 
@@ -1264,7 +1279,8 @@ namespace TestClient
             chatGroupForm.btn_BanishUser.Visible = true;
             chatGroupForm.btn_ChangeRoomConfig.Visible = true;
             chatGroupForm.btn_ManagerConfig.Visible = false;
-
+            // JSON / YAML 구분
+            chatGroupForm.dataFormat = dataFormat;
             // 회원 추방 기능을 위해 userList를 사용 가능하게 변경
             chatGroupForm.lb_UserList.SelectionMode = SelectionMode.One;
 
@@ -1312,7 +1328,8 @@ namespace TestClient
             chatGroupForm.btn_BanishUser.Visible = true;
             chatGroupForm.btn_ChangeRoomConfig.Visible = true;
             chatGroupForm.btn_ManagerConfig.Visible = true;
-
+            // JSON / YAML 구분
+            chatGroupForm.dataFormat = dataFormat;
             // 회원 추방 기능을 위해 userList를 사용 가능하게 변경
             chatGroupForm.lb_UserList.SelectionMode = SelectionMode.One;
 
@@ -1373,7 +1390,8 @@ namespace TestClient
             chatGroupForm.btn_Leave.Visible = false;
             chatGroupForm.btn_Invitation.Visible = false;
             chatGroupForm.btn_SendFile.Visible = false;
-
+            // JSON / YAML 구분
+            chatGroupForm.dataFormat = dataFormat;
             // ChatGroupForm이 열렸을 때 Form 정보 저장
             chatGroupForms.Add(chatGroupForm);
 
