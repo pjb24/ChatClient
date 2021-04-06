@@ -208,5 +208,31 @@ namespace TestClient
         {
             Application.Exit();
         }
+
+        private void txt_UserID_KeyDown(object sender, KeyEventArgs e)
+        {
+            switch (e.KeyCode)
+            {
+                case Keys.Space:
+                    MessageBox.Show("공백은 사용하실 수 없습니다.", "알림");
+                    e.Handled = true;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private void txt_UserPW_KeyDown(object sender, KeyEventArgs e)
+        {
+            switch (e.KeyCode)
+            {
+                case Keys.Space:
+                    MessageBox.Show("공백은 사용하실 수 없습니다.", "알림");
+                    e.Handled = true;
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 }

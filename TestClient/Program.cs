@@ -15,6 +15,14 @@ namespace TestClient
         [STAThread]
         static void Main()
         {
+            System.Diagnostics.Process[] processes = null;
+            string strCurrentProcess = System.Diagnostics.Process.GetCurrentProcess().ProcessName.ToUpper();
+            processes = System.Diagnostics.Process.GetProcessesByName(strCurrentProcess);
+            if (processes.Length > 1)
+            {
+                MessageBox.Show(string.Format("{0} 프로그램이 이미 실행 중입니다.", System.Diagnostics.Process.GetCurrentProcess().ProcessName), "알림");
+                return;
+            }
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new SignInForm());

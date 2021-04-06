@@ -49,6 +49,7 @@ namespace TestClient
             this.txt_UserID.Size = new System.Drawing.Size(160, 29);
             this.txt_UserID.TabIndex = 1;
             this.txt_UserID.TextChanged += new System.EventHandler(this.txt_UserID_TextChanged);
+            this.txt_UserID.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txt_UserID_KeyDown);
             // 
             // txt_UserPW
             // 
@@ -62,6 +63,7 @@ namespace TestClient
             this.txt_UserPW.Size = new System.Drawing.Size(160, 29);
             this.txt_UserPW.TabIndex = 2;
             this.txt_UserPW.TextChanged += new System.EventHandler(this.txt_UserPW_TextChanged);
+            this.txt_UserPW.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txt_UserPW_KeyDown);
             // 
             // btn_Submit
             // 

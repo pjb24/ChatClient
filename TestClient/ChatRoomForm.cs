@@ -156,48 +156,56 @@ namespace TestClient
 
         private void btn_Leave_Click(object sender, EventArgs e)
         {
-            Relation relation = new Relation()
+            if (btn_ManagerConfig.Visible && userList.Count != 0)
             {
-                RoomNo = roomNo,
-                UserNo = SearchUserNoByUserID(user_ID)
-            };
-
-            string serialized = string.Empty;
-            if (dataFormat == 1)
-            {
-                serialized = JsonConvert.SerializeObject(relation);
+                MessageBox.Show("채팅방 생성자는 회원이 남아있을 경우 채팅방을 나갈 수 없습니다.", "알림");
+                return;
             }
-            else if (dataFormat == 2)
+            if (MessageBox.Show("채팅방에서 나가시겠습니까?", "알림", MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
-                ISerializer serializer = new SerializerBuilder()
-                    .WithNamingConvention(CamelCaseNamingConvention.Instance)
-                    .Build();
-                serialized = serializer.Serialize(relation);
+                Relation relation = new Relation()
+                {
+                    RoomNo = roomNo,
+                    UserNo = SearchUserNoByUserID(user_ID)
+                };
+
+                string serialized = string.Empty;
+                if (dataFormat == 1)
+                {
+                    serialized = JsonConvert.SerializeObject(relation);
+                }
+                else if (dataFormat == 2)
+                {
+                    ISerializer serializer = new SerializerBuilder()
+                        .WithNamingConvention(CamelCaseNamingConvention.Instance)
+                        .Build();
+                    serialized = serializer.Serialize(relation);
+                }
+
+                byte[] Key = Cryption.KeyGenerator(TestClientUI.msgid.ToString());
+                byte[] IV = Cryption.IVGenerator(CONSTANTS.REQ_LEAVE_ROOM.ToString());
+
+                string encrypted = string.Empty;
+                encrypted = Cryption.EncryptString_Aes(serialized, Key, IV);
+
+                PacketMessage reqMsg = new PacketMessage();
+                reqMsg.Body = new RequestLeaveRoom()
+                {
+                    msg = encrypted
+                };
+                reqMsg.Header = new Header()
+                {
+                    MSGID = TestClientUI.msgid++,
+                    MSGTYPE = CONSTANTS.REQ_LEAVE_ROOM,
+                    BODYLEN = (uint)reqMsg.Body.GetSize(),
+                    FRAGMENTED = CONSTANTS.NOT_FRAGMENTED,
+                    LASTMSG = CONSTANTS.LASTMSG,
+                    SEQ = 0
+                };
+                MessageUtil.Send(stream, reqMsg);
+
+                this.Close();
             }
-
-            byte[] Key = Cryption.KeyGenerator(TestClientUI.msgid.ToString());
-            byte[] IV = Cryption.IVGenerator(CONSTANTS.REQ_LEAVE_ROOM.ToString());
-
-            string encrypted = string.Empty;
-            encrypted = Cryption.EncryptString_Aes(serialized, Key, IV);
-
-            PacketMessage reqMsg = new PacketMessage();
-            reqMsg.Body = new RequestLeaveRoom()
-            {
-                msg = encrypted
-            };
-            reqMsg.Header = new Header()
-            {
-                MSGID = TestClientUI.msgid++,
-                MSGTYPE = CONSTANTS.REQ_LEAVE_ROOM,
-                BODYLEN = (uint)reqMsg.Body.GetSize(),
-                FRAGMENTED = CONSTANTS.NOT_FRAGMENTED,
-                LASTMSG = CONSTANTS.LASTMSG,
-                SEQ = 0
-            };
-            MessageUtil.Send(stream, reqMsg);            
-
-            this.Close();
         }
 
         private void btn_Invitation_Click(object sender, EventArgs e)
@@ -236,54 +244,63 @@ namespace TestClient
                 long fileSize = new FileInfo(filePath).Length;
                 string fileName = p[p.Count() - 1];
 
-                Relation relation = new Relation()
+                if (openFileDialog1.FileName.Length == 0)
                 {
-                    RoomNo = roomNo,
-                    UserNo = SearchUserNoByUserID(user_ID)
-                };
-                MyMessageProtocol.File file = new MyMessageProtocol.File()
-                {
-                    Size = fileSize,
-                    Name = fileName,
-                    Path = filePath,
-                    Relation = relation
-                };
-
-                string serialized = string.Empty;
-                if (dataFormat == 1)
-                {
-                    serialized = JsonConvert.SerializeObject(file);
-                }
-                else if (dataFormat == 2)
-                {
-                    ISerializer serializer = new SerializerBuilder()
-                        .WithNamingConvention(CamelCaseNamingConvention.Instance)
-                        .Build();
-                    serialized = serializer.Serialize(file);
+                    MessageBox.Show("파일을 선택해주십시오.", "알림");
+                    btn_SendFile_Click(sender, e);
                 }
 
-                byte[] Key = Cryption.KeyGenerator(TestClientUI.msgid.ToString());
-                byte[] IV = Cryption.IVGenerator(CONSTANTS.REQ_SEND_FILE.ToString());
-
-                string encrypted = string.Empty;
-                encrypted = Cryption.EncryptString_Aes(serialized, Key, IV);
-
-                PacketMessage reqMsg = new PacketMessage();
-                reqMsg.Body = new RequestSendFile()
+                if (MessageBox.Show(fileName + "파일을 전송하시겠습니까?", "알림", MessageBoxButtons.YesNo) == DialogResult.Yes)
                 {
-                    msg = encrypted
-                };
-                reqMsg.Header = new Header()
-                {
-                    MSGID = TestClientUI.msgid++,
-                    MSGTYPE = CONSTANTS.REQ_SEND_FILE,
-                    BODYLEN = (uint)reqMsg.Body.GetSize(),
-                    FRAGMENTED = CONSTANTS.NOT_FRAGMENTED,
-                    LASTMSG = CONSTANTS.LASTMSG,
-                    SEQ = 0
-                };
+                    Relation relation = new Relation()
+                    {
+                        RoomNo = roomNo,
+                        UserNo = SearchUserNoByUserID(user_ID)
+                    };
+                    MyMessageProtocol.File file = new MyMessageProtocol.File()
+                    {
+                        Size = fileSize,
+                        Name = fileName,
+                        Path = filePath,
+                        Relation = relation
+                    };
 
-                MessageUtil.Send(stream, reqMsg);
+                    string serialized = string.Empty;
+                    if (dataFormat == 1)
+                    {
+                        serialized = JsonConvert.SerializeObject(file);
+                    }
+                    else if (dataFormat == 2)
+                    {
+                        ISerializer serializer = new SerializerBuilder()
+                            .WithNamingConvention(CamelCaseNamingConvention.Instance)
+                            .Build();
+                        serialized = serializer.Serialize(file);
+                    }
+
+                    byte[] Key = Cryption.KeyGenerator(TestClientUI.msgid.ToString());
+                    byte[] IV = Cryption.IVGenerator(CONSTANTS.REQ_SEND_FILE.ToString());
+
+                    string encrypted = string.Empty;
+                    encrypted = Cryption.EncryptString_Aes(serialized, Key, IV);
+
+                    PacketMessage reqMsg = new PacketMessage();
+                    reqMsg.Body = new RequestSendFile()
+                    {
+                        msg = encrypted
+                    };
+                    reqMsg.Header = new Header()
+                    {
+                        MSGID = TestClientUI.msgid++,
+                        MSGTYPE = CONSTANTS.REQ_SEND_FILE,
+                        BODYLEN = (uint)reqMsg.Body.GetSize(),
+                        FRAGMENTED = CONSTANTS.NOT_FRAGMENTED,
+                        LASTMSG = CONSTANTS.LASTMSG,
+                        SEQ = 0
+                    };
+
+                    MessageUtil.Send(stream, reqMsg);
+                }
             }
         }
 
@@ -324,6 +341,11 @@ namespace TestClient
             bool isCommonUser = false;
             string banishedUser = string.Empty;
             banishedUser = lb_UserList.SelectedItem.ToString();
+            
+            if (banishedUser.Length == 0)
+            {
+                return;
+            }
 
             foreach(KeyValuePair<int, Tuple<int, int, int>> temp in usersInRoom)
             {

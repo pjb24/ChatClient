@@ -58,6 +58,11 @@ namespace TestClient
                 };
                 relations.Add(relation);
             }
+            if (relations.Count == 0)
+            {
+                MessageBox.Show("초대할 인원을 선택해주세요.", "알림");
+                return;
+            }
             room.Relation = relations;
 
             string serialized = string.Empty;

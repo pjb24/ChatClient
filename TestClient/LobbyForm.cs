@@ -490,6 +490,7 @@ namespace TestClient
                                     // 초대된 회원이라면
                                     if (invited)
                                     {
+                                        MessageBox.Show(string.Format("{0} 채팅방에 초대되셨습니다.", roomList[resBody.roomNo].Item2), "알림");
                                         Pull_RoomList();
                                     }
                                     // 채팅방에 원래 있던 회원이라면
@@ -509,27 +510,26 @@ namespace TestClient
                                                         if (tmp.Key.Equals(temp.Value.Item2))
                                                         {
                                                             userName = tmp.Value;
-                                                            break;
+                                                            content = userName + "님이 채팅방에 초대되셨습니다.";
+                                                            tempLength = content.Length;
+                                                            count = tempLength / lineLength;
+                                                            if (tempLength % lineLength == 0) count -= 1;
+                                                            for (; count >= index; tempLength -= lineLength, index++)
+                                                            {
+                                                                if (tempLength <= lineLength)
+                                                                {
+                                                                    contentList.Add(content.Substring(index * lineLength));
+                                                                }
+                                                                else
+                                                                {
+                                                                    contentList.Add(content.Substring(index * lineLength, lineLength));
+                                                                }
+                                                            }
+                                                            foreach (string tempContent in contentList)
+                                                            {
+                                                                chatGroupForm.DisplayText(tempContent);
+                                                            }
                                                         }
-                                                    }
-                                                    content = userName + "님이 채팅방에 초대되셨습니다.";
-                                                    tempLength = content.Length;
-                                                    count = tempLength / lineLength;
-                                                    if (tempLength % lineLength == 0) count -= 1;
-                                                    for (; count >= index; tempLength -= lineLength, index++)
-                                                    {
-                                                        if (tempLength <= lineLength)
-                                                        {
-                                                            contentList.Add(content.Substring(index * lineLength));
-                                                        }
-                                                        else
-                                                        {
-                                                            contentList.Add(content.Substring(index * lineLength, lineLength));
-                                                        }
-                                                    }
-                                                    foreach (string tempContent in contentList)
-                                                    {
-                                                        chatGroupForm.DisplayText(tempContent);
                                                     }
                                                     chatGroupForm.RedrawUserList();
                                                 }
