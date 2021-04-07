@@ -40,6 +40,12 @@ namespace TestClient
 
         private void btn_Submit_Click(object sender, EventArgs e)
         {
+            if (clb_RoomUser.CheckedItems.Count == 0)
+            {
+                MessageBox.Show("채팅방에 초대할 인원을 선택해주십시오.", "알림");
+                return;
+            }
+
             int accessRight = 0;
             string roomName = string.Empty;
             string creator = user_ID;
@@ -53,6 +59,7 @@ namespace TestClient
                 tempUsersNo.Add(SearchUserNoByUserID(checkeditem.ToString()));
                 tempUsers.Add(checkeditem.ToString());
             }
+
             // 정렬
             tempUsers.Sort();
             string group = string.Join(", ", tempUsers);
